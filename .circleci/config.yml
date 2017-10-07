@@ -26,14 +26,14 @@ jobs:
       - run:
           name: Pull new container image
           command: |
-            docker pull gcr.io/${PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD}
+            docker pull gcr.io/${PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
       - run:
           name: Test PHP version
           command: |
-            docker run --rm gcr.io/${PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD} php -v > ${TEST_RESULTS}/php_version.txt
+            docker run --rm gcr.io/${PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} php -v > ${TEST_RESULTS}/php_version.txt
             grep -q 'PHP 7' $TEST_RESULTS/php_version.txt || exit 1
       - run:
           name: Test gcloud version
           command: |
-            docker run --rm gcr.io/${PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD} ${HOME}/google-cloud-sdk/bin/gcloud -v > ${TEST_RESULTS}/gcloud_version.txt
+            docker run --rm gcr.io/${PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} ${HOME}/google-cloud-sdk/bin/gcloud -v > ${TEST_RESULTS}/gcloud_version.txt
             grep -q 'kubectl' || fatal exit 1

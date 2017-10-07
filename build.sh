@@ -8,7 +8,7 @@ fi
 
 # Cloudbuild.yaml template substitutions
 SUBSTITUTIONS=(
-  "_BUILD_NUMBER=${CIRCLE_BUILD:-"test-build"}" \
+  "_BUILD_NUMBER=${CIRCLE_BUILD_NUM:-"test-build"}" \
   "_GOOGLE_PROJECT_ID=${GOOGLE_PROJECT_ID:-"planet-4-151612"}" \
   "_REVISION_TAG=$(git rev-parse --abbrev-ref HEAD)" \
   "_BRANCH_TAG=$(git rev-parse --abbrev-ref HEAD)" \
