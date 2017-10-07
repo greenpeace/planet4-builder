@@ -52,7 +52,7 @@ jobs:
 
   deploy:
     docker:
-      image: gcr.io/planet-4-151612/circleci-base:latest
+      - image: gcr.io/planet-4-151612/circleci-base:latest
     steps:
       - deploy:
           name: Tag new build with :latest and push to gcr.io
