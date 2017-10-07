@@ -31,6 +31,7 @@ jobs:
       - run:
           name: Test PHP version
           command: |
+            mkdir -p ${TEST_RESULTS}
             docker run --rm gcr.io/${PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} php -v > ${TEST_RESULTS}/php_version.txt
             grep -q 'PHP 7' ${TEST_RESULTS}/php_version.txt || exit 1
       - run:
