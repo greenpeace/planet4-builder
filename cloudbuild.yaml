@@ -6,10 +6,8 @@ steps:
     - '--tag=gcr.io/${_GOOGLE_PROJECT_ID}/circleci-base:${_BRANCH_TAG}'
     - '--tag=gcr.io/${_GOOGLE_PROJECT_ID}/circleci-base:${_REVISION_TAG}'
     - '--tag=gcr.io/${_GOOGLE_PROJECT_ID}/circleci-base:build-${_BUILD_NUMBER}'
-    - '--tag=gcr.io/${_GOOGLE_PROJECT_ID}/circleci-base:latest'
     - './circleci-base'
 images:
   - 'gcr.io/${_GOOGLE_PROJECT_ID}/circleci-base:${_BRANCH_TAG}'
   - 'gcr.io/${_GOOGLE_PROJECT_ID}/circleci-base:${_REVISION_TAG}'
   - 'gcr.io/${_GOOGLE_PROJECT_ID}/circleci-base:build-${_BUILD_NUMBER}'
-  - 'gcr.io/${_GOOGLE_PROJECT_ID}/circleci-base:latest'
