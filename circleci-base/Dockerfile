@@ -1,4 +1,4 @@
-FROM circleci/php:7
+FROM circleci/php:7.0-fpm-browsers
 
 MAINTAINER Raymond Walker <raymond.walker@greenpeace.org>
 
