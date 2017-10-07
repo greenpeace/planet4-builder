@@ -39,3 +39,5 @@ jobs:
           command: |
             docker run --rm gcr.io/${PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} ${HOME}/google-cloud-sdk/bin/gcloud -v > ${TEST_RESULTS}/gcloud_version.txt
             grep -q 'kubectl' ${TEST_RESULTS}/gcloud_version.txt || fatal exit 1
+      - store_test_results:
+          path: ${TEST_RESULTS}
