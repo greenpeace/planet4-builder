@@ -4,7 +4,6 @@ jobs:
   build:
     environment:
       PROJECT_ID: planet-4-151612
-      TEST_RESULTS: /tmp/test-results
     docker:
       - image: gcr.io/planet-4-151612/circleci-base:latest
     working_directory:  /home/circleci/app
@@ -15,6 +14,7 @@ jobs:
           command: |
             ${HOME}/google-cloud-sdk/bin/gcloud --quiet components update
             echo "${GCLOUD_SERVICE_KEY}" | base64 --decode -i > ${HOME}/gcloud-service-key.json
+            export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/gcloud-service-key.json
             ${HOME}/google-cloud-sdk/bin/gcloud config set project ${PROJECT_ID}
             ${HOME}/google-cloud-sdk/bin/gcloud auth activate-service-account --key-file ${HOME}/gcloud-service-key.json
 
@@ -24,20 +24,51 @@ jobs:
           name: Building platform containers on gcr.io
           command: |
             ./build.sh
+
+  test:
+    environment:
+      PROJECT_ID: planet-4-151612
+      TEST_RESULTS: ./test-results
+    docker:
+      - image: gcr.io/planet-4-151612/circleci-base:latest
+    steps:
       - run:
           name: Pull new container image
           command: |
             docker pull gcr.io/${PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
       - run:
-          name: Test PHP version
+          name: Test PHP
           command: |
             mkdir -p ${TEST_RESULTS}
             docker run --rm gcr.io/${PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} php -v > ${TEST_RESULTS}/php_version.txt
-            grep -q 'PHP 7' ${TEST_RESULTS}/php_version.txt || exit 1
+            grep -q 'PHP 7' ${TEST_RESULTS}/php_version.txt && echo "PHP 7 installed"
       - run:
-          name: Test gcloud version
+          name: Test gcloud
           command: |
             docker run --rm gcr.io/${PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} ${HOME}/google-cloud-sdk/bin/gcloud -v > ${TEST_RESULTS}/gcloud_version.txt
-            grep -q 'kubectl' ${TEST_RESULTS}/gcloud_version.txt || fatal exit 1
+            grep -q 'kubectl' ${TEST_RESULTS}/gcloud_version.txt && echo "Kubectl installed"
       - store_test_results:
           path: ${TEST_RESULTS}
+
+  deploy:
+    docker:
+      image: gcr.io/planet-4-151612/circleci-base:latest
+      steps:
+        - deploy:
+          command: |
+            docker tag -t gcr.io/${PROJECT_ID}/circleci-base:latest gcr.io/${PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
+            ${HOME}/google-cloud-sdk/bin/gcloud docker -- push gcr.io/${PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
+
+
+
+workflows:
+  version: 2
+  build-test-and-approval-deploy:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - deploy:
+          requires:
+            - test
