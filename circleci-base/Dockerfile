@@ -25,3 +25,5 @@ RUN curl -L "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/""google
         --path-update true && \
     google-cloud-sdk/bin/gcloud --quiet components update && \
     google-cloud-sdk/bin/gcloud --quiet components update kubectl
+
+ADD ./scripts /home/circleci/scripts
