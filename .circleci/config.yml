@@ -55,11 +55,10 @@ jobs:
       image: gcr.io/planet-4-151612/circleci-base:latest
     steps:
       - deploy:
-        command: |
-          docker tag -t gcr.io/${PROJECT_ID}/circleci-base:latest gcr.io/${PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
-          ${HOME}/google-cloud-sdk/bin/gcloud docker -- push gcr.io/${PROJECT_ID}/circleci-base:latest
-
-
+          name: Tag new build with :latest and push to gcr.io
+          command: |
+            docker tag -t gcr.io/${PROJECT_ID}/circleci-base:latest gcr.io/${PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
+            ${HOME}/google-cloud-sdk/bin/gcloud docker -- push gcr.io/${PROJECT_ID}/circleci-base:latest
 
 workflows:
   version: 2
