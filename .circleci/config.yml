@@ -27,6 +27,7 @@ jobs:
     docker:
       - image: gcr.io/planet-4-151612/circleci-base:latest
     steps:
+      - setup_remote_docker
       - run:
           name: Pull new container image
           command: |
@@ -49,6 +50,7 @@ jobs:
     docker:
       - image: gcr.io/planet-4-151612/circleci-base:latest
     steps:
+      - setup_remote_docker
       - deploy:
           name: Tag new build with :latest and push to gcr.io
           command: |
