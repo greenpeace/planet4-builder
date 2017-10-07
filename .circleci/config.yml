@@ -25,15 +25,6 @@ jobs:
           command: |
             set -ex
             ./build.sh
-
-  test:
-    environment:
-      PROJECT_ID: planet-4-151612
-      TEST_RESULTS: /tmp/test-results
-    docker:
-      - image: circlci/php:7
-
-    steps:
       - run:
           name: Pull new container image
           command: |
