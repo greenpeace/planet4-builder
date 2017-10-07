@@ -12,7 +12,7 @@ jobs:
       - run:
           name: Configure gcloud
           command: |
-            scripts/activate-gcloud-account.sh
+            ${HOME}/scripts/activate-gcloud-account.sh
       - setup_remote_docker
       - checkout
       - run:
