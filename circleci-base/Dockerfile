@@ -23,7 +23,10 @@ RUN curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE
 
 USER circleci
 
-RUN curl -L "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/""google-cloud-sdk-${GOOGLE_SDK_VERSION}-linux-x86_64.tar.gz" | tar xz && \
+RUN git clone https://github.com/sstephenson/bats.git && \
+    ./install.sh /usr/local && \
+    rm -fr /home/circleci/bats && \
+    curl -L "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/""google-cloud-sdk-${GOOGLE_SDK_VERSION}-linux-x86_64.tar.gz" | tar xz && \
     CLOUDSDK_CORE_DISABLE_PROMPTS=1 ./google-cloud-sdk/install.sh \
         --usage-reporting false \
         --bash-completion false \
