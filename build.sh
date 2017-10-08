@@ -34,7 +34,7 @@ tar --exclude='.git/' --exclude='.circleci/' -zcf ${TMPDIR}/docker-source.tar.gz
 # Check if we're running on CircleCI
 if [ ! -z "${CIRCLECI}" ]; then
   # Expect gcloud to be configured under the home directory
-  GCLOUD=/home/circleci/google-cloud-sdk/bin/gcloud
+  GCLOUD=${HOME}/google-cloud-sdk/bin/gcloud
 else
   # Hope for the best
   GCLOUD=gcloud
