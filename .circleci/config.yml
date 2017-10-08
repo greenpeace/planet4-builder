@@ -82,7 +82,8 @@ jobs:
             export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
             docker tag gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
             ${HOME}/google-cloud-sdk/bin/gcloud docker -- push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
-            if [ ! -z "${CIRCLE_TAG}" ]; then
+            if [[ ! -z "${CIRCLE_TAG}" ]]
+            then
               docker tag gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:${CIRCLE_TAG} gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
               ${HOME}/google-cloud-sdk/bin/gcloud docker -- push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:${CIRCLE_TAG}
             fi

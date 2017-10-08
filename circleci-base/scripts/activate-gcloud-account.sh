@@ -1,12 +1,14 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 set -ex
 
-if [ -z "${GCLOUD_SERVICE_KEY}" ]; then
+if [[ -z "${GCLOUD_SERVICE_KEY}" ]]
+then
   >&2 echo "ERROR :: environment variable GCLOUD_SERVICE_KEY not set"
   exit 1
 fi
 
-if [ -z "${GOOGLE_PROJECT_ID}" ]; then
+if [[ -z "${GOOGLE_PROJECT_ID}" ]]
+then
   >&2 echo "ERROR :: environment variable GOOGLE_PROJECT_ID not set"
   exit 1
 fi
