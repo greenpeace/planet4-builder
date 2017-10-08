@@ -29,7 +29,7 @@ SUBSTITUTIONS_STRING=$(getSubstitutions "${SUBSTITUTIONS[@]}")
 # Since git builtin substitutions aren't available unless triggered
 # https://cloud.google.com/container-builder/docs/concepts/build-requests#substitutions
 TMPDIR=$(mktemp -d "${TMPDIR:-/tmp/}$(basename 0).XXXXXXXXXXXX")
-tar --exclude='.git/' -zcf $TMPDIR/docker-source.tar.gz .
+tar --exclude='.git/' --exclude='.circleci/' -zcf ${TMPDIR}/docker-source.tar.gz .
 
 # Check if we're running on CircleCI
 if [ ! -z "${CIRCLECI}" ]; then
