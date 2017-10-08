@@ -1,13 +1,16 @@
+defaults: &defaults
+  environment:
+    GOOGLE_PROJECT_ID: planet-4-151612
+    TEST_RESULTS: /tmp/test-results
+  docker:
+    - image: gcr.io/planet-4-151612/circleci-base:latest
+  working_directory:  /home/circleci/app
+
 version: 2
 
 jobs:
   build:
-    environment:
-      GOOGLE_PROJECT_ID: planet-4-151612
-    docker:
-      - image: gcr.io/planet-4-151612/circleci-base:latest
-    working_directory:  /home/circleci/app
-
+    <<: *defaults
     steps:
       - run:
           name: Configure gcloud
@@ -21,11 +24,7 @@ jobs:
             ./build.sh
 
   test:
-    environment:
-      GOOGLE_PROJECT_ID: planet-4-151612
-      TEST_RESULTS: ./test-results
-    docker:
-      - image: gcr.io/planet-4-151612/circleci-base:latest
+    <<: *defaults
     steps:
       - setup_remote_docker
       - run:
@@ -47,8 +46,7 @@ jobs:
           path: ${TEST_RESULTS}
 
   deploy:
-    docker:
-      - image: gcr.io/planet-4-151612/circleci-base:latest
+    <<: *defaults
     steps:
       - setup_remote_docker
       - deploy:
