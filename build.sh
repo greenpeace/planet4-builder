@@ -18,6 +18,11 @@ SUBSTITUTIONS=(
 #   ----------- NO USER SERVICEABLE PARTS BELOW -----------
 #
 
+if [[ "$1" = "test" ]]
+then
+  BUILD_LOCALLY=true
+fi
+
 function getSubstitutions() {
   local -a arg=($@)
   SUBSTITUTIONS_PROCESSOR="$(printf "%s," "${arg[@]}" )"
@@ -32,7 +37,8 @@ TMPDIR=$(mktemp -d "${TMPDIR:-/tmp/}$(basename 0).XXXXXXXXXXXX")
 tar --exclude='.git/' --exclude='.circleci/' -zcf ${TMPDIR}/docker-source.tar.gz .
 
 # Check if we're running on CircleCI
-if [ ! -z "${CIRCLECI}" ]; then
+if [[ ! -z "${CIRCLECI}" ]]
+then
   # Expect gcloud to be configured under the home directory
   GCLOUD=${HOME}/google-cloud-sdk/bin/gcloud
 else
@@ -41,6 +47,16 @@ else
 fi
 
 # Submit the build
+if [[ "$BUILD_LOCALLY" = 'true' ]]
+then
+  if [[ -x circlecli ]]
+  then
+    circlecli
+  else
+    fatal "ERROR :: circlecli not found"
+  fi
+fi
+
 time ${GCLOUD} container builds submit \
   --verbosity=${VERBOSITY:-"warning"} \
   --timeout=10m \
