@@ -16,8 +16,8 @@ jobs:
       - run:
           name: Setup workspace
           command: |
-            mkdir -p ${WORKSPACE}/var
-            echo "${CIRCLE_BUILD_NUM}" > ${WORKSPACE}/var/circle-build-num
+            mkdir -p /tmp/workspace/var
+            echo "${CIRCLE_BUILD_NUM}" > /tmp/workspace/var/circle-build-num
       - run:
           name: Configure gcloud
           command: |
@@ -29,7 +29,7 @@ jobs:
           command: |
             ./build.sh
       - persist_to_workspace:
-          root: ${WORKSPACE}
+          root: /tmp/workspace
           paths:
             - var
 
@@ -38,7 +38,7 @@ jobs:
     <<: *defaults
     steps:
       - attach_workspace:
-          at: ${WORKSPACE}
+          at: /tmp/workspace
       - setup_remote_docker
       - run:
           name: Setup test results
@@ -47,19 +47,19 @@ jobs:
       - run:
           name: Pull new container image
           command: |
-            export CIRCLE_BUILD_NUM=$(cat ${WORKSPACE}/var/circle-build-num)
+            export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
             docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
       - run:
           name: Test PHP
           command: |
-            export CIRCLE_BUILD_NUM=$(cat ${WORKSPACE}/var/circle-build-num)
+            export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
             docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} php -v > ${TEST_RESULTS}/php_version.txt
             grep -q 'PHP 7' ${TEST_RESULTS}/php_version.txt && echo "PHP 7 installed"
             cat ${TEST_RESULTS}/php_version.txt
       - run:
           name: Test gcloud
           command: |
-            export CIRCLE_BUILD_NUM=$(cat ${WORKSPACE}/var/circle-build-num)
+            export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
             docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} ${HOME}/google-cloud-sdk/bin/gcloud -v > ${TEST_RESULTS}/gcloud_version.txt
             grep -q 'kubectl' ${TEST_RESULTS}/gcloud_version.txt && echo "Kubectl installed"
             cat ${TEST_RESULTS}/gcloud_version.txt
@@ -70,7 +70,7 @@ jobs:
     <<: *defaults
     steps:
       - attach_workspace:
-          at: ${WORKSPACE}
+          at: /tmp/workspace
       - run:
           name: Configure gcloud
           command: |
@@ -79,7 +79,7 @@ jobs:
       - deploy:
           name: Tag new build with :latest and push to gcr.io
           command: |
-            export CIRCLE_BUILD_NUM=$(cat ${WORKSPACE}/var/circle-build-num)
+            export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
             docker tag -t gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
             ${HOME}/google-cloud-sdk/bin/gcloud docker -- push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
             if [ ! -z "${CIRCLE_TAG}" ]; then
