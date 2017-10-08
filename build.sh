@@ -10,8 +10,8 @@ fi
 SUBSTITUTIONS=(
   "_BUILD_NUMBER=${CIRCLE_BUILD_NUM:-"test-build"}" \
   "_GOOGLE_PROJECT_ID=${GOOGLE_PROJECT_ID:-"planet-4-151612"}" \
-  "_REVISION_TAG=$(git rev-parse --abbrev-ref HEAD)" \
-  "_BRANCH_TAG=$(git rev-parse --abbrev-ref HEAD)" \
+  "_REVISION_TAG=${CIRCLE_TAG:-$(git rev-parse --short HEAD)}" \
+  "_BRANCH_TAG=${CIRCLE_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}" \
 )
 
 #
