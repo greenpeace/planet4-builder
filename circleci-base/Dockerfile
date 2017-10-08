@@ -7,13 +7,15 @@ USER root
 ENV CIRCLECI_USER 'circleci'
 ENV DOCKER_COMPOSE_VERSION '1.16.1'
 ENV GOOGLE_SDK_VERSION='174.0.0'
+ENV ACK_VERSION='2.18'
 
 WORKDIR /home/circleci
 
 COPY ./scripts /home/circleci/scripts
 COPY ./etc/apt/sources.list /etc/apt/sources.list
 
-RUN curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose && \
+RUN curl https://beyondgrep.com/ack-${ACK_VERSION}-single-file > /usr/local/bin/ack && chmod 0755 /usr/local/bin/ack && \
+    curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose && \
     chmod 755 /usr/local/bin/docker-compose && \
     chmod 755 /home/circleci/scripts/* && \
     apt-get update && apt-get install -y \
