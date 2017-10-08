@@ -13,10 +13,12 @@ WORKDIR /home/circleci
 COPY ./scripts /home/circleci/scripts
 COPY ./etc/apt/sources.list /etc/apt/sources.list
 
-RUN chmod +x /home/circleci/scripts/* && \
-    curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose && \
-    chmod +x /usr/local/bin/docker-compose && \
-    apt-get update && apt-get install -y gettext && \
+RUN curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose && \
+    chmod 755 /usr/local/bin/docker-compose && \
+    chmod 755 /home/circleci/scripts/* && \
+    apt-get update && apt-get install -y \
+      gettext \
+      shellcheck && \
     rm -fr /var/lib/apt
 
 USER circleci
