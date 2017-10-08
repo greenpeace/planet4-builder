@@ -14,7 +14,10 @@ WORKDIR /home/circleci
 COPY ./scripts /home/circleci/scripts
 COPY ./etc/apt/sources.list /etc/apt/sources.list
 
-RUN curl https://beyondgrep.com/ack-${ACK_VERSION}-single-file > /usr/local/bin/ack && chmod 0755 /usr/local/bin/ack && \
+RUN git clone https://github.com/sstephenson/bats.git && \
+    ./bats/install.sh /usr/local && \
+    rm -fr /home/circleci/bats && \
+    curl https://beyondgrep.com/ack-${ACK_VERSION}-single-file > /usr/local/bin/ack && chmod 0755 /usr/local/bin/ack && \
     curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose && \
     chmod 755 /usr/local/bin/docker-compose && \
     chmod 755 /home/circleci/scripts/* && \
@@ -25,10 +28,7 @@ RUN curl https://beyondgrep.com/ack-${ACK_VERSION}-single-file > /usr/local/bin/
 
 USER circleci
 
-RUN git clone https://github.com/sstephenson/bats.git && \
-    ./bats/install.sh /usr/local && \
-    rm -fr /home/circleci/bats && \
-    curl -L "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/""google-cloud-sdk-${GOOGLE_SDK_VERSION}-linux-x86_64.tar.gz" | tar xz && \
+RUN curl -L "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/""google-cloud-sdk-${GOOGLE_SDK_VERSION}-linux-x86_64.tar.gz" | tar xz && \
     CLOUDSDK_CORE_DISABLE_PROMPTS=1 ./google-cloud-sdk/install.sh \
         --usage-reporting false \
         --bash-completion false \
