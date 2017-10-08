@@ -25,7 +25,7 @@ RUN curl -L "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/""google
     CLOUDSDK_CORE_DISABLE_PROMPTS=1 ./google-cloud-sdk/install.sh \
         --usage-reporting false \
         --bash-completion false \
-        --rc-path /home/${CIRCLECI_USER}/.bashrc \
-        --path-update true && \
+        --path-update false \
+        --rc-path /home/${CIRCLECI_USER}/.bashrc && \
     google-cloud-sdk/bin/gcloud --quiet components update && \
     google-cloud-sdk/bin/gcloud --quiet components update kubectl
