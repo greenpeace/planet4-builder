@@ -13,6 +13,11 @@ jobs:
     <<: *defaults
     steps:
       - run:
+          name: Setup workspace
+          command: |
+            mkdir -p ${HOME}/workspace/var
+            echo "${CIRCLE_BUILD_NUM}" > ${HOME}/workspace/var/circle_build_num
+      - run:
           name: Configure gcloud
           command: |
             ${HOME}/scripts/activate-gcloud-account.sh
@@ -22,14 +27,23 @@ jobs:
           name: Building platform containers on gcr.io
           command: |
             ./build.sh
+      - persist_to_workspace:
+          root: ${HOME}/workspace
+          paths:
+            - var
+
 
   test:
     <<: *defaults
     steps:
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: ${HOME}/workspace
       - setup_remote_docker
       - run:
           name: Pull new container image
           command: |
+            export CIRCLE_BUILD_NUM=$(cat ${HOME}/workspace/var/circle_build_num)
             docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
       - run:
           name: Test PHP
@@ -48,12 +62,24 @@ jobs:
   deploy:
     <<: *defaults
     steps:
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: ${HOME}/workspace
+      - run:
+          name: Configure gcloud
+          command: |
+            ${HOME}/scripts/activate-gcloud-account.sh
       - setup_remote_docker
       - deploy:
           name: Tag new build with :latest and push to gcr.io
           command: |
+            export CIRCLE_BUILD_NUM=$(cat ${HOME}/workspace/var/circle_build_num)
             docker tag -t gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
             ${HOME}/google-cloud-sdk/bin/gcloud docker -- push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
+            if [ ! -z "${CIRCLE_TAG}" ]; then
+              docker tag -t gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:${CIRCLE_TAG} gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
+              ${HOME}/google-cloud-sdk/bin/gcloud docker -- push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:${CIRCLE_TAG}
+            fi
 
 workflows:
   version: 2
