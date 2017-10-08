@@ -26,7 +26,7 @@ RUN curl https://beyondgrep.com/ack-${ACK_VERSION}-single-file > /usr/local/bin/
 USER circleci
 
 RUN git clone https://github.com/sstephenson/bats.git && \
-    ./install.sh /usr/local && \
+    ./bats/install.sh /usr/local && \
     rm -fr /home/circleci/bats && \
     curl -L "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/""google-cloud-sdk-${GOOGLE_SDK_VERSION}-linux-x86_64.tar.gz" | tar xz && \
     CLOUDSDK_CORE_DISABLE_PROMPTS=1 ./google-cloud-sdk/install.sh \
