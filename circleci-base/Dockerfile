@@ -10,7 +10,10 @@ ENV GOOGLE_SDK_VERSION='174.0.0'
 
 WORKDIR /home/circleci
 
-RUN curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose && \
+COPY ./scripts /home/circleci/scripts
+
+RUN chmod +x /home/circleci/scripts/* && \
+    curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose && \
     chmod +x /usr/local/bin/docker-compose && \
     apt-get update && apt-get install -y gettext && \
     rm -fr /var/lib/apt
@@ -25,5 +28,3 @@ RUN curl -L "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/""google
         --path-update true && \
     google-cloud-sdk/bin/gcloud --quiet components update && \
     google-cloud-sdk/bin/gcloud --quiet components update kubectl
-
-COPY ./scripts /home/circleci/scripts
