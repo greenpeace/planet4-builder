@@ -1,8 +1,6 @@
 defaults: &defaults
   environment:
     GOOGLE_PROJECT_ID: planet-4-151612
-    TEST_RESULTS: /tmp/test-results
-    WORKSPACE: /tmp/workspace
   docker:
     - image: gcr.io/planet-4-151612/circleci-base:latest
   working_directory:  /home/circleci/app
@@ -43,7 +41,7 @@ jobs:
       - run:
           name: Setup test results
           command: |
-            mkdir -p ${TEST_RESULTS}
+            mkdir -p /tmp/test-results
       - run:
           name: Pull new container image
           command: |
@@ -53,18 +51,18 @@ jobs:
           name: Test PHP
           command: |
             export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
-            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} php -v > ${TEST_RESULTS}/php_version.txt
-            grep -q 'PHP 7' ${TEST_RESULTS}/php_version.txt && echo "PHP 7 installed"
-            cat ${TEST_RESULTS}/php_version.txt
+            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} php -v > /tmp/test-results/php_version.txt
+            grep -q 'PHP 7' /tmp/test-results/php_version.txt && echo "PHP 7 installed"
+            cat /tmp/test-results/php_version.txt
       - run:
           name: Test gcloud
           command: |
             export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
-            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} ${HOME}/google-cloud-sdk/bin/gcloud -v > ${TEST_RESULTS}/gcloud_version.txt
-            grep -q 'kubectl' ${TEST_RESULTS}/gcloud_version.txt && echo "Kubectl installed"
-            cat ${TEST_RESULTS}/gcloud_version.txt
+            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} ${HOME}/google-cloud-sdk/bin/gcloud -v > /tmp/test-results/gcloud_version.txt
+            grep -q 'kubectl' /tmp/test-results/gcloud_version.txt && echo "Kubectl installed"
+            cat /tmp/test-results/gcloud_version.txt
       - store_test_results:
-          path: ${TEST_RESULTS}
+          path: /tmp/test-results
 
   deploy:
     <<: *defaults
