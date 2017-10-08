@@ -16,6 +16,7 @@ jobs:
           command: |
             mkdir -p /tmp/workspace/var
             echo "${CIRCLE_BUILD_NUM}" > /tmp/workspace/var/circle-build-num
+            bash --version
             uname -a
             lsb_release -a
       - run:
