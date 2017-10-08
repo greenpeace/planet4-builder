@@ -15,8 +15,8 @@ jobs:
       - run:
           name: Setup workspace
           command: |
-            mkdir -p ${HOME}/workspace/var
-            echo "${CIRCLE_BUILD_NUM}" > ${HOME}/workspace/var/circle_build_num
+            mkdir -p /tmp/workspace/var
+            echo "${CIRCLE_BUILD_NUM}" > /tmp/workspace/var/circle_build_num
       - run:
           name: Configure gcloud
           command: |
@@ -28,7 +28,7 @@ jobs:
           command: |
             ./build.sh
       - persist_to_workspace:
-          root: ${HOME}/workspace
+          root: /tmp/workspace
           paths:
             - var
 
@@ -38,12 +38,12 @@ jobs:
     steps:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
-          at: ${HOME}/workspace
+          at: /tmp/workspace
       - setup_remote_docker
       - run:
           name: Pull new container image
           command: |
-            export CIRCLE_BUILD_NUM=$(cat ${HOME}/workspace/var/circle_build_num)
+            export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle_build_num)
             docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
       - run:
           name: Test PHP
@@ -64,7 +64,7 @@ jobs:
     steps:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
-          at: ${HOME}/workspace
+          at: /tmp/workspace
       - run:
           name: Configure gcloud
           command: |
@@ -73,7 +73,7 @@ jobs:
       - deploy:
           name: Tag new build with :latest and push to gcr.io
           command: |
-            export CIRCLE_BUILD_NUM=$(cat ${HOME}/workspace/var/circle_build_num)
+            export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle_build_num)
             docker tag -t gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
             ${HOME}/google-cloud-sdk/bin/gcloud docker -- push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
             if [ ! -z "${CIRCLE_TAG}" ]; then
