@@ -30,33 +30,34 @@ jobs:
             bats -v
             # ack version
             ack --version
+      - checkout
+      - run:
+          name: Update build numbers
+          command: |
+            # Build without arguments to update Dockerfile from template
+            ./build.sh
+            git config user.email "circleci-bot@greenpeace.org"
+            git config user.name "CircleCI Bot"
+            git config push.default simple
+            git add .
+            OLD_MSG=$(git log --format=%B -n1)
+            git commit -m "$OLD_MSG" -m "Update build numbers [skip ci]"
+            git push --force-with-lease --set-upstream origin ${CIRCLE_BRANCH}
+      - setup_remote_docker
       - run:
           name: Configure gcloud
           command: |
             # Configure gcloud authentication
             ${HOME}/scripts/activate-gcloud-account.sh
-      - setup_remote_docker
-      - checkout
-      - run:
-          name: Update build numbers
-          command: |
-            ./build.sh
-            OLD_MSG=$(git log --format=%B -n1)
-            git config user.email "bot@greenpeace.org"
-            git config user.name "CircleCI Bot"
-            git config push.default simple
-            git add .
-            git commit -m "$OLD_MSG" -m "Update build numbers [skip ci]"
-            git push --force-with-lease --set-upstream origin ${CIRCLE_BRANCH}
       - run:
           name: Sending build request to Google Container Builder
           command: |
-            # Perform the build
+            # Perform the build on GCP
             ./build.sh -r
       - run:
-          name: Pull and store image in workspace
+          name: Pull and store new image in workspace
           command: |
-            # Store built image for future reference
+            # Store new image for future reference
             docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
             docker save --output /tmp/workspace/image/circleci-base.tar gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
       - persist_to_workspace:
