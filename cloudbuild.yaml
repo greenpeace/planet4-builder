@@ -7,9 +7,7 @@ steps:
     - '--tag=${_NAMESPACE}/${_GOOGLE_PROJECT_ID}/circleci-base:${_BRANCH_TAG}'
     - '--tag=${_NAMESPACE}/${_GOOGLE_PROJECT_ID}/circleci-base:${_REVISION_TAG}'
     - '--tag=${_NAMESPACE}/${_GOOGLE_PROJECT_ID}/circleci-base:build-${_BUILD_NUMBER}'
-    - '--tag=${_NAMESPACE}/${_GOOGLE_PROJECT_ID}/circleci-base:latest'
 images:
   - '${_NAMESPACE}/${_GOOGLE_PROJECT_ID}/circleci-base:${_BRANCH_TAG}'
   - '${_NAMESPACE}/${_GOOGLE_PROJECT_ID}/circleci-base:${_REVISION_TAG}'
   - '${_NAMESPACE}/${_GOOGLE_PROJECT_ID}/circleci-base:build-${_BUILD_NUMBER}'
-  - '${_NAMESPACE}/${_GOOGLE_PROJECT_ID}/circleci-base:latest'
