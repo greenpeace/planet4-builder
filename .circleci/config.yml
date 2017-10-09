@@ -58,6 +58,7 @@ jobs:
           name: Pull and store new image in workspace
           command: |
             # Store new image for future reference
+            mkdir -p /tmp/workspace/image
             docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
             docker save --output /tmp/workspace/image/circleci-base.tar gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
       - persist_to_workspace:
