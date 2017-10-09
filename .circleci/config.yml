@@ -40,7 +40,8 @@ jobs:
       - run:
           name: Sending build request to Google Container Builder
           command: |
-            ./build.sh
+            # Perform the build
+            ./build.sh -r
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
