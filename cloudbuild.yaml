@@ -4,10 +4,10 @@ steps:
   args:
     - 'build'
     - './circleci-base'
-    - '--tag=gcr.io/${_GOOGLE_PROJECT_ID}/circleci-base:${_BRANCH_TAG}'
-    - '--tag=gcr.io/${_GOOGLE_PROJECT_ID}/circleci-base:${_REVISION_TAG}'
-    - '--tag=gcr.io/${_GOOGLE_PROJECT_ID}/circleci-base:build-${_BUILD_NUMBER}'
+    - '--tag=${_NAMESPACE}/${_GOOGLE_PROJECT_ID}/circleci-base:${_BRANCH_TAG}'
+    - '--tag=${_NAMESPACE}/${_GOOGLE_PROJECT_ID}/circleci-base:${_REVISION_TAG}'
+    - '--tag=${_NAMESPACE}/${_GOOGLE_PROJECT_ID}/circleci-base:build-${_BUILD_NUMBER}'
 images:
-  - 'gcr.io/${_GOOGLE_PROJECT_ID}/circleci-base:${_BRANCH_TAG}'
-  - 'gcr.io/${_GOOGLE_PROJECT_ID}/circleci-base:${_REVISION_TAG}'
-  - 'gcr.io/${_GOOGLE_PROJECT_ID}/circleci-base:build-${_BUILD_NUMBER}'
+  - '${_NAMESPACE}/${_GOOGLE_PROJECT_ID}/circleci-base:${_BRANCH_TAG}'
+  - '${_NAMESPACE}/${_GOOGLE_PROJECT_ID}/circleci-base:${_REVISION_TAG}'
+  - '${_NAMESPACE}/${_GOOGLE_PROJECT_ID}/circleci-base:build-${_BUILD_NUMBER}'
