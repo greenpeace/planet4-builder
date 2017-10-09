@@ -47,7 +47,7 @@ jobs:
             git config push.default simple
             git add .
             git commit -m "$OLD_MSG" -m "Update build numbers [skip ci]"
-            git push --force-with-lease --set-upstream origin develop
+            git push --force-with-lease --set-upstream origin ${CIRCLE_BRANCH}
       - run:
           name: Sending build request to Google Container Builder
           command: |
