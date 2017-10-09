@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -ex
+set -eo pipefail
 
 if [[ -z "${GCLOUD_SERVICE_KEY}" ]]
 then
