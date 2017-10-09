@@ -118,6 +118,10 @@ jobs:
       - deploy:
           name: Tag new build and push to gcr.io
           command: |
+            if [[ -z "${CIRCLE_TAG} "]]
+            then
+              exit 0
+            fi
             export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
             docker tag gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:${CIRCLE_TAG}
             docker push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:${CIRCLE_TAG}
@@ -136,9 +140,12 @@ workflows:
       - test:
           requires:
             - build
+      # Only run deploy job for tagged releases, any branch
       - deploy:
           requires:
             - test
           filters:
             tags:
-              only: /.*/
+              only: /.+/
+            branches:
+              ignore: /.*/
