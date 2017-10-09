@@ -112,9 +112,10 @@ envsubst "${ENVVARS_STRING}" < ${BUILD_DIR}/circleci-base/templates/Dockerfile.i
 # envsubst "${ENVVARS_STRING}" < ${BUILD_DIR}/templates/README.md.in > ${BUILD_DIR}/README.md
 
 BUILD_STRING="# ${APPLICATION_NAME}
-# Build: ${CIRCLE_BUILD_NUM:-"test-$(git rev-parse --abbrev-ref HEAD)"}
+# Build:  ${CIRCLE_BUILD_NUM:-"test-$(git rev-parse --abbrev-ref HEAD)"}
+# URL:    ${CIRCLE_BUILD_URL:-"(local)"}
 # ------------------------------------------------------------------------
-# DO NOT MAKE CHANGES HERE
+#                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
 # ------------------------------------------------------------------------
 "
