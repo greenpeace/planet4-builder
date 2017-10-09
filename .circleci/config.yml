@@ -44,10 +44,10 @@ jobs:
             OLD_MSG=$(git log --format=%B -n1)
             git config user.email "bot@greenpeace.org"
             git config user.name "CircleCI Bot"
-            git config push.default matching
+            git config push.default simple
             git add .
             git commit -m "$OLD_MSG" -m "Update build numbers [skip ci]"
-            git push --force-with-lease
+            git push --force-with-lease --set-upstream origin develop
       - run:
           name: Sending build request to Google Container Builder
           command: |
@@ -105,10 +105,8 @@ jobs:
           name: Tag new build with :latest and push to gcr.io
           command: |
             export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
-            docker tag gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
+            docker tag gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:${CIRCLE_BUILD_NUM} gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
             ${HOME}/google-cloud-sdk/bin/gcloud docker -- push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
-            docker tag gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:${CIRCLE_TAG} gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
-            ${HOME}/google-cloud-sdk/bin/gcloud docker -- push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:${CIRCLE_TAG}
 
 workflows:
   version: 2
