@@ -1,7 +1,7 @@
 
 # Planet 4 CircleCI build containers
 
-[!CircleCI Build Status](https://circleci.com/gh/greenpeace/planet4-circleci.svg?style=shield)
+[![CircleCI](https://circleci.com/gh/greenpeace/planet4-circleci/tree/master.svg?style=svg)](https://circleci.com/gh/greenpeace/planet4-circleci/tree/master)
 
 Performs builds and tests for the Planet 4 web application and associated infrastructure
 
