@@ -38,6 +38,13 @@ jobs:
       - setup_remote_docker
       - checkout
       - run:
+          name: Update build numbers
+          command: |
+            ./build.sh
+            OLD_MSG=$(git log --format=%B -n1)
+            git commit -m "$OLD_MSG" -m "Update build numbers [skip ci]"
+            git push --force-with-lease
+      - run:
           name: Sending build request to Google Container Builder
           command: |
             # Perform the build
