@@ -1,13 +1,17 @@
-FROM circleci/php:7.0-fpm-browsers
+# Planet 4 CircleCI build images
+# Build: test-develop
+# ------------------------------------------------------------------------
+# DO NOT MAKE CHANGES HERE
+# This file is built automatically from ./templates/Dockerfile.in
+# ------------------------------------------------------------------------
+
+FROM circleci/php:7.0
 
 MAINTAINER Raymond Walker <raymond.walker@greenpeace.org>
 
 USER root
 
 ENV CIRCLECI_USER 'circleci'
-ENV DOCKER_COMPOSE_VERSION '1.16.1'
-ENV GOOGLE_SDK_VERSION='174.0.0'
-ENV ACK_VERSION='2.18'
 
 WORKDIR /home/circleci
 
@@ -17,8 +21,8 @@ COPY ./etc/apt/sources.list /etc/apt/sources.list
 RUN git clone https://github.com/sstephenson/bats.git && \
     ./bats/install.sh /usr/local && \
     rm -fr /home/circleci/bats && \
-    curl https://beyondgrep.com/ack-${ACK_VERSION}-single-file > /usr/local/bin/ack && chmod 0755 /usr/local/bin/ack && \
-    curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose && \
+    curl https://beyondgrep.com/ack-2.18-single-file > /usr/local/bin/ack && chmod 0755 /usr/local/bin/ack && \
+    curl -L https://github.com/docker/compose/releases/download/1.16.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose && \
     chmod 755 /usr/local/bin/docker-compose && \
     chmod 755 /home/circleci/scripts/* && \
     apt-get update && apt-get install -y \
@@ -28,7 +32,7 @@ RUN git clone https://github.com/sstephenson/bats.git && \
 
 USER circleci
 
-RUN curl -L "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/""google-cloud-sdk-${GOOGLE_SDK_VERSION}-linux-x86_64.tar.gz" | tar xz && \
+RUN curl -L "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/""google-cloud-sdk-174.0.0-linux-x86_64.tar.gz" | tar xz && \
     CLOUDSDK_CORE_DISABLE_PROMPTS=1 ./google-cloud-sdk/install.sh \
         --usage-reporting false \
         --bash-completion false \
