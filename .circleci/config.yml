@@ -31,18 +31,18 @@ jobs:
             # ack version
             ack --version
       - checkout
-      - run:
-          name: Update build numbers
-          command: |
-            # Build without arguments to update Dockerfile from template
-            ./build.sh
-            git config user.email "circleci-bot@greenpeace.org"
-            git config user.name "CircleCI Bot"
-            git config push.default simple
-            git add .
-            OLD_MSG=$(git log --format=%B -n1)
-            git commit -m "$OLD_MSG" -m "Update build numbers [skip ci]"
-            git push --force-with-lease --set-upstream origin ${CIRCLE_BRANCH:-$(git branch --no-merge tags/${CIRCLE_TAG})}
+      # - run:
+      #     name: Update build numbers
+      #     command: |
+      #       # Build without arguments to update Dockerfile from template
+      #       ./build.sh
+      #       git config user.email "circleci-bot@greenpeace.org"
+      #       git config user.name "CircleCI Bot"
+      #       git config push.default simple
+      #       git add .
+      #       OLD_MSG=$(git log --format=%B -n1)
+      #       git commit -m "$OLD_MSG" -m "Update build numbers [skip ci]"
+      #       git push --force-with-lease --set-upstream origin ${CIRCLE_BRANCH:-$(git branch --no-merge tags/${CIRCLE_TAG})}
       - setup_remote_docker
       - run:
           name: Configure gcloud
@@ -118,10 +118,6 @@ jobs:
       - deploy:
           name: Tag new build and push to gcr.io
           command: |
-            if [[ -z "${CIRCLE_TAG} "]]
-            then
-              exit 0
-            fi
             export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
             docker tag gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:${CIRCLE_TAG}
             docker push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:${CIRCLE_TAG}
@@ -136,20 +132,12 @@ workflows:
   version: 2
   build-test-and-deploy:
     jobs:
-      - build:
-          filters:
-            tags:
-              only: /.*/
+      - build
       - test:
           requires:
             - build
-          filters:
-            tags:
-              only: /.*/
       # Only run deploy job for tagged releases, any branch
       - deploy:
-          requires:
-            - test
           filters:
             tags:
               only: /.*/
