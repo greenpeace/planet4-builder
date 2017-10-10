@@ -34,6 +34,12 @@ jobs:
       - run:
           name: Update build numbers
           command: |
+            set -ex
+            if [[ -z "${CIRCLE_BRANCH}" ]] && [[ "${CIRCLE_TAG}" ]]
+            then
+              export CIRCLE_BRANCH=$(git branch --no-merge tags/${CIRCLE_TAG})
+              git checkout ${CIRCLE_BRANCH}
+            fi
             # Build without arguments to update Dockerfile from template
             ./build.sh
             git config user.email "circleci-bot@greenpeace.org"
@@ -42,7 +48,7 @@ jobs:
             git add .
             OLD_MSG=$(git log --format=%B -n1)
             git commit -m "$OLD_MSG" -m "Update build numbers [skip ci]"
-            git push --force-with-lease --set-upstream origin ${CIRCLE_BRANCH:-$(git branch --no-merge tags/${CIRCLE_TAG})}
+            git push --force-with-lease --set-upstream origin ${CIRCLE_BRANCH}
       - setup_remote_docker
       - run:
           name: Configure gcloud
