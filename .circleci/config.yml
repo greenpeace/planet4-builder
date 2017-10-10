@@ -38,8 +38,13 @@ jobs:
             if [[ -z "${CIRCLE_BRANCH}" ]] && [[ "${CIRCLE_TAG}" ]]
             then
               # Find the branch associated with this commit
-              export CIRCLE_BRANCH=$(git branch --contains ${CIRCLE_SHA1} | awk '{printf $2}')
+              # Why is this so hard, CircleCI?
+              git remote update
+              # Find which remote branch contains the current commit
+              export CIRCLE_BRANCH=$(git branch -r --contains ${CIRCLE_SHA1} | awk '{split($1,a,"/"); print a[2]}')
               echo "Branch: ${CIRCLE_BRANCH}"
+              echo "${CIRCLE_BRANCH}" > /tmp/workspace/var/circle-branch-name
+              # Checkout that branch / tag
               git checkout tags/${CIRCLE_TAG} -b ${CIRCLE_BRANCH}
             fi
             # Build without arguments to update Dockerfile from template
@@ -72,6 +77,7 @@ jobs:
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
+            - src
             - image
             - var
 
@@ -130,7 +136,8 @@ jobs:
             docker tag gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:${CIRCLE_TAG}
             docker push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:${CIRCLE_TAG}
             # If the branch is 'master', also tag image with 'latest' and push
-            if [[ "${CIRCLE_BRANCH}" = "master" ]]
+            if [[ "${CIRCLE_BRANCH}" = "master" ]] ||
+               [[ "$(cat /tmp/workspace/var/circle-branch-name)" = "master" ]]
             then
               docker tag gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
               docker push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
