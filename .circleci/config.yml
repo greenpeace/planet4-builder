@@ -160,7 +160,7 @@ workflows:
       # Only run deploy job for tagged releases, any branch
       - deploy:
           requires:
-            - build
+            - test
           filters:
             tags:
               only: /.*/
