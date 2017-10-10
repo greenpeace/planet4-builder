@@ -31,18 +31,18 @@ jobs:
             # ack version
             ack --version
       - checkout
-      # - run:
-      #     name: Update build numbers
-      #     command: |
-      #       # Build without arguments to update Dockerfile from template
-      #       ./build.sh
-      #       git config user.email "circleci-bot@greenpeace.org"
-      #       git config user.name "CircleCI Bot"
-      #       git config push.default simple
-      #       git add .
-      #       OLD_MSG=$(git log --format=%B -n1)
-      #       git commit -m "$OLD_MSG" -m "Update build numbers [skip ci]"
-      #       git push --force-with-lease --set-upstream origin ${CIRCLE_BRANCH:-$(git branch --no-merge tags/${CIRCLE_TAG})}
+      - run:
+          name: Update build numbers
+          command: |
+            # Build without arguments to update Dockerfile from template
+            ./build.sh
+            git config user.email "circleci-bot@greenpeace.org"
+            git config user.name "CircleCI Bot"
+            git config push.default simple
+            git add .
+            OLD_MSG=$(git log --format=%B -n1)
+            git commit -m "$OLD_MSG" -m "Update build numbers [skip ci]"
+            git push --force-with-lease --set-upstream origin ${CIRCLE_BRANCH:-$(git branch --no-merge tags/${CIRCLE_TAG})}
       - setup_remote_docker
       - run:
           name: Configure gcloud
@@ -132,10 +132,16 @@ workflows:
   version: 2
   build-test-and-deploy:
     jobs:
-      - build
+      - build:
+          filters:
+            tags:
+              only: /.*?/
       - test:
           requires:
             - build
+          filters:
+            tags:
+              only: /.*?/
       # Only run deploy job for tagged releases, any branch
       - deploy:
           filters:

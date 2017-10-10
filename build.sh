@@ -112,8 +112,8 @@ envsubst "${ENVVARS_STRING}" < ${BUILD_DIR}/circleci-base/templates/Dockerfile.i
 # envsubst "${ENVVARS_STRING}" < ${BUILD_DIR}/templates/README.md.in > ${BUILD_DIR}/README.md
 
 BUILD_STRING="# ${APPLICATION_NAME}
-# Branch: ${CIRCLE_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}}
-# Commit: ${CIRCLE_SHA1:-$(git rev-parse HEAD)}}
+# Branch: ${CIRCLE_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}
+# Commit: ${CIRCLE_SHA1:-$(git rev-parse HEAD)}
 # Build:  ${CIRCLE_BUILD_URL:-"(local)"}
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
