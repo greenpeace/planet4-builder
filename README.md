@@ -5,7 +5,7 @@
 
 Performs builds and tests for the Planet 4 web application and associated infrastructure
 
-The base image builds upon the `circleci/php:7.0-fpm-browsers` image and includes:
+The base image builds upon the `circleci/php:7.0-fpm-browsers` image and adds:
 -   [gcloud sdk](https://cloud.google.com/sdk/gcloud/) 174.0.0
 -   [docker-compose](https://github.com/docker/compose/releases) 1.16.1
 -   [shellcheck](https://github.com/koalaman/shellcheck) latest
