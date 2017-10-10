@@ -150,6 +150,8 @@ workflows:
               only: /.*?/
       # Only run deploy job for tagged releases, any branch
       - deploy:
+          requires:
+            - build
           filters:
             tags:
               only: /.*/
