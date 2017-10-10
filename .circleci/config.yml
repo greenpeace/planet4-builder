@@ -37,8 +37,10 @@ jobs:
             set -ex
             if [[ -z "${CIRCLE_BRANCH}" ]] && [[ "${CIRCLE_TAG}" ]]
             then
-              export CIRCLE_BRANCH=$(git branch --no-merge tags/${CIRCLE_TAG})
-              git checkout ${CIRCLE_BRANCH}
+              # Find the branch associated with this commit
+              export CIRCLE_BRANCH=$(git branch --contains ${CIRCLE_SHA1} | awk '{printf $2}')
+              echo "Branch: ${CIRCLE_BRANCH}"
+              git checkout tags/${CIRCLE_TAG} -b ${CIRCLE_BRANCH}
             fi
             # Build without arguments to update Dockerfile from template
             ./build.sh
