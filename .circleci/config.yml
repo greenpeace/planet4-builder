@@ -14,12 +14,6 @@ jobs:
       - run:
           name: Setup workspace
           command: |
-            if [[ -z "${CIRCLE_TAG}" ]]
-            then
-              echo "seriously, no tag"
-              exit 1
-            fi
-
             # Store current build number for future jobs
             mkdir -p /tmp/workspace/var
             echo "${CIRCLE_BUILD_NUM}" > /tmp/workspace/var/circle-build-num
