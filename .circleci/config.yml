@@ -30,32 +30,41 @@ jobs:
             bats -v
             # ack version
             ack --version
+      - checkout
+      - run:
+          name: Update build numbers
+          command: |
+            # Build without arguments to update Dockerfile from template
+            ./build.sh
+            git config user.email "circleci-bot@greenpeace.org"
+            git config user.name "CircleCI Bot"
+            git config push.default simple
+            git add .
+            OLD_MSG=$(git log --format=%B -n1)
+            git commit -m "$OLD_MSG" -m "Update build numbers [skip ci]"
+            git push --force-with-lease --set-upstream origin ${CIRCLE_BRANCH}
+      - setup_remote_docker
       - run:
           name: Configure gcloud
           command: |
             # Configure gcloud authentication
             ${HOME}/scripts/activate-gcloud-account.sh
-      - setup_remote_docker
-      - checkout
-      - run:
-          name: Update build numbers
-          command: |
-            ./build.sh
-            OLD_MSG=$(git log --format=%B -n1)
-            git config user.email "bot@greenpeace.org"
-            git config user.name "CircleCI Bot"
-            git config push.default simple
-            git add .
-            git commit -m "$OLD_MSG" -m "Update build numbers [skip ci]"
-            git push --force-with-lease --set-upstream origin ${CIRCLE_BRANCH}
       - run:
           name: Sending build request to Google Container Builder
           command: |
-            # Perform the build
+            # Perform the build on GCP
             ./build.sh -r
+      - run:
+          name: Pull and store new image in workspace
+          command: |
+            # Store new image for future reference
+            mkdir -p /tmp/workspace/image
+            docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
+            docker save --output /tmp/workspace/image/circleci-base.tar gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
+            - image
             - var
 
 
@@ -70,10 +79,10 @@ jobs:
           command: |
             mkdir -p /tmp/test-results
       - run:
-          name: Pull new container image
+          name: Restore container image
           command: |
             export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
-            docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
+            docker load --input /tmp/workspace/image/circleci-base.tar
       - run:
           name: Test PHP
           command: |
@@ -101,12 +110,27 @@ jobs:
           command: |
             ${HOME}/scripts/activate-gcloud-account.sh
       - setup_remote_docker
-      - deploy:
-          name: Tag new build with :latest and push to gcr.io
+      - run:
+          name: Restore container image
           command: |
             export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
-            docker tag gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
-            ${HOME}/google-cloud-sdk/bin/gcloud docker -- push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
+            docker load --input /tmp/workspace/image/circleci-base.tar
+      - deploy:
+          name: Tag new build and push to gcr.io
+          command: |
+            if [[ -z "${CIRCLE_TAG} "]]
+            then
+              exit 0
+            fi
+            export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
+            docker tag gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:${CIRCLE_TAG}
+            docker push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:${CIRCLE_TAG}
+            # If the branch is 'master', also tag image with 'latest' and push
+            if [[ "${CIRCLE_BRANCH}" = "master" ]]
+            then
+              docker tag gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
+              docker push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
+            fi
 
 workflows:
   version: 2
@@ -116,11 +140,12 @@ workflows:
       - test:
           requires:
             - build
+      # Only run deploy job for tagged releases, any branch
       - deploy:
           requires:
             - test
           filters:
             tags:
-              only: /.*/
+              only: /.+/
             branches:
-              only: master
+              ignore: /.*/
