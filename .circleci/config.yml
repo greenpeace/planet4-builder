@@ -48,8 +48,7 @@ jobs:
               # Why is this so hard, CircleCI?
               git remote update
               # Find which remote branch contains the current commit
-              export CIRCLE_BRANCH=$(git branch -r --contains ${CIRCLE_SHA1} | awk '{split($1,a,"/"); print a[2]}')
-              echo "Branch: ${CIRCLE_BRANCH}"
+              export CIRCLE_BRANCH=$(git branch -r --contains ${CIRCLE_SHA1} | grep -v 'HEAD' | awk '{split($1,a,"/"); print a[2]}')
               echo "${CIRCLE_BRANCH}" > /tmp/workspace/var/circle-branch-name
               # Checkout that branch / tag
               git checkout tags/${CIRCLE_TAG} -b ${CIRCLE_BRANCH}
