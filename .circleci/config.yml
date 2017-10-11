@@ -111,16 +111,15 @@ jobs:
       - deploy:
           name: Tag new build and push to gcr.io
           command: |
+            set -x
             if [[ -z "${CIRCLE_TAG}" ]]
             then
               exit 0
             fi
 
             export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
-            docker tag gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:${CIRCLE_TAG}
-            docker push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:${CIRCLE_TAG}
 
-            # If the branch is 'master', also tag image with 'latest' and push
+            # If the branch is 'master', tag image with 'latest' and push
             if [[ "${CIRCLE_BRANCH}" = "master" ]] ||
                [[ "$(cat /tmp/workspace/var/circle-branch-name)" = "master" ]]
             then
