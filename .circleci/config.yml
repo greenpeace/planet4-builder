@@ -12,7 +12,7 @@ jobs:
     <<: *defaults
     steps:
       - checkout
-      
+
       - run:
           name: Initialise workspace
           command: |
@@ -52,18 +52,23 @@ jobs:
   test:
     <<: *defaults
     steps:
+
       - attach_workspace:
           at: /tmp/workspace
+
       - setup_remote_docker
+
       - run:
           name: Setup test results
           command: |
             mkdir -p /tmp/test-results
+
       - run:
           name: Restore container image
           command: |
             export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
             docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
+
       - run:
           name: Test PHP
           command: |
@@ -71,6 +76,7 @@ jobs:
             docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} php -v > /tmp/test-results/php_version.txt
             grep -q 'PHP 7' /tmp/test-results/php_version.txt
             cat /tmp/test-results/php_version.txt
+
       - run:
           name: Test gcloud
           command: |
@@ -78,34 +84,42 @@ jobs:
             docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} ${HOME}/google-cloud-sdk/bin/gcloud -v > /tmp/test-results/gcloud_version.txt
             grep -q 'kubectl' /tmp/test-results/gcloud_version.txt
             cat /tmp/test-results/gcloud_version.txt
+
       - store_test_results:
           path: /tmp/test-results
+
 
   deploy:
     <<: *defaults
     steps:
       - attach_workspace:
           at: /tmp/workspace
+
       - run:
           name: Configure gcloud
           command: |
             ${HOME}/scripts/activate-gcloud-account.sh
+
       - setup_remote_docker
+
       - run:
           name: Restore container image
           command: |
             export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
             docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
+
       - deploy:
           name: Tag new build and push to gcr.io
           command: |
-            if [[ -z "${CIRCLE_TAG} "]]
+            if [[ -z "${CIRCLE_TAG}" ]]
             then
               exit 0
             fi
+
             export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
             docker tag gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:${CIRCLE_TAG}
             docker push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:${CIRCLE_TAG}
+
             # If the branch is 'master', also tag image with 'latest' and push
             if [[ "${CIRCLE_BRANCH}" = "master" ]] ||
                [[ "$(cat /tmp/workspace/var/circle-branch-name)" = "master" ]]
