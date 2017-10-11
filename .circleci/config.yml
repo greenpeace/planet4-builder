@@ -56,12 +56,17 @@ jobs:
             fi
             # Build without arguments to update Dockerfile from template
             ./build.sh
+
+            # Configure git user
             git config user.email "circleci-bot@greenpeace.org"
             git config user.name "CircleCI Bot"
             git config push.default simple
+            # Add changes
             git add .
+            # Get previous commit message and append a message, skipping CI
             OLD_MSG=$(git log --format=%B -n1)
             git commit -m "$OLD_MSG" -m "Update build numbers [skip ci]"
+            # Push the updated Dockerfile and README to the repo
             git push --force-with-lease --set-upstream origin ${CIRCLE_BRANCH}
       - setup_remote_docker
       - run:
