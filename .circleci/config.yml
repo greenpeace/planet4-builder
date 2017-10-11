@@ -11,6 +11,8 @@ jobs:
   build:
     <<: *defaults
     steps:
+      - checkout
+      
       - run:
           name: Initialise workspace
           command: |
@@ -20,7 +22,6 @@ jobs:
             # Setup
             ./bin/setup_workspace.sh
 
-      - checkout
 
       - run:
           name: Update build numbers
