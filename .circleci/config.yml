@@ -12,72 +12,36 @@ jobs:
     <<: *defaults
     steps:
       - run:
-          name: Setup workspace
+          name: Initialise workspace
           command: |
-            # Store current build number for future jobs
-            mkdir -p /tmp/workspace/var
-            echo "${CIRCLE_BUILD_NUM}" > /tmp/workspace/var/circle-build-num
-            # Show bash version
-            bash --version
-            # Show kernel information
-            uname -a
-            # Not all distributions will have lsb_release
-            if [[ $(type -P "lsb_release") ]]
-            then
-              lsb_release -a
-            fi
-            # bats version
-            bats -v
-            # ack version
-            ack --version
+            # Ensure all shell scripts are executable
+            chmod +x ./bin/*.sh
+
+            # Setup
+            ./bin/setup_workspace.sh
+
       - checkout
+
       - run:
           name: Update build numbers
           command: |
-            set -ex
-            # If the build url isn't set, we're building locally so
-            if [[ -z "${CIRCLE_BUILD_URL}" ]]
-            then
-              # Don't attempt to update the repository
-              exit 0
-            fi
+            # Updates Dockerfile and README data with CI variables
+            ./bin/update_build_numbers.sh
 
-            if [[ -z "${CIRCLE_BRANCH}" ]] && [[ "${CIRCLE_TAG}" ]]
-            then
-              # Find the branch associated with this commit
-              # Why is this so hard, CircleCI?
-              git remote update
-              # Find which remote branch contains the current commit
-              export CIRCLE_BRANCH=$(git branch -r --contains ${CIRCLE_SHA1} | grep -v 'HEAD' | awk '{split($1,a,"/"); print a[2]}')
-              echo "${CIRCLE_BRANCH}" > /tmp/workspace/var/circle-branch-name
-              # Checkout that branch / tag
-              git checkout tags/${CIRCLE_TAG} -b ${CIRCLE_BRANCH}
-            fi
-            # Build without arguments to update Dockerfile from template
-            ./build.sh
-
-            # Configure git user
-            git config user.email "circleci-bot@greenpeace.org"
-            git config user.name "CircleCI Bot"
-            git config push.default simple
-            # Add changes
-            git add .
-            # Get previous commit message and append a message, skipping CI
-            OLD_MSG=$(git log --format=%B -n1)
-            git commit -m "$OLD_MSG" -m "Update build numbers [skip ci]"
-            # Push the updated Dockerfile and README to the repo
-            git push --force-with-lease --set-upstream origin ${CIRCLE_BRANCH}
       - setup_remote_docker
+
       - run:
           name: Configure gcloud
           command: |
             # Configure gcloud authentication
             ${HOME}/scripts/activate-gcloud-account.sh
+
       - run:
           name: Sending build request to Google Container Builder
           command: |
             # Perform the build on GCP
             ./build.sh -r
+
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
