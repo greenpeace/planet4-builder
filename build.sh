@@ -88,7 +88,7 @@ DOCKER_BUILD_STRING="# ${APPLICATION_NAME}
 "
 
 echo -e "${DOCKER_BUILD_STRING}\n$(cat ${BUILD_DIR}/src/circleci-base/Dockerfile)" > ${BUILD_DIR}/src/circleci-base/Dockerfile
-echo -e "\nBuild: ${CIRCLE_BUILD_URL:-"(local)"}\n$(cat ${BUILD_DIR}/README.md)" > ${BUILD_DIR}/README.md
+echo -e "$(cat ${BUILD_DIR}/README.md)\nBuild: ${CIRCLE_BUILD_URL:-"(local)"}" > ${BUILD_DIR}/README.md
 
 # Cloudbuild.yaml template substitutions
 CLOUDBUILD_SUBSTITUTIONS=(
