@@ -16,7 +16,7 @@ Upstream images are [CircleCI build images](https://github.com/circleci/circleci
 
 ---
 
-Build: https://circleci.com/gh/greenpeace/planet4-circleci/173
+Build: https://circleci.com/gh/greenpeace/planet4-circleci/176
 
 # Planet 4 CircleCI build containers
 
