@@ -124,7 +124,7 @@ jobs:
                [[ "$(cat /tmp/workspace/var/circle-branch-name)" = "master" ]]
             then
               docker tag gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
-              gcloud docker -- push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
+              ${HOME}/google-cloud-sdk/bin/gcloud docker -- push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
             fi
 
 workflows:
