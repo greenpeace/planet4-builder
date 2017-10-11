@@ -12,39 +12,29 @@ set -a
 
 # How to customise the build configuration:
 # -----------------------------------------
-#
 # Create a custom file and set values are described above, and pass it to the
 # build binary as a parameter, like so:
 
 # $ ./build.sh -c config.custom
 
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# Any values defined in a custom configuration file will overwrite the defaults
 
-# =============================================================================
-#
-#   DEFAULT BUILD CONFIGURATION
-#
-#   Define build parameters in a custom file
-#
-#   Examples of build-time configuration:
-#
-#   GOOGLE_PROJECT_ID=greenpeace-testing
-#
-# =============================================================================
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 # Application environment
 DEFAULT_APPLICATION_NAME="Planet 4 CircleCI build image"
 DEFAULT_GOOGLE_PROJECT_ID="planet-4-151612"
+DEFAULT_MAINTAINER="Raymond Walker <raymond.walker@greenpeace.org>"
 
 # Container registry
 DEFAULT_NAMESPACE="gcr.io"
 
+# Upstream image
 DEFAULT_BASE_NAMESPACE="circleci"
 DEFAULT_BASE_IMAGE="php"
 DEFAULT_BASE_TAG="7.0"
 
-DEFAULT_MAINTAINER="Raymond Walker <raymond.walker@greenpeace.org>"
-
+# Vendor application versions
 DEFAULT_DOCKER_COMPOSE_VERSION='1.16.1'
 DEFAULT_GOOGLE_SDK_VERSION='174.0.0'
 DEFAULT_ACK_VERSION='2.18'
