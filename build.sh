@@ -111,7 +111,7 @@ ENVVARS_STRING="${ENVVARS_STRING%:}"
 envsubst "${ENVVARS_STRING}" < ${BUILD_DIR}/circleci-base/templates/Dockerfile.in > ${BUILD_DIR}/circleci-base/Dockerfile
 envsubst "${ENVVARS_STRING}" < ${BUILD_DIR}/README.md.in > ${BUILD_DIR}/README.md
 
-BUILD_STRING="# ${APPLICATION_NAME}
+DOCKER_BUILD_STRING="# ${APPLICATION_NAME}
 # Branch: ${BRANCH_NAME}
 # Commit: ${CIRCLE_SHA1:-$(git rev-parse HEAD)}
 # Build:  ${CIRCLE_BUILD_URL:-"(local)"}
@@ -121,8 +121,8 @@ BUILD_STRING="# ${APPLICATION_NAME}
 # ------------------------------------------------------------------------
 "
 
-echo -e "$BUILD_STRING\n$(cat ${BUILD_DIR}/circleci-base/Dockerfile)" > ${BUILD_DIR}/circleci-base/Dockerfile
-echo -e "\nBuild: ${CIRCLE_BUILD_URL:-"(local)"}\n$(cat ${BUILD_DIR}/README.md)" >> ${BUILD_DIR}/README.md
+echo -e "${DOCKER_BUILD_STRING}\n$(cat ${BUILD_DIR}/circleci-base/Dockerfile)" > ${BUILD_DIR}/circleci-base/Dockerfile
+echo -e "\nBuild: ${CIRCLE_BUILD_URL:-"(local)"}\n$(cat ${BUILD_DIR}/README.md)" > ${BUILD_DIR}/README.md
 
 # Cloudbuild.yaml template substitutions
 CLOUDBUILD_SUBSTITUTIONS=(
