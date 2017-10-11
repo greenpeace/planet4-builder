@@ -35,6 +35,13 @@ jobs:
           name: Update build numbers
           command: |
             set -ex
+            # If the build url isn't set, we're building locally so
+            if [[ -z "${CIRCLE_BUILD_URL}" ]]
+            then
+              # Don't attempt to update the repository
+              exit 0
+            fi
+
             if [[ -z "${CIRCLE_BRANCH}" ]] && [[ "${CIRCLE_TAG}" ]]
             then
               # Find the branch associated with this commit
@@ -49,12 +56,17 @@ jobs:
             fi
             # Build without arguments to update Dockerfile from template
             ./build.sh
+
+            # Configure git user
             git config user.email "circleci-bot@greenpeace.org"
             git config user.name "CircleCI Bot"
             git config push.default simple
+            # Add changes
             git add .
+            # Get previous commit message and append a message, skipping CI
             OLD_MSG=$(git log --format=%B -n1)
             git commit -m "$OLD_MSG" -m "Update build numbers [skip ci]"
+            # Push the updated Dockerfile and README to the repo
             git push --force-with-lease --set-upstream origin ${CIRCLE_BRANCH}
       - setup_remote_docker
       - run:
@@ -67,18 +79,9 @@ jobs:
           command: |
             # Perform the build on GCP
             ./build.sh -r
-      - run:
-          name: Pull and store new image in workspace
-          command: |
-            # Store new image for future reference
-            mkdir -p /tmp/workspace/image
-            docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
-            docker save --output /tmp/workspace/image/circleci-base.tar gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
-            - src
-            - image
             - var
 
 
@@ -96,20 +99,20 @@ jobs:
           name: Restore container image
           command: |
             export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
-            docker load --input /tmp/workspace/image/circleci-base.tar
+            docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
       - run:
           name: Test PHP
           command: |
             export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
             docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} php -v > /tmp/test-results/php_version.txt
-            grep -q 'PHP 7' /tmp/test-results/php_version.txt && echo "PHP 7 installed"
+            grep -q 'PHP 7' /tmp/test-results/php_version.txt
             cat /tmp/test-results/php_version.txt
       - run:
           name: Test gcloud
           command: |
             export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
             docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} ${HOME}/google-cloud-sdk/bin/gcloud -v > /tmp/test-results/gcloud_version.txt
-            grep -q 'kubectl' /tmp/test-results/gcloud_version.txt && echo "Kubectl installed"
+            grep -q 'kubectl' /tmp/test-results/gcloud_version.txt
             cat /tmp/test-results/gcloud_version.txt
       - store_test_results:
           path: /tmp/test-results
@@ -128,7 +131,7 @@ jobs:
           name: Restore container image
           command: |
             export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
-            docker load --input /tmp/workspace/image/circleci-base.tar
+            docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
       - deploy:
           name: Tag new build and push to gcr.io
           command: |

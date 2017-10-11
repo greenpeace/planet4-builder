@@ -3,7 +3,7 @@ steps:
   name: 'gcr.io/cloud-builders/docker'
   args:
     - 'build'
-    - './circleci-base'
+    - './src/circleci-base'
     - '--tag=${_NAMESPACE}/${_GOOGLE_PROJECT_ID}/circleci-base:${_BRANCH_TAG}'
     - '--tag=${_NAMESPACE}/${_GOOGLE_PROJECT_ID}/circleci-base:${_REVISION_TAG}'
     - '--tag=${_NAMESPACE}/${_GOOGLE_PROJECT_ID}/circleci-base:build-${_BUILD_NUMBER}'
