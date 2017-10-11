@@ -70,7 +70,6 @@ jobs:
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
-            - src
             - var
 
 
