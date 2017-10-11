@@ -99,11 +99,9 @@ fi
 ENVVARS=(
   '${ACK_VERSION}' \
   '${DOCKER_COMPOSE_VERSION}' \
-  '${GOOGLE_PROJECT_ID}' \
   '${GOOGLE_SDK_VERSION}' \
   '${IMAGE_FROM}' \
   '${IMAGE_MAINTAINER}' \
-  '${UPSTREAM_TAG}' \
 )
 
 ENVVARS_STRING="$(printf "%s:" "${ENVVARS[@]}")"
