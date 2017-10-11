@@ -98,6 +98,7 @@ fi
 # Rewrite only the cloudbuild variables we want to change
 ENVVARS=(
   '${ACK_VERSION}' \
+  '${BRANCH_NAME}' \
   '${DOCKER_COMPOSE_VERSION}' \
   '${GOOGLE_SDK_VERSION}' \
   '${IMAGE_FROM}' \
