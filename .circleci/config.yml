@@ -105,14 +105,14 @@ jobs:
           command: |
             export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
             docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} php -v > /tmp/test-results/php_version.txt
-            grep -q 'PHP 7' /tmp/test-results/php_version.txt && echo "PHP 7 installed"
+            grep -q 'PHP 7' /tmp/test-results/php_version.txt
             cat /tmp/test-results/php_version.txt
       - run:
           name: Test gcloud
           command: |
             export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
             docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} ${HOME}/google-cloud-sdk/bin/gcloud -v > /tmp/test-results/gcloud_version.txt
-            grep -q 'kubectl' /tmp/test-results/gcloud_version.txt && echo "Kubectl installed"
+            grep -q 'kubectl' /tmp/test-results/gcloud_version.txt
             cat /tmp/test-results/gcloud_version.txt
       - store_test_results:
           path: /tmp/test-results
