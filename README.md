@@ -1,7 +1,7 @@
 
 # Planet 4 CircleCI build containers
 
-[![CircleCI](https://circleci.com/gh/greenpeace/planet4-circleci/tree/${BRANCH_NAME}.svg?style=shield)](https://circleci.com/gh/greenpeace/planet4-circleci/tree/${BRANCH_NAME})
+[![CircleCI](https://circleci.com/gh/greenpeace/planet4-circleci/tree/develop.svg?style=shield)](https://circleci.com/gh/greenpeace/planet4-circleci/tree/develop)
 
 Performs builds and tests for the Planet 4 web application and associated infrastructure
 
@@ -16,11 +16,11 @@ Upstream images are [CircleCI build images](https://github.com/circleci/circleci
 
 ---
 
-Build: https://circleci.com/gh/greenpeace/planet4-circleci/176
+Build: https://circleci.com/gh/greenpeace/planet4-circleci/179
 
 # Planet 4 CircleCI build containers
 
-[![CircleCI](https://circleci.com/gh/greenpeace/planet4-circleci/tree/${BRANCH_NAME}.svg?style=shield)](https://circleci.com/gh/greenpeace/planet4-circleci/tree/${BRANCH_NAME})
+[![CircleCI](https://circleci.com/gh/greenpeace/planet4-circleci/tree/develop.svg?style=shield)](https://circleci.com/gh/greenpeace/planet4-circleci/tree/develop)
 
 Performs builds and tests for the Planet 4 web application and associated infrastructure
 
