@@ -67,18 +67,10 @@ jobs:
           command: |
             # Perform the build on GCP
             ./build.sh -r
-      - run:
-          name: Pull and store new image in workspace
-          command: |
-            # Store new image for future reference
-            mkdir -p /tmp/workspace/image
-            docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
-            docker save --output /tmp/workspace/image/circleci-base.tar gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
             - src
-            - image
             - var
 
 
@@ -96,7 +88,7 @@ jobs:
           name: Restore container image
           command: |
             export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
-            docker load --input /tmp/workspace/image/circleci-base.tar
+            docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
       - run:
           name: Test PHP
           command: |
@@ -128,7 +120,7 @@ jobs:
           name: Restore container image
           command: |
             export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
-            docker load --input /tmp/workspace/image/circleci-base.tar
+            docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
       - deploy:
           name: Tag new build and push to gcr.io
           command: |
