@@ -35,6 +35,13 @@ jobs:
           name: Update build numbers
           command: |
             set -ex
+            # If the build url isn't set, we're building locally so
+            if [[ -z "${CIRCLE_BUILD_URL}" ]]
+            then
+              # Don't attempt to update the repository
+              exit 0
+            fi
+
             if [[ -z "${CIRCLE_BRANCH}" ]] && [[ "${CIRCLE_TAG}" ]]
             then
               # Find the branch associated with this commit
