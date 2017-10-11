@@ -29,7 +29,8 @@ OPTIONS=':vc:lr'
 while getopts $OPTIONS option
 do
     case $option in
-        c  )    CONFIG_FILE=$OPTARG;;
+        c  )    # shellcheck disable=SC2034
+                CONFIG_FILE=$OPTARG;;
         l  )    BUILD_LOCALLY='true';;
         r  )    BUILD_REMOTELY='true';;
         v  )    VERBOSITY='debug'
