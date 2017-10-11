@@ -77,6 +77,7 @@ APPLICATION_NAME=${APPLICATION_NAME:-${DEFAULT_APPLICATION_NAME}}
 BASE_IMAGE="${BASE_IMAGE:-${DEFAULT_BASE_IMAGE}}"
 BASE_NAMESPACE="${BASE_NAMESPACE:-${DEFAULT_BASE_NAMESPACE}}"
 BASE_TAG="${BASE_TAG:-${DEFAULT_BASE_TAG}}"
+BRANCH_NAME="${CIRCLE_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}"
 DOCKER_COMPOSE_VERSION="${DOCKER_COMPOSE_VERSION:-${DEFAULT_DOCKER_COMPOSE_VERSION}}"
 GOOGLE_SDK_VERSION="${GOOGLE_SDK_VERSION:-${DEFAULT_GOOGLE_SDK_VERSION}}"
 IMAGE_FROM="${BASE_NAMESPACE}/${BASE_IMAGE}:${BASE_TAG}"
@@ -109,10 +110,10 @@ ENVVARS_STRING="$(printf "%s:" "${ENVVARS[@]}")"
 ENVVARS_STRING="${ENVVARS_STRING%:}"
 
 envsubst "${ENVVARS_STRING}" < ${BUILD_DIR}/circleci-base/templates/Dockerfile.in > ${BUILD_DIR}/circleci-base/Dockerfile
-# envsubst "${ENVVARS_STRING}" < ${BUILD_DIR}/templates/README.md.in > ${BUILD_DIR}/README.md
+envsubst "${ENVVARS_STRING}" < ${BUILD_DIR}/README.md.in > ${BUILD_DIR}/README.md
 
 BUILD_STRING="# ${APPLICATION_NAME}
-# Branch: ${CIRCLE_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}
+# Branch: ${BRANCH_NAME}
 # Commit: ${CIRCLE_SHA1:-$(git rev-parse HEAD)}
 # Build:  ${CIRCLE_BUILD_URL:-"(local)"}
 # ------------------------------------------------------------------------
@@ -122,10 +123,11 @@ BUILD_STRING="# ${APPLICATION_NAME}
 "
 
 echo -e "$BUILD_STRING\n$(cat ${BUILD_DIR}/circleci-base/Dockerfile)" > ${BUILD_DIR}/circleci-base/Dockerfile
+echo -e "\nBuild: ${CIRCLE_BUILD_URL:-"(local)"}\n$(cat ${BUILD_DIR}/README.md)" >> ${BUILD_DIR}/README.md
 
 # Cloudbuild.yaml template substitutions
 CLOUDBUILD_SUBSTITUTIONS=(
-  "_BRANCH_TAG=${CIRCLE_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}" \
+  "_BRANCH_TAG=${BRANCH_NAME}" \
   "_BUILD_NUMBER=${CIRCLE_BUILD_NUM:-$(git rev-parse --short HEAD)}" \
   "_GOOGLE_PROJECT_ID=${GOOGLE_PROJECT_ID:-${DEFAULT_GOOGLE_PROJECT_ID}}" \
   "_NAMESPACE=${NAMESPACE:-${DEFAULT_NAMESPACE}}" \
