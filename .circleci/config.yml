@@ -109,23 +109,20 @@ jobs:
             docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
 
       - deploy:
-          name: Tag new build and push to gcr.io
+          name: Deploy latest tag on master branch
           command: |
             set -x
-            if [[ -z "${CIRCLE_TAG}" ]]
-            then
-              exit 0
-            fi
+
+            # Hacky workaround for CircleCI checking commits out with detached HEAD
 
             export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
-
-            # If the branch is 'master', tag image with 'latest' and push
             if [[ "${CIRCLE_BRANCH}" = "master" ]] ||
                [[ "$(cat /tmp/workspace/var/circle-branch-name)" = "master" ]]
             then
               docker tag gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
               ${HOME}/google-cloud-sdk/bin/gcloud docker -- push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
             fi
+
 
 workflows:
   version: 2
@@ -134,19 +131,17 @@ workflows:
       - build:
           filters:
             tags:
-              only: /.*?/
+              only: /.*/
       - test:
           requires:
             - build
           filters:
             tags:
-              only: /.*?/
+              only: /.*/
       # Only run deploy job for tagged releases, any branch
       - deploy:
           requires:
             - test
           filters:
             tags:
-              only: /.+/
-            branches:
-              ignore: /.*/
+              only: /.*/
