@@ -38,7 +38,7 @@ do
         *  )    usage;;
     esac
 done
-shift $(($OPTIND - 1))
+shift $((OPTIND - 1))
 
 #
 #   ----------- NO USER SERVICEABLE PARTS BELOW -----------
@@ -92,7 +92,7 @@ echo -e "$(cat ${BUILD_DIR}/README.md)\nBuild: ${CIRCLE_BUILD_URL:-"(local)"}" >
 
 # Cloudbuild.yaml template substitutions
 CLOUDBUILD_SUBSTITUTIONS=(
-  "_BRANCH_TAG=${BRANCH_NAME}" \
+  "_BRANCH_TAG=${BRANCH_NAME//[^a-zA-Z0-9]/-}" \
   "_BUILD_NUMBER=${CIRCLE_BUILD_NUM:-$(git rev-parse --short HEAD)}" \
   "_GOOGLE_PROJECT_ID=${GOOGLE_PROJECT_ID:-${DEFAULT_GOOGLE_PROJECT_ID}}" \
   "_NAMESPACE=${NAMESPACE:-${DEFAULT_NAMESPACE}}" \
