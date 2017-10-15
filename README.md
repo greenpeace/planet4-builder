@@ -1,7 +1,7 @@
 
 # Planet 4 CircleCI build containers
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/4c9d5b08e9b046cbba9cdcbc9ba8eaf9)](https://www.codacy.com/app/rawalker/planet4-circleci?utm_source=github.com&utm_medium=referral&utm_content=greenpeace/planet4-circleci&utm_campaign=badger) [![CircleCI](https://circleci.com/gh/greenpeace/planet4-circleci/tree/feature/codacy-fixes.svg?style=shield)](https://circleci.com/gh/greenpeace/planet4-circleci/tree/feature/codacy-fixes)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/4c9d5b08e9b046cbba9cdcbc9ba8eaf9)](https://www.codacy.com/app/rawalker/planet4-circleci?utm_source=github.com&utm_medium=referral&utm_content=greenpeace/planet4-circleci&utm_campaign=badger) [![CircleCI](https://circleci.com/gh/greenpeace/planet4-circleci/tree/develop.svg?style=shield)](https://circleci.com/gh/greenpeace/planet4-circleci/tree/develop)
 
 Performs builds and tests for the Planet 4 web application and associated infrastructure
 
@@ -15,4 +15,4 @@ The base image builds upon the `circleci/php:7.0` image and adds:
 Upstream images are [CircleCI build images](https://github.com/circleci/circleci-images/)
 
 ---
-Build: https://circleci.com/gh/greenpeace/planet4-circleci/246
+Build: https://circleci.com/gh/greenpeace/planet4-circleci/250
