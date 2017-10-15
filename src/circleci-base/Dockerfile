@@ -1,7 +1,7 @@
 # Planet 4 CircleCI build image
-# Branch: develop
-# Commit: f9a968f22c3237cec257cdb161aec6534915a183
-# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/236
+# Branch: feature/codacy-fixes
+# Commit: 83558869b68c749c6ad21337770e22b787d15511
+# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/246
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
@@ -24,10 +24,10 @@ RUN git clone https://github.com/sstephenson/bats.git && \
     ./bats/install.sh /usr/local && \
     rm -fr /home/circleci/bats && \
     curl https://beyondgrep.com/ack-2.18-single-file > /usr/local/bin/ack && chmod 0755 /usr/local/bin/ack && \
-    curl -L https://github.com/docker/compose/releases/download/1.16.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose && \
+    curl -L https://github.com/docker/compose/releases/download/1.16.1/docker-compose-$(uname -s)-$(uname -m) > /usr/local/bin/docker-compose && \
     chmod 755 /usr/local/bin/docker-compose && \
     chmod 755 /home/circleci/scripts/* && \
-    apt-get update && apt-get install -y \
+    apt-get update && apt-get install -y --no-install-recommends \
       gettext \
       shellcheck && \
     rm -fr /var/lib/apt
@@ -39,6 +39,6 @@ RUN curl -L "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/""google
         --usage-reporting false \
         --bash-completion false \
         --path-update false \
-        --rc-path /home/${CIRCLECI_USER}/.bashrc && \
+        --rc-path "/home/${CIRCLECI_USER}/.bashrc" && \
     google-cloud-sdk/bin/gcloud --quiet components update && \
     google-cloud-sdk/bin/gcloud --quiet components update kubectl
