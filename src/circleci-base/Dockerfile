@@ -1,7 +1,7 @@
 # Planet 4 CircleCI build image
-# Branch: master
-# Commit: c0ad4528376206949720b64d88d9da2daead2009
-# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/259
+# Branch: develop
+# Commit: 7819671d45c8f138542d857f1498946e2809e996
+# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/268
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
@@ -30,11 +30,11 @@ RUN git clone https://github.com/sstephenson/bats.git && \
     apt-get update && apt-get install -y --no-install-recommends \
       gettext \
       shellcheck && \
-    rm -fr /var/lib/apt
+    rm -rf /tmp/* /var/tmp/* /var/lib/apt/lists/*
 
 USER circleci
 
-RUN curl -L "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/""google-cloud-sdk-174.0.0-linux-x86_64.tar.gz" | tar xz && \
+RUN curl -L "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/""google-cloud-sdk-175.0.0-linux-x86_64.tar.gz" | tar xz && \
     CLOUDSDK_CORE_DISABLE_PROMPTS=1 ./google-cloud-sdk/install.sh \
         --usage-reporting false \
         --bash-completion false \
