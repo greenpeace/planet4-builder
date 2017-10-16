@@ -1,7 +1,7 @@
 # Planet 4 CircleCI build image
-# Branch: master
-# Commit: a8ca252a5621ea3e057db28f47c78fff59b52783
-# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/254
+# Branch: develop
+# Commit: 08ab572701d57f2be2afc0916579b4e997067ab6
+# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/264
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
@@ -30,7 +30,7 @@ RUN git clone https://github.com/sstephenson/bats.git && \
     apt-get update && apt-get install -y --no-install-recommends \
       gettext \
       shellcheck && \
-    rm -fr /var/lib/apt
+    rm -rf /tmp/* /var/tmp/* /var/lib/apt/lists/*
 
 USER circleci
 
