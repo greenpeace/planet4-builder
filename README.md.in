@@ -6,8 +6,9 @@
 Performs builds and tests for the Planet 4 web application and associated infrastructure
 
 The base image builds upon the `${IMAGE_FROM}` image and adds:
--   [gcloud sdk](https://cloud.google.com/sdk/gcloud/) ${GOOGLE_SDK_VERSION}
+-   [Google Cloud SDK](https://cloud.google.com/sdk/gcloud/) ${GOOGLE_SDK_VERSION}
 -   [docker-compose](https://github.com/docker/compose/releases) ${DOCKER_COMPOSE_VERSION}
+-   [Terraform](https://www.terraform.io/downloads.html) ${TERRAFORM_VERSION}
 -   [shellcheck](https://github.com/koalaman/shellcheck) latest
 -   [ack](https://beyondgrep.com/) ${ACK_VERSION}
 -   [bats](https://github.com/sstephenson/bats) latest

@@ -69,6 +69,7 @@ ENVVARS=(
   '${GOOGLE_SDK_VERSION}' \
   '${IMAGE_FROM}' \
   '${IMAGE_MAINTAINER}' \
+  '${TERRAFORM_VERSION}' \
 )
 
 ENVVARS_STRING="$(printf "%s:" "${ENVVARS[@]}")"
