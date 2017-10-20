@@ -1,7 +1,7 @@
 # Planet 4 CircleCI build image
-# Branch: master
-# Commit: 6bf8342c47c6965d114542a50b8d9712b9fd263a
-# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/278
+# Branch: develop
+# Commit: 02ef63a11cccfaa5347725925f18866391011617
+# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/282
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
@@ -23,14 +23,20 @@ COPY ./etc/apt/sources.list /etc/apt/sources.list
 RUN git clone https://github.com/sstephenson/bats.git && \
     ./bats/install.sh /usr/local && \
     rm -fr /home/circleci/bats && \
-    curl https://beyondgrep.com/ack-2.18-single-file > /usr/local/bin/ack && chmod 0755 /usr/local/bin/ack && \
+    curl https://releases.hashicorp.com/terraform/0.10.7/terraform_0.10.7_linux_amd64.zip > /tmp/terraform.zip && \
+    unzip /tmp/terraform.zip -d /usr/local/bin && \
+    chmod 0755 /usr/local/bin/terraform && \
+    curl https://beyondgrep.com/ack-2.18-single-file > /usr/local/bin/ack && \
+    chmod 0755 /usr/local/bin/ack && \
     curl -L https://github.com/docker/compose/releases/download/1.16.1/docker-compose-$(uname -s)-$(uname -m) > /usr/local/bin/docker-compose && \
-    chmod 755 /usr/local/bin/docker-compose && \
-    chmod 755 /home/circleci/scripts/* && \
+    chmod 0755 /usr/local/bin/docker-compose && \
+    chmod 0755 /home/circleci/scripts/* && \
     apt-get update && apt-get install -y --no-install-recommends \
       gettext \
       shellcheck && \
-    rm -rf /tmp/* /var/tmp/* /var/lib/apt/lists/*
+    rm -rf /tmp/* && \
+    rm -rf /var/tmp/* && \
+    rm -rf /var/lib/apt/lists/*
 
 USER circleci
 
