@@ -17,6 +17,9 @@ RUN git clone https://github.com/sstephenson/bats.git && \
     curl "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" > /tmp/terraform.zip && \
     unzip /tmp/terraform.zip -d /usr/local/bin && \
     chmod 0755 /usr/local/bin/terraform && \
+    curl -sSOL https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_amd64 && \
+    chmod 0755 terragrunt_linux_amd64 && \
+    mv terragrunt_linux_amd64 /usr/local/bin/terragrunt && \
     curl "https://beyondgrep.com/ack-${ACK_VERSION}-single-file" > /usr/local/bin/ack && \
     chmod 0755 /usr/local/bin/ack && \
     curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" > /usr/local/bin/docker-compose && \

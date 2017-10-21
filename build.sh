@@ -64,6 +64,7 @@ ENVVARS=(
   '${IMAGE_FROM}' \
   '${IMAGE_MAINTAINER}' \
   '${TERRAFORM_VERSION}' \
+  '${TERRAGRUNT_VERSION}' \
 )
 
 ENVVARS_STRING="$(printf "%s:" "${ENVVARS[@]}")"
