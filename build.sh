@@ -49,12 +49,6 @@ BUILD_DIR=$(dirname $0)
 # Setup environment variables
 . ./bin/env.sh
 
-
-if [[ "$1" = "test" ]]
-then
-  BUILD_LOCALLY=true
-fi
-
 # Rewrite only the cloudbuild variables we want to change
 ENVVARS=(
   '${ACK_VERSION}' \
