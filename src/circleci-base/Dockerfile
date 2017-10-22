@@ -1,7 +1,7 @@
 # Planet 4 CircleCI build image
 # Branch: develop
-# Commit: ba552d4eb235a608b527c52b0c455d38162d5cc9
-# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/296
+# Commit: 2216389f099957816a565473dc27709f4d87cb2f
+# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/300
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
@@ -26,6 +26,9 @@ RUN git clone https://github.com/sstephenson/bats.git && \
     curl "https://releases.hashicorp.com/terraform/0.10.7/terraform_0.10.7_linux_amd64.zip" > /tmp/terraform.zip && \
     unzip /tmp/terraform.zip -d /usr/local/bin && \
     chmod 0755 /usr/local/bin/terraform && \
+    curl -sSOL https://github.com/gruntwork-io/terragrunt/releases/download/v/terragrunt_linux_amd64 && \
+    chmod 0755 terragrunt_linux_amd64 && \
+    mv terragrunt_linux_amd64 /usr/local/bin/terragrunt && \
     curl "https://beyondgrep.com/ack-2.18-single-file" > /usr/local/bin/ack && \
     chmod 0755 /usr/local/bin/ack && \
     curl -L "https://github.com/docker/compose/releases/download/1.16.1/docker-compose-$(uname -s)-$(uname -m)" > /usr/local/bin/docker-compose && \
