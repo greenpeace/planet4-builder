@@ -44,4 +44,4 @@ DEFAULT_GOOGLE_SDK_VERSION='178.0.0'
 # https://www.terraform.io/downloads.html
 DEFAULT_TERRAFORM_VERSION='0.10.8'
 # https://github.com/gruntwork-io/terragrunt/releases
-DEFAULT_TERRAGRUNT_VERSION='0.13.13'
+DEFAULT_TERRAGRUNT_VERSION='0.13.15'
