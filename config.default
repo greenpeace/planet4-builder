@@ -30,11 +30,18 @@ DEFAULT_MAINTAINER="Raymond Walker <raymond.walker@greenpeace.org>"
 DEFAULT_NAMESPACE="gcr.io"
 
 # Upstream image
-DEFAULT_BASE_NAMESPACE="circleci"
 DEFAULT_BASE_IMAGE="php"
+DEFAULT_BASE_NAMESPACE="circleci"
 DEFAULT_BASE_TAG="7.0"
 
 # Vendor application versions
-DEFAULT_DOCKER_COMPOSE_VERSION='1.16.1'
-DEFAULT_GOOGLE_SDK_VERSION='175.0.0'
+# https://beyondgrep.com/install/
 DEFAULT_ACK_VERSION='2.18'
+# https://github.com/docker/compose/releases
+DEFAULT_DOCKER_COMPOSE_VERSION='1.17.0'
+# https://cloud.google.com/sdk/docs/quickstart-linux
+DEFAULT_GOOGLE_SDK_VERSION='178.0.0'
+# https://www.terraform.io/downloads.html
+DEFAULT_TERRAFORM_VERSION='0.10.8'
+# https://github.com/gruntwork-io/terragrunt/releases
+DEFAULT_TERRAGRUNT_VERSION='0.13.15'

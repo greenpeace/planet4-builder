@@ -14,14 +14,23 @@ COPY ./etc/apt/sources.list /etc/apt/sources.list
 RUN git clone https://github.com/sstephenson/bats.git && \
     ./bats/install.sh /usr/local && \
     rm -fr /home/circleci/bats && \
-    curl https://beyondgrep.com/ack-${ACK_VERSION}-single-file > /usr/local/bin/ack && chmod 0755 /usr/local/bin/ack && \
-    curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m) > /usr/local/bin/docker-compose && \
-    chmod 755 /usr/local/bin/docker-compose && \
-    chmod 755 /home/circleci/scripts/* && \
+    curl "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" > /tmp/terraform.zip && \
+    unzip /tmp/terraform.zip -d /usr/local/bin && \
+    chmod 0755 /usr/local/bin/terraform && \
+    curl -sSOL https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_amd64 && \
+    chmod 0755 terragrunt_linux_amd64 && \
+    mv terragrunt_linux_amd64 /usr/local/bin/terragrunt && \
+    curl "https://beyondgrep.com/ack-${ACK_VERSION}-single-file" > /usr/local/bin/ack && \
+    chmod 0755 /usr/local/bin/ack && \
+    curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" > /usr/local/bin/docker-compose && \
+    chmod 0755 /usr/local/bin/docker-compose && \
+    chmod 0755 /home/circleci/scripts/* && \
     apt-get update && apt-get install -y --no-install-recommends \
       gettext \
       shellcheck && \
-    rm -rf /tmp/* /var/tmp/* /var/lib/apt/lists/*
+    rm -rf /tmp/* && \
+    rm -rf /var/tmp/* && \
+    rm -rf /var/lib/apt/lists/*
 
 USER circleci
 

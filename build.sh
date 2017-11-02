@@ -49,18 +49,6 @@ BUILD_DIR=$(dirname $0)
 # Setup environment variables
 . ./bin/env.sh
 
-# Process array of cloudbuild substitutions
-function getSubstitutions() {
-  local -a arg=($@)
-  s="$(printf "%s," "${arg[@]}" )"
-  echo "${s%,}"
-}
-
-if [[ "$1" = "test" ]]
-then
-  BUILD_LOCALLY=true
-fi
-
 # Rewrite only the cloudbuild variables we want to change
 ENVVARS=(
   '${ACK_VERSION}' \
@@ -69,6 +57,8 @@ ENVVARS=(
   '${GOOGLE_SDK_VERSION}' \
   '${IMAGE_FROM}' \
   '${IMAGE_MAINTAINER}' \
+  '${TERRAFORM_VERSION}' \
+  '${TERRAGRUNT_VERSION}' \
 )
 
 ENVVARS_STRING="$(printf "%s:" "${ENVVARS[@]}")"
@@ -89,6 +79,13 @@ DOCKER_BUILD_STRING="# ${APPLICATION_NAME}
 
 echo -e "${DOCKER_BUILD_STRING}\n$(cat ${BUILD_DIR}/src/circleci-base/Dockerfile)" > ${BUILD_DIR}/src/circleci-base/Dockerfile
 echo -e "$(cat ${BUILD_DIR}/README.md)\nBuild: ${CIRCLE_BUILD_URL:-"(local)"}" > ${BUILD_DIR}/README.md
+
+# Process array of cloudbuild substitutions
+function getSubstitutions() {
+  local -a arg=($@)
+  s="$(printf "%s," "${arg[@]}" )"
+  echo "${s%,}"
+}
 
 # Cloudbuild.yaml template substitutions
 CLOUDBUILD_SUBSTITUTIONS=(
