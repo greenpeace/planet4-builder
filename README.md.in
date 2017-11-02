@@ -9,6 +9,7 @@ The base image builds upon the `${IMAGE_FROM}` image and adds:
 -   [Google Cloud SDK](https://cloud.google.com/sdk/gcloud/) ${GOOGLE_SDK_VERSION}
 -   [docker-compose](https://github.com/docker/compose/releases) ${DOCKER_COMPOSE_VERSION}
 -   [Terraform](https://www.terraform.io/downloads.html) ${TERRAFORM_VERSION}
+-   [Terragrunt](https://github.com/gruntwork-io/terragrunt/releases) ${TERRAGRUNT_VERSION}
 -   [shellcheck](https://github.com/koalaman/shellcheck) latest
 -   [ack](https://beyondgrep.com/) ${ACK_VERSION}
 -   [bats](https://github.com/sstephenson/bats) latest
