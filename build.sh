@@ -52,12 +52,18 @@ BUILD_DIR=$(dirname $0)
 # Rewrite only the cloudbuild variables we want to change
 ENVVARS=(
   '${ACK_VERSION}' \
+  '${APPLICATION_DESCRIPTION}' \
+  '${APPLICATION_NAME}' \
   '${BRANCH_NAME}' \
   '${DOCKER_COMPOSE_VERSION}' \
+  '${GETTEXT_VERSION}' \
   '${GOOGLE_SDK_VERSION}' \
   '${IMAGE_FROM}' \
   '${IMAGE_MAINTAINER}' \
+  '${JUNIT_MERGE_VERSION}' \
   '${NODEJS_VERSION}' \
+  '${SHELLCHECK_VERSION}' \
+  '${TAP_XUNIT_VERSION}' \
   '${TERRAFORM_VERSION}' \
   '${TERRAGRUNT_VERSION}' \
 )

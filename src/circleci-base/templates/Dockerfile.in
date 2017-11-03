@@ -25,9 +25,14 @@ RUN git clone https://github.com/sstephenson/bats.git && \
     curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" > /usr/local/bin/docker-compose && \
     chmod 0755 /usr/local/bin/docker-compose && \
     chmod 0755 /home/circleci/scripts/* && \
-    apt-get update && apt-get install -y --no-install-recommends \
-      gettext \
-      shellcheck && \
+    curl -sL https://deb.nodesource.com/setup_8.x | bash - && \
+    apt-get install -y --no-install-recommends \
+      gettext=${GETTEXT_VERSION} \
+      nodejs=${NODEJS_VERSION} \
+      shellcheck=${SHELLCHECK_VERSION} && \
+    npm install -g \
+      junit-merge@${JUNIT_MERGE_VERSION} \
+      tap-xunit@${TAP_XUNIT_VERSION} && \
     rm -rf /tmp/* && \
     rm -rf /var/tmp/* && \
     rm -rf /var/lib/apt/lists/*
