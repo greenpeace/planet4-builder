@@ -1,7 +1,7 @@
 # Planet 4 CircleCI build image
-# Branch: master
-# Commit: 74a15036b6a4c88d85acbfe8e74787ea55dc653e
-# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/312
+# Branch: develop
+# Commit: 44ed96ca4ed33ea4987c7fc5d5e2d554d3aa3777
+# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/316
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
@@ -10,6 +10,10 @@
 FROM circleci/php:7.0
 
 MAINTAINER Raymond Walker <raymond.walker@greenpeace.org>
+
+LABEL maintainer="Raymond Walker <raymond.walker@greenpeace.org>" \
+      description="Planet 4 CircleCI build image: \
+Base image for performing CI/CD operations in CircleCI"
 
 USER root
 
@@ -26,7 +30,7 @@ RUN git clone https://github.com/sstephenson/bats.git && \
     curl "https://releases.hashicorp.com/terraform/0.10.8/terraform_0.10.8_linux_amd64.zip" > /tmp/terraform.zip && \
     unzip /tmp/terraform.zip -d /usr/local/bin && \
     chmod 0755 /usr/local/bin/terraform && \
-    curl -sSOL https://github.com/gruntwork-io/terragrunt/releases/download/v/terragrunt_linux_amd64 && \
+    curl -sSOL https://github.com/gruntwork-io/terragrunt/releases/download/v0.13.15/terragrunt_linux_amd64 && \
     chmod 0755 terragrunt_linux_amd64 && \
     mv terragrunt_linux_amd64 /usr/local/bin/terragrunt && \
     curl "https://beyondgrep.com/ack-2.18-single-file" > /usr/local/bin/ack && \
@@ -34,9 +38,14 @@ RUN git clone https://github.com/sstephenson/bats.git && \
     curl -L "https://github.com/docker/compose/releases/download/1.17.0/docker-compose-$(uname -s)-$(uname -m)" > /usr/local/bin/docker-compose && \
     chmod 0755 /usr/local/bin/docker-compose && \
     chmod 0755 /home/circleci/scripts/* && \
-    apt-get update && apt-get install -y --no-install-recommends \
-      gettext \
-      shellcheck && \
+    curl -sL https://deb.nodesource.com/setup_8.x | bash - && \
+    apt-get install -y --no-install-recommends \
+      gettext=0.19.3-2 \
+      nodejs=8.9.0-1nodesource1 \
+      shellcheck=0.3.4-3 && \
+    npm install -g \
+      junit-merge@1.1.0 \
+      tap-xunit@1.7.0 && \
     rm -rf /tmp/* && \
     rm -rf /var/tmp/* && \
     rm -rf /var/lib/apt/lists/*
