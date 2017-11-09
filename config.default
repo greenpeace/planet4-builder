@@ -45,6 +45,8 @@ DEFAULT_DOCKER_COMPOSE_VERSION='1.17.0'
 DEFAULT_GETTEXT_VERSION='0.19.3-2'
 # https://cloud.google.com/sdk/docs/quickstart-linux
 DEFAULT_GOOGLE_SDK_VERSION='179.0.0'
+# https://github.com/kubernetes/helm/releases
+DEFAULT_HELM_VERSION='2.7.0'
 # https://www.npmjs.com/package/junit-merge
 DEFAULT_JUNIT_MERGE_VERSION='1.1.0'
 # https://github.com/nodesource/distributions
