@@ -10,6 +10,7 @@ The base image builds upon the `${IMAGE_FROM}` image and adds:
 -   [bats](https://github.com/sstephenson/bats) latest
 -   [docker-compose](https://github.com/docker/compose/releases) ${DOCKER_COMPOSE_VERSION}
 -   [Google Cloud SDK](https://cloud.google.com/sdk/gcloud/) ${GOOGLE_SDK_VERSION}
+-   [Helm](https://github.com/kubernetes/helm/releases) ${HELM_VERSION}
 -   [junit-merge](https://www.npmjs.com/package/junit-merge) ${JUNIT_MERGE_VERSION}
 -   [NodeJS](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions) ${NODEJS_VERSION}
 -   [shellcheck](https://github.com/koalaman/shellcheck) ${SHELLCHECK_VERSION}
