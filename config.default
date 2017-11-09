@@ -51,7 +51,7 @@ DEFAULT_HELM_VERSION='2.7.0'
 DEFAULT_JUNIT_MERGE_VERSION='1.1.0'
 # https://github.com/nodesource/distributions
 # docker run --rm -it gcr.io/planet-4-151612/circleci-base bash -c "sudo apt-get update && apt-cache madison nodejs"
-DEFAULT_NODEJS_VERSION='8.9.0-1nodesource1'
+DEFAULT_NODEJS_VERSION='8.9.1-1nodesource1'
 # docker run --rm -it gcr.io/planet-4-151612/circleci-base bash -c "sudo apt-get update && apt-cache madison shellcheck"
 DEFAULT_SHELLCHECK_VERSION='0.3.4-3'
 # https://github.com/aghassemi/tap-xunit/releases
