@@ -4,10 +4,9 @@ set -eo pipefail
 # UTILITY
 
 function usage {
-  fatal "Usage: $0 [-l|r|v] [-c <configfile>] ...
+  >&2 echo "Usage: $0 [-l|r|v] [-c <configfile>] ...
 
-Build and test artifacts in this repository. By default this script will only
-recreate a new Dockerfile from the Dockerfile.in template.  To initiate a build
+Build and test the CircleCI base image.
 
 Options:
   -c    Config file for environment variables, eg:
@@ -16,11 +15,6 @@ Options:
   -r    Submits a build request to Google Container Builder
   -v    Verbose
 "
-}
-
-function fatal() {
- >&2 echo -e "ERROR: $1"
- exit 1
 }
 
 # COMMAND LINE OPTIONS
@@ -35,10 +29,26 @@ do
         r  )    BUILD_REMOTELY='true';;
         v  )    VERBOSITY='debug'
                 set -x;;
-        *  )    usage;;
+        *  )    usage
+                exit 1;;
     esac
 done
 shift $((OPTIND - 1))
+
+# Clean up on exit
+function finish() {
+  rm -fr "$TMPDIR"
+}
+trap finish EXIT
+
+TMPDIR=$(mktemp -d "${TMPDIR:-/tmp/}$(basename 0).XXXXXXXXXXXX")
+
+# -----------------------------------------------------------------------------
+# Pretty printing
+
+wget -q -O ${TMPDIR}/pretty-print.sh https://gist.githubusercontent.com/27Bslash6/ffa9cfb92c25ef27cad2900c74e2f6dc/raw/7142ba210765899f5027d9660998b59b5faa500a/bash-pretty-print.sh
+# shellcheck disable=SC1090
+. ${TMPDIR}/pretty-print.sh
 
 #
 #   ----------- NO USER SERVICEABLE PARTS BELOW -----------
@@ -84,8 +94,9 @@ DOCKER_BUILD_STRING="# ${APPLICATION_NAME}
 # This file is built automatically from ./templates/Dockerfile.in
 # ------------------------------------------------------------------------
 "
-
+_build "Rewriting Dockerfile from template ..."
 echo -e "${DOCKER_BUILD_STRING}\n$(cat ${BUILD_DIR}/src/circleci-base/Dockerfile)" > ${BUILD_DIR}/src/circleci-base/Dockerfile
+_build "Rewriting README.md from template ..."
 echo -e "$(cat ${BUILD_DIR}/README.md)\nBuild: ${CIRCLE_BUILD_URL:-"(local)"}" > ${BUILD_DIR}/README.md
 
 # Process array of cloudbuild substitutions
@@ -122,7 +133,7 @@ if [[ "$BUILD_LOCALLY" = 'true' ]]
 then
   if [[ -z "$GOOGLE_APPLICATION_CREDENTIALS" ]]
   then
-    fatal "GOOGLE_APPLICATION_CREDENTIALS environment variable not set.
+    _fatal "GOOGLE_APPLICATION_CREDENTIALS environment variable not set.
 
 Please set GOOGLE_APPLICATION_CREDENTIALS to the path of your GCP service key and try again.
 "
@@ -130,18 +141,19 @@ Please set GOOGLE_APPLICATION_CREDENTIALS to the path of your GCP service key an
 
   if [[ $(type -P "circleci") ]]
   then
+    _build "Performing build locally ..."
     circleci build . -e "GCLOUD_SERVICE_KEY=$(base64 "${GOOGLE_APPLICATION_CREDENTIALS}")"
   else
-    fatal "ERROR :: circlecli not found in PATH. Please install from https://circleci.com/docs/2.0/local-jobs/"
+    _fatal "ERROR :: circlecli not found in PATH. Please install from https://circleci.com/docs/2.0/local-jobs/"
   fi
 fi
 
 if [[ "${BUILD_REMOTELY}" = 'true' ]]
 then
+  _build "Sending build request to GCR ..."
   # Avoid sending entire .git history as build context to save some time and bandwidth
   # Since git builtin substitutions aren't available unless triggered
   # https://cloud.google.com/container-builder/docs/concepts/build-requests#substitutions
-  TMPDIR=$(mktemp -d "${TMPDIR:-/tmp/}$(basename 0).XXXXXXXXXXXX")
   tar --exclude='.git/' --exclude='.circleci/' -zcf ${TMPDIR}/docker-source.tar.gz .
 
   time ${GCLOUD} container builds submit \
@@ -151,6 +163,10 @@ then
     --substitutions ${CLOUDBUILD_SUBSTITUTIONS_STRING} \
     ${TMPDIR}/docker-source.tar.gz
 
-    rm -fr ${TMPDIR}
+fi
 
+if [[ -z "$BUILD_LOCALLY" ]] && [[ -z "${BUILD_REMOTELY}" ]]
+then
+  _notice "No build option specified"
+  usage
 fi

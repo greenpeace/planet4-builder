@@ -10,7 +10,7 @@ set -ao pipefail
 DEFAULT_CONFIG_FILE="${BUILD_DIR}/config.default"
 if [[ ! -f "${DEFAULT_CONFIG_FILE}" ]]
 then
-  fatal "ERROR :: Default configuration file not found: ${DEFAULT_CONFIG_FILE}"
+  _fatal "ERROR :: Default configuration file not found: ${DEFAULT_CONFIG_FILE}"
 fi
 # shellcheck source=/dev/null
 . ${DEFAULT_CONFIG_FILE}
@@ -18,10 +18,10 @@ fi
 # Read from custom config file from command line parameter
 if [ ! -z "${CONFIG_FILE}" ]; then
   if [ ! -f "${CONFIG_FILE}" ]; then
-    fatal "ERROR: Custom config file not found: ${CONFIG_FILE}"
+    _fatal "ERROR: Custom config file not found: ${CONFIG_FILE}"
   fi
 
-  echo "Reading config from: ${CONFIG_FILE}"
+  _build "Reading config from: ${CONFIG_FILE}"
 
   # https://github.com/koalaman/shellcheck/wiki/SC1090
   # shellcheck source=/dev/null
