@@ -1,7 +1,7 @@
 # Planet 4 CircleCI build image
-# Branch: develop
-# Commit: c243eccaf7c936bcf9281efd830dd622b56411fa
-# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/343
+# Branch: master
+# Commit: 410c5e97cca4bb832c973cc99d25a186b9e6d32f
+# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/349
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
@@ -42,6 +42,7 @@ RUN git clone https://github.com/sstephenson/bats.git && \
     export "DESIRED_VERSION=v2.7.0" && \
     curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -sL https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get | bash - && \
     apt-get install -y --no-install-recommends \
+      wget \
       gettext=0.19.3-2 \
       nodejs=8.9.1-1nodesource1 \
       shellcheck=0.3.4-3 && \
