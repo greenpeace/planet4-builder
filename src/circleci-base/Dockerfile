@@ -1,7 +1,7 @@
 # Planet 4 CircleCI build image
 # Branch: master
-# Commit: 410c5e97cca4bb832c973cc99d25a186b9e6d32f
-# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/349
+# Commit: 4ff3793d818847256ec8dcb069c33500ca36234b
+# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/366
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
@@ -63,7 +63,3 @@ RUN curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max
         --rc-path "/home/${CIRCLECI_USER}/.bashrc" && \
     google-cloud-sdk/bin/gcloud --quiet components update && \
     google-cloud-sdk/bin/gcloud --quiet components update kubectl
-
-# Branch: master
-# Commit: 6ed6e46e2a7f574b74a100bcc58f2ec291f024a8
-# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/353
