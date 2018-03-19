@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2034
+
 set -ao pipefail
 
 # CONFIG FILE
@@ -12,8 +13,8 @@ if [[ ! -f "${DEFAULT_CONFIG_FILE}" ]]
 then
   _fatal "ERROR :: Default configuration file not found: ${DEFAULT_CONFIG_FILE}"
 fi
-# shellcheck source=/dev/null
-. ${DEFAULT_CONFIG_FILE}
+
+. "${DEFAULT_CONFIG_FILE}"
 
 # Read from custom config file from command line parameter
 if [ ! -z "${CONFIG_FILE}" ]; then
@@ -24,8 +25,7 @@ if [ ! -z "${CONFIG_FILE}" ]; then
   _build "Reading config from: ${CONFIG_FILE}"
 
   # https://github.com/koalaman/shellcheck/wiki/SC1090
-  # shellcheck source=/dev/null
-  . ${CONFIG_FILE}
+  . "${CONFIG_FILE}"
 fi
 
 # Envsubst and cloudbuild.yaml variable consolidation
