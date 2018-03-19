@@ -37,26 +37,14 @@ DEFAULT_BASE_TAG="7.0"
 
 # Vendor application versions
 # https://beyondgrep.com/install/
-DEFAULT_ACK_VERSION='2.18'
+DEFAULT_ACK_VERSION='2.22'
 # https://github.com/docker/compose/releases
-DEFAULT_DOCKER_COMPOSE_VERSION='1.17.0'
-# https://packages.debian.org/jessie/gettext
-# docker run --rm -it gcr.io/planet-4-151612/circleci-base bash -c "sudo apt-get update && apt-cache madison gettext"
-DEFAULT_GETTEXT_VERSION='0.19.3-2'
+DEFAULT_DOCKER_COMPOSE_VERSION='1.19.0'
 # https://cloud.google.com/sdk/docs/quickstart-linux
-DEFAULT_GOOGLE_SDK_VERSION='179.0.0'
+DEFAULT_GOOGLE_SDK_VERSION='193.0.0'
 # https://github.com/kubernetes/helm/releases
-DEFAULT_HELM_VERSION='2.7.0'
-# https://www.npmjs.com/package/junit-merge
-DEFAULT_JUNIT_MERGE_VERSION='1.1.0'
-# https://github.com/nodesource/distributions
-# docker run --rm -it gcr.io/planet-4-151612/circleci-base bash -c "sudo apt-get update && apt-cache madison nodejs"
-DEFAULT_NODEJS_VERSION='8.9.1-1nodesource1'
-# docker run --rm -it gcr.io/planet-4-151612/circleci-base bash -c "sudo apt-get update && apt-cache madison shellcheck"
-DEFAULT_SHELLCHECK_VERSION='0.3.4-3'
-# https://github.com/aghassemi/tap-xunit/releases
-DEFAULT_TAP_XUNIT_VERSION='1.7.0'
+DEFAULT_HELM_VERSION='2.8.2'
 # https://www.terraform.io/downloads.html
-DEFAULT_TERRAFORM_VERSION='0.10.8'
+DEFAULT_TERRAFORM_VERSION='0.11.4'
 # https://github.com/gruntwork-io/terragrunt/releases
-DEFAULT_TERRAGRUNT_VERSION='0.13.17'
+DEFAULT_TERRAGRUNT_VERSION='0.14.2'
