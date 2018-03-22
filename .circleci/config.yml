@@ -80,7 +80,7 @@ jobs:
           name: Test gcloud
           command: |
             export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
-            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} ${HOME}/google-cloud-sdk/bin/gcloud -v > /tmp/test-results/gcloud_version.txt
+            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} gcloud -v > /tmp/test-results/gcloud_version.txt
             grep -q 'kubectl' /tmp/test-results/gcloud_version.txt
             cat /tmp/test-results/gcloud_version.txt
 
