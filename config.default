@@ -21,6 +21,8 @@ set -a
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+CIRCLECI_USER="circleci"
+
 # Application environment
 DEFAULT_APPLICATION_NAME="Planet 4 CircleCI build image"
 DEFAULT_APPLICATION_DESCRIPTION="Base image for performing CI/CD operations in CircleCI"
