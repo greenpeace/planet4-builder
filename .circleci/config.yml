@@ -26,9 +26,7 @@ jobs:
           name: Update build numbers
           command: |
             # Updates Dockerfile and README data with CI variables
-            curl -sS https://gist.githubusercontent.com/27Bslash6/b124df87ac2c5ce44f6736b1d4af124a/raw/d5675017a496f0cc966a9fc5f86266eccff3643f/circleci_update_build_numbers.sh -o /tmp/update_build_numbers.sh
-            chmod +x /tmp/update_build_numbers.sh
-            /tmp/update_build_numbers.sh
+            ./bin/update_build_numbers.sh
 
       - setup_remote_docker
 
