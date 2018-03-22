@@ -17,8 +17,8 @@ Options:
 "
 }
 
+# -----------------------------------------------------------------------------
 # COMMAND LINE OPTIONS
-
 OPTIONS=':vc:lr'
 while getopts $OPTIONS option
 do
@@ -35,7 +35,8 @@ do
 done
 shift $((OPTIND - 1))
 
-# Clean up on exit
+# -----------------------------------------------------------------------------
+# CREATE TEMP DIR AND CLEAN ON EXIT
 function finish() {
   rm -fr "$TMPDIR"
 }
@@ -44,27 +45,36 @@ trap finish EXIT
 TMPDIR=$(mktemp -d "${TMPDIR:-/tmp/}$(basename 0).XXXXXXXXXXXX")
 
 # -----------------------------------------------------------------------------
-# Pretty printing
-
+# OUTPUT HELPERS
 wget -q -O ${TMPDIR}/pretty-print.sh https://gist.githubusercontent.com/27Bslash6/ffa9cfb92c25ef27cad2900c74e2f6dc/raw/7142ba210765899f5027d9660998b59b5faa500a/bash-pretty-print.sh
 # shellcheck disable=SC1090
 . ${TMPDIR}/pretty-print.sh
 
-#
-#   ----------- NO USER SERVICEABLE PARTS BELOW -----------
-#
-
-BUILD_DIR=$(dirname $0)
+# -----------------------------------------------------------------------------
+# SET BUILD_DIR FROM REAL PATH
+# https://stackoverflow.com/questions/59895/getting-the-source-directory-of-a-bash-script-from-within
+source="${BASH_SOURCE[0]}"
+while [[ -h "$source" ]]
+do # resolve $source until the file is no longer a symlink
+  dir="$( cd -P "$( dirname "$source" )" && pwd )"
+  source="$(readlink "$source")"
+  # if $source was a relative symlink, we need to resolve it relative to the
+  # path where the symlink file was located
+  [[ $source != /* ]] && source="$dir/$source"
+done
+BUILD_DIR="$( cd -P "$( dirname "$source" )/.." && pwd )"
+# -----------------------------------------------------------------------------
 
 # Setup environment variables
-. ./bin/env.sh
+. ${BUILD_DIR}/bin/env.sh
 
-# Rewrite only the cloudbuild variables we want to change
+# Rewrite only the variables we want to change
 ENVVARS=(
   '${ACK_VERSION}' \
   '${APPLICATION_DESCRIPTION}' \
   '${APPLICATION_NAME}' \
   '${BRANCH_NAME}' \
+  '${CIRCLECI_USER}' \
   '${DOCKER_COMPOSE_VERSION}' \
   '${GETTEXT_VERSION}' \
   '${GOOGLE_SDK_VERSION}' \
@@ -78,6 +88,7 @@ ENVVARS=(
   '${TERRAFORM_VERSION}' \
   '${TERRAGRUNT_VERSION}' \
 )
+
 
 ENVVARS_STRING="$(printf "%s:" "${ENVVARS[@]}")"
 ENVVARS_STRING="${ENVVARS_STRING%:}"
@@ -116,16 +127,6 @@ CLOUDBUILD_SUBSTITUTIONS=(
 )
 CLOUDBUILD_SUBSTITUTIONS_STRING=$(getSubstitutions "${CLOUDBUILD_SUBSTITUTIONS[@]}")
 
-# Check if we're running on CircleCI
-if [[ ! -z "${CIRCLECI}" ]]
-then
-  # Expect gcloud to be configured under the home directory
-  GCLOUD=${HOME}/google-cloud-sdk/bin/gcloud
-else
-  # Hope for the best
-  GCLOUD=gcloud
-fi
-
 # Submit the build
 # @todo Implement local build
 # $ circlecli build . -e GCLOUD_SERVICE_KEY=$(base64 ~/.config/gcloud/Planet-4-circleci.json)
@@ -156,7 +157,7 @@ then
   # https://cloud.google.com/container-builder/docs/concepts/build-requests#substitutions
   tar --exclude='.git/' --exclude='.circleci/' -zcf ${TMPDIR}/docker-source.tar.gz .
 
-  time ${GCLOUD} container builds submit \
+  time gcloud container builds submit \
     --verbosity=${VERBOSITY:-"warning"} \
     --timeout=10m \
     --config cloudbuild.yaml \

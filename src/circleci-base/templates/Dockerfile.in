@@ -8,16 +8,17 @@ ${APPLICATION_DESCRIPTION}"
 
 USER root
 
-ENV CIRCLECI_USER 'circleci'
+ENV CIRCLECI_USER="${CIRCLECI_USER}" \
+    PATH="/home/${CIRCLECI_USER}/google-cloud-sdk/bin:${PATH}"
 
-WORKDIR /home/circleci
+WORKDIR /home/${CIRCLECI_USER}
 
-COPY ./scripts /home/circleci/scripts
-COPY ./etc/apt/sources.list /etc/apt/sources.list
+COPY ./scripts /home/${CIRCLECI_USER}/scripts
+COPY ./etc/ /etc
 
 RUN git clone https://github.com/sstephenson/bats.git && \
     ./bats/install.sh /usr/local && \
-    rm -fr /home/circleci/bats && \
+    rm -fr /home/${CIRCLECI_USER}/bats && \
     curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" > /tmp/terraform.zip && \
     unzip /tmp/terraform.zip -d /usr/local/bin && \
     chmod 0755 /usr/local/bin/terraform && \
@@ -28,7 +29,7 @@ RUN git clone https://github.com/sstephenson/bats.git && \
     chmod 0755 /usr/local/bin/ack && \
     curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" > /usr/local/bin/docker-compose && \
     chmod 0755 /usr/local/bin/docker-compose && \
-    chmod 0755 /home/circleci/scripts/* && \
+    chmod 0755 /home/${CIRCLECI_USER}/scripts/* && \
     curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -sL https://deb.nodesource.com/setup_8.x | bash - && \
     export "DESIRED_VERSION=v${HELM_VERSION}" && \
     curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -sL https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get | bash - && \
@@ -44,7 +45,7 @@ RUN git clone https://github.com/sstephenson/bats.git && \
     rm -rf /var/tmp/* && \
     rm -rf /var/lib/apt/lists/*
 
-USER circleci
+USER ${CIRCLECI_USER}
 
 RUN curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -L "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/""google-cloud-sdk-${GOOGLE_SDK_VERSION}-linux-x86_64.tar.gz" | tar xz && \
     CLOUDSDK_CORE_DISABLE_PROMPTS=1 ./google-cloud-sdk/install.sh \
@@ -52,5 +53,5 @@ RUN curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max
         --bash-completion false \
         --path-update false \
         --rc-path "/home/${CIRCLECI_USER}/.bashrc" && \
-    google-cloud-sdk/bin/gcloud --quiet components update && \
-    google-cloud-sdk/bin/gcloud --quiet components update kubectl
+    gcloud --quiet components update && \
+    gcloud --quiet components update kubectl

@@ -1,14 +1,26 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2034
-
 set -ao pipefail
-
+# -----------------------------------------------------------------------------
+# SET BUILD_DIR FROM REAL PATH
+# https://stackoverflow.com/questions/59895/getting-the-source-directory-of-a-bash-script-from-within
+source="${BASH_SOURCE[0]}"
+while [[ -h "$source" ]]
+do # resolve $source until the file is no longer a symlink
+  dir="$( cd -P "$( dirname "$source" )" && pwd )"
+  source="$(readlink "$source")"
+  # if $source was a relative symlink, we need to resolve it relative to the
+  # path where the symlink file was located
+  [[ $source != /* ]] && source="$dir/$source"
+done
+BUILD_DIR="$( cd -P "$( dirname "$source" )/.." && pwd )"
+# -----------------------------------------------------------------------------
 # CONFIG FILE
 # Read parameters from key->value configuration files
 # Note this will override environment variables at this stage
 # @todo prioritise ENV over config file ?
-
 DEFAULT_CONFIG_FILE="${BUILD_DIR}/config.default"
+
 if [[ ! -f "${DEFAULT_CONFIG_FILE}" ]]
 then
   _fatal "ERROR :: Default configuration file not found: ${DEFAULT_CONFIG_FILE}"
