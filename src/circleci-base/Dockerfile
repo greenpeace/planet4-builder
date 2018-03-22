@@ -1,7 +1,7 @@
 # Planet 4 CircleCI build image
-# Branch: master
-# Commit: 4ff3793d818847256ec8dcb069c33500ca36234b
-# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/366
+# Branch: develop
+# Commit: 3c68e3052d0f847cd9df5397fce1354218d3fcb2
+# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/373
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
@@ -17,12 +17,13 @@ Base image for performing CI/CD operations in CircleCI"
 
 USER root
 
-ENV CIRCLECI_USER 'circleci'
+ENV CIRCLECI_USER="circleci" \
+    PATH="/home/circleci/google-cloud-sdk/bin:${PATH}"
 
 WORKDIR /home/circleci
 
 COPY ./scripts /home/circleci/scripts
-COPY ./etc/apt/sources.list /etc/apt/sources.list
+COPY ./etc/ /etc
 
 RUN git clone https://github.com/sstephenson/bats.git && \
     ./bats/install.sh /usr/local && \
@@ -60,6 +61,6 @@ RUN curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max
         --usage-reporting false \
         --bash-completion false \
         --path-update false \
-        --rc-path "/home/${CIRCLECI_USER}/.bashrc" && \
-    google-cloud-sdk/bin/gcloud --quiet components update && \
-    google-cloud-sdk/bin/gcloud --quiet components update kubectl
+        --rc-path "/home/circleci/.bashrc" && \
+    gcloud --quiet components update && \
+    gcloud --quiet components update kubectl
