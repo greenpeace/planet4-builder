@@ -14,7 +14,8 @@ then
 fi
 
 # Update gcloud sdk components
-gcloud --quiet components update
+# gcloud --quiet components update
+
 # Decode base64-encoded service key json
 echo "${GCLOUD_SERVICE_KEY}" | base64 --decode -i > ${HOME}/gcloud-service-key.json
 
