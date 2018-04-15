@@ -1,7 +1,7 @@
 # Planet 4 CircleCI build image
 # Branch: master
-# Commit: 48df93ec73b4b98f8c3d8ac691b6e029e7350fbe
-# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/396
+# Commit: cf844ac6ea6d2c71bd93f0f312b838b96f16cb14
+# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/401
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
@@ -36,7 +36,7 @@ RUN git clone https://github.com/sstephenson/bats.git && \
     mv terragrunt_linux_amd64 /usr/local/bin/terragrunt && \
     curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 "https://beyondgrep.com/ack-2.22-single-file" > /usr/local/bin/ack && \
     chmod 0755 /usr/local/bin/ack && \
-    curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -L "https://github.com/docker/compose/releases/download/1.19.0/docker-compose-$(uname -s)-$(uname -m)" > /usr/local/bin/docker-compose && \
+    curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -L "https://github.com/docker/compose/releases/download/1.21.0/docker-compose-$(uname -s)-$(uname -m)" > /usr/local/bin/docker-compose && \
     chmod 0755 /usr/local/bin/docker-compose && \
     chmod 0755 /home/circleci/scripts/* && \
     curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -sL https://deb.nodesource.com/setup_8.x | bash - && \
