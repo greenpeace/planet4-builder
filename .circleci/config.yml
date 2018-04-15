@@ -46,7 +46,7 @@ jobs:
           name: Sending build request to Google Container Builder
           command: |
             # Perform the build on GCP
-            ./bin/build.sh -r
+            make build
 
       - persist_to_workspace:
           root: /tmp/workspace
