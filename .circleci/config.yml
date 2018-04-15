@@ -11,6 +11,12 @@ jobs:
   build:
     <<: *defaults
     steps:
+      - run:
+          name: Versions
+          command: |
+            docker version
+            docker-compose version
+            
       - checkout
 
       - run:
