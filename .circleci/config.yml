@@ -11,12 +11,14 @@ jobs:
   build:
     <<: *defaults
     steps:
+      - setup_remote_docker
+      
       - run:
           name: Versions
           command: |
             docker version
             docker-compose version
-            
+
       - checkout
 
       - run:
@@ -34,7 +36,6 @@ jobs:
             # Updates Dockerfile and README data with CI variables
             ./bin/update_build_numbers.sh
 
-      - setup_remote_docker
 
       - run:
           name: Configure gcloud
@@ -69,7 +70,7 @@ jobs:
             mkdir -p /tmp/test-results
 
       - run:
-          name: Restore container image
+          name: Pull new image
           command: |
             export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
             docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
