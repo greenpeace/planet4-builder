@@ -12,7 +12,7 @@ jobs:
     <<: *defaults
     steps:
       - setup_remote_docker
-      
+
       - run:
           name: Versions
           command: |
@@ -28,13 +28,13 @@ jobs:
             chmod +x ./bin/*.sh
 
             # Setup
-            ./bin/setup_workspace.sh
+            ${HOME}/scripts/setup-workspace.sh
 
       - run:
           name: Update build numbers
           command: |
             # Updates Dockerfile and README data with CI variables
-            ./bin/update_build_numbers.sh
+            ${HOME}/scripts/update-build-numbers.sh
 
 
       - run:
