@@ -2,7 +2,7 @@ defaults: &defaults
   environment:
     GOOGLE_PROJECT_ID: planet-4-151612
   docker:
-    - image: gcr.io/planet-4-151612/circleci-base:0.3.7
+    - image: gcr.io/planet-4-151612/circleci-base:latest
   working_directory:  /home/circleci/app
 
 version: 2
@@ -28,13 +28,14 @@ jobs:
             chmod +x ./bin/*.sh
 
             # Setup
-            ${HOME}/scripts/setup-workspace.sh
+            ./bin/setup_workspace.sh
 
       - run:
           name: Update build numbers
           command: |
             # Updates Dockerfile and README data with CI variables
             ${HOME}/scripts/update-build-numbers.sh
+            ./bin/update_build_numbers.sh
 
 
       - run:
