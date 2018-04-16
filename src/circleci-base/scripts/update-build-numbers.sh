@@ -30,17 +30,16 @@ fi
 echo "${CIRCLE_BRANCH}" > /tmp/workspace/var/circle-branch-name
 export CIRCLE_BRANCH
 
-
 # Configure git user
 git config user.email "circleci-bot@greenpeace.org"
 git config user.name "CircleCI Bot"
 git config push.default simple
 
-# Add changes
-git add .
-
 # Build without arguments to update Dockerfile from template
 ./bin/build.sh
+
+# Add changes
+git add .
 
 # Exit early if no changes to write
 git diff-index --quiet HEAD -- && exit 0
