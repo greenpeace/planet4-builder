@@ -1,7 +1,7 @@
 # Planet 4 CircleCI build image
-# Branch: master
-# Commit: bf87a5347f7c9ee093b7e6dbbb9baad79661caf6
-# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/461
+# Branch: develop
+# Commit: ae926710ec0bfae8242a894f079add61567a4da8
+# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/465
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
