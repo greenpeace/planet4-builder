@@ -30,11 +30,6 @@ fi
 echo "${CIRCLE_BRANCH}" > /tmp/workspace/var/circle-branch-name
 export CIRCLE_BRANCH
 
-# Build without arguments to update Dockerfile from template
-./bin/build.sh
-
-# Exit early if no changes to write
-git diff-index --quiet HEAD -- && exit 0
 
 # Configure git user
 git config user.email "circleci-bot@greenpeace.org"
@@ -43,6 +38,13 @@ git config push.default simple
 
 # Add changes
 git add .
+
+# Build without arguments to update Dockerfile from template
+./bin/build.sh
+
+# Exit early if no changes to write
+git diff-index --quiet HEAD -- && exit 0
+
 # Get previous commit message and append a message, skipping CI
 OLD_MSG=$(git log --format=%B -n1)
 git commit -m ":robot: $OLD_MSG" -m "- update build numbers [skip ci]"
