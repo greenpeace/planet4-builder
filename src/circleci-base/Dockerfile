@@ -1,7 +1,7 @@
 # Planet 4 CircleCI build image
 # Branch: develop
-# Commit: ae926710ec0bfae8242a894f079add61567a4da8
-# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/465
+# Commit: 9eae6d86fba4c86f1b9ec1ec633963fbe293ed0f
+# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/469
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
@@ -42,6 +42,10 @@ RUN git clone https://github.com/sstephenson/bats.git && \
     curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -sL https://deb.nodesource.com/setup_8.x | bash - && \
     export "DESIRED_VERSION=v2.8.2" && \
     curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -sL https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get | bash - && \
+    wget https://github.com/jwilder/dockerize/releases/download/v0.6.0/dockerize-linux-amd64-v0.6.0.tar.gz && \
+    tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.6.0.tar.gz && \
+    chmod 755 /usr/local/bin/dockerize && \
+    rm dockerize-linux-amd64-v0.6.0.tar.gz && \
     apt-get install -y --no-install-recommends \
       wget \
       gettext \
