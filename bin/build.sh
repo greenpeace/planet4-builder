@@ -95,8 +95,8 @@ ENVVARS=(
 ENVVARS_STRING="$(printf "%s:" "${ENVVARS[@]}")"
 ENVVARS_STRING="${ENVVARS_STRING%:}"
 
-envsubst "${ENVVARS_STRING}" < "${BUILD_DIR}/src/circleci-base/templates/Dockerfile.in" > "${BUILD_DIR}/src/circleci-base/Dockerfile"
-envsubst "${ENVVARS_STRING}" < "${BUILD_DIR}/README.md.in" > "${BUILD_DIR}/README.md"
+envsubst "${ENVVARS_STRING}" < "${BUILD_DIR}/src/circleci-base/templates/Dockerfile.in" > "${BUILD_DIR}/src/circleci-base/Dockerfile.tmp"
+envsubst "${ENVVARS_STRING}" < "${BUILD_DIR}/README.md.in" > "${BUILD_DIR}/README.md.tmp"
 
 DOCKER_BUILD_STRING="# ${APPLICATION_NAME}
 # Branch: ${BRANCH_NAME}
@@ -107,10 +107,14 @@ DOCKER_BUILD_STRING="# ${APPLICATION_NAME}
 # This file is built automatically from ./templates/Dockerfile.in
 # ------------------------------------------------------------------------
 "
+
 _build "Rewriting Dockerfile from template ..."
-echo -e "${DOCKER_BUILD_STRING}\n$(cat" ${BUILD_DIR}/src/circleci-base/Dockerfile")" > "${BUILD_DIR}/src/circleci-base/Dockerfile"
+echo -e "${DOCKER_BUILD_STRING}\n$(cat "${BUILD_DIR}/src/circleci-base/Dockerfile.tmp")" > "${BUILD_DIR}/src/circleci-base/Dockerfile"
+rm "${BUILD_DIR}/src/circleci-base/Dockerfile.tmp"
+
 _build "Rewriting README.md from template ..."
-echo -e "$(cat "${BUILD_DIR}/README.md")\nBuild: ${CIRCLE_BUILD_URL:-"(local)"}" > "${BUILD_DIR}/README.md"
+echo -e "$(cat "${BUILD_DIR}/README.md.tmp")\nBuild: ${CIRCLE_BUILD_URL:-"(local)"}" > "${BUILD_DIR}/README.md"
+rm "${BUILD_DIR}/README.md.tmp"
 
 # Process array of cloudbuild substitutions
 function getSubstitutions() {
