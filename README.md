@@ -9,6 +9,7 @@ The base image builds upon the `circleci/php:7.0` image and adds:
 -   [ack](https://beyondgrep.com/) 2.22
 -   [bats](https://github.com/sstephenson/bats) latest
 -   [docker-compose](https://github.com/docker/compose/releases) 1.21.0
+-   [dockerize](https://github.com/jwilder/dockerize/releases) 0.6.1
 -   [Google Cloud SDK](https://cloud.google.com/sdk/docs/#install_the_latest_cloud_tools_version_cloudsdk_current_version) 197.0.0
 -   [Helm](https://github.com/kubernetes/helm/releases) 2.8.2
 -   [junit-merge](https://www.npmjs.com/package/junit-merge)

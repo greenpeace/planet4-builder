@@ -43,7 +43,7 @@ DEFAULT_ACK_VERSION='2.22'
 # https://github.com/docker/compose/releases
 DEFAULT_DOCKER_COMPOSE_VERSION='1.21.0'
 # https://github.com/jwilder/dockerize/releases
-DOCKERIZE_VERSION='0.6.0'
+DOCKERIZE_VERSION='0.6.1'
 # https://cloud.google.com/sdk/docs/quickstart-linux
 DEFAULT_GOOGLE_SDK_VERSION='197.0.0'
 # https://github.com/kubernetes/helm/releases
