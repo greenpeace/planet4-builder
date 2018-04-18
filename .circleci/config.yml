@@ -2,7 +2,7 @@ defaults: &defaults
   environment:
     GOOGLE_PROJECT_ID: planet-4-151612
   docker:
-    - image: gcr.io/planet-4-151612/circleci-base:develop
+    - image: gcr.io/planet-4-151612/circleci-base:latest
   working_directory:  /home/circleci/app
 
 version: 2
@@ -11,6 +11,32 @@ jobs:
   build:
     <<: *defaults
     steps:
+      - setup_remote_docker
+
+      - run:
+          name: Versions
+          command: |
+            docker version
+            docker-compose version
+
+            # Show bash version
+            bash --version
+
+            # Show kernel information
+            uname -a
+
+            # Not all distributions will have lsb_release
+            if [[ $(type -P "lsb_release") ]]
+            then
+              lsb_release -a
+            fi
+
+            # bats version
+            bats -v
+
+            # ack version
+            ack --version
+
       - checkout
 
       - run:
@@ -19,17 +45,14 @@ jobs:
             # Ensure all shell scripts are executable
             chmod +x ./bin/*.sh
 
-            # Setup
-            ./bin/setup_workspace.sh
+            # Store current build number for future jobs
+            mkdir -p /tmp/workspace/var
+            echo "${CIRCLE_BUILD_NUM}" > /tmp/workspace/var/circle-build-num
 
       - run:
           name: Update build numbers
           command: |
-            # Updates Dockerfile and README data with CI variables
-            ./bin/update_build_numbers.sh
-
-      - setup_remote_docker
-
+            ${HOME}/scripts/update-build-numbers.sh
       - run:
           name: Configure gcloud
           command: |
@@ -40,7 +63,7 @@ jobs:
           name: Sending build request to Google Container Builder
           command: |
             # Perform the build on GCP
-            ./bin/build.sh -r
+            make build
 
       - persist_to_workspace:
           root: /tmp/workspace
@@ -63,7 +86,7 @@ jobs:
             mkdir -p /tmp/test-results
 
       - run:
-          name: Restore container image
+          name: Pull new image
           command: |
             export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
             docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
