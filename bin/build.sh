@@ -46,9 +46,9 @@ TMPDIR=$(mktemp -d "${TMPDIR:-/tmp/}$(basename 0).XXXXXXXXXXXX")
 
 # -----------------------------------------------------------------------------
 # OUTPUT HELPERS
-wget -q -O ${TMPDIR}/pretty-print.sh https://gist.githubusercontent.com/27Bslash6/ffa9cfb92c25ef27cad2900c74e2f6dc/raw/7142ba210765899f5027d9660998b59b5faa500a/bash-pretty-print.sh
+wget -q -O "${TMPDIR}/pretty-print.sh" https://gist.githubusercontent.com/27Bslash6/ffa9cfb92c25ef27cad2900c74e2f6dc/raw/7142ba210765899f5027d9660998b59b5faa500a/bash-pretty-print.sh
 # shellcheck disable=SC1090
-. ${TMPDIR}/pretty-print.sh
+. "${TMPDIR}/pretty-print.sh"
 
 # -----------------------------------------------------------------------------
 # SET BUILD_DIR FROM REAL PATH
@@ -66,9 +66,10 @@ BUILD_DIR="$( cd -P "$( dirname "$source" )/.." && pwd )"
 # -----------------------------------------------------------------------------
 
 # Setup environment variables
-. ${BUILD_DIR}/bin/env.sh
+. "${BUILD_DIR}/bin/env.sh"
 
 # Rewrite only the variables we want to change
+# shellcheck disable=SC2016
 ENVVARS=(
   '${ACK_VERSION}' \
   '${APPLICATION_DESCRIPTION}' \
@@ -94,8 +95,8 @@ ENVVARS=(
 ENVVARS_STRING="$(printf "%s:" "${ENVVARS[@]}")"
 ENVVARS_STRING="${ENVVARS_STRING%:}"
 
-envsubst "${ENVVARS_STRING}" < ${BUILD_DIR}/src/circleci-base/templates/Dockerfile.in > ${BUILD_DIR}/src/circleci-base/Dockerfile
-envsubst "${ENVVARS_STRING}" < ${BUILD_DIR}/README.md.in > ${BUILD_DIR}/README.md
+envsubst "${ENVVARS_STRING}" < "${BUILD_DIR}/src/circleci-base/templates/Dockerfile.in" > "${BUILD_DIR}/src/circleci-base/Dockerfile.tmp"
+envsubst "${ENVVARS_STRING}" < "${BUILD_DIR}/README.md.in" > "${BUILD_DIR}/README.md.tmp"
 
 DOCKER_BUILD_STRING="# ${APPLICATION_NAME}
 # Branch: ${BRANCH_NAME}
@@ -106,10 +107,14 @@ DOCKER_BUILD_STRING="# ${APPLICATION_NAME}
 # This file is built automatically from ./templates/Dockerfile.in
 # ------------------------------------------------------------------------
 "
+
 _build "Rewriting Dockerfile from template ..."
-echo -e "${DOCKER_BUILD_STRING}\n$(cat ${BUILD_DIR}/src/circleci-base/Dockerfile)" > ${BUILD_DIR}/src/circleci-base/Dockerfile
+echo -e "${DOCKER_BUILD_STRING}\n$(cat "${BUILD_DIR}/src/circleci-base/Dockerfile.tmp")" > "${BUILD_DIR}/src/circleci-base/Dockerfile"
+rm "${BUILD_DIR}/src/circleci-base/Dockerfile.tmp"
+
 _build "Rewriting README.md from template ..."
-echo -e "$(cat ${BUILD_DIR}/README.md)\nBuild: ${CIRCLE_BUILD_URL:-"(local)"}" > ${BUILD_DIR}/README.md
+echo -e "$(cat "${BUILD_DIR}/README.md.tmp")\nBuild: ${CIRCLE_BUILD_URL:-"(local)"}" > "${BUILD_DIR}/README.md"
+rm "${BUILD_DIR}/README.md.tmp"
 
 # Process array of cloudbuild substitutions
 function getSubstitutions() {
@@ -156,14 +161,14 @@ then
   # Avoid sending entire .git history as build context to save some time and bandwidth
   # Since git builtin substitutions aren't available unless triggered
   # https://cloud.google.com/container-builder/docs/concepts/build-requests#substitutions
-  tar --exclude='.git/' --exclude='.circleci/' -zcf ${TMPDIR}/docker-source.tar.gz .
+  tar --exclude='.git/' --exclude='.circleci/' -zcf "${TMPDIR}/docker-source.tar.gz" .
 
   time gcloud container builds submit \
     --verbosity=${VERBOSITY:-"warning"} \
     --timeout=10m \
     --config cloudbuild.yaml \
-    --substitutions ${CLOUDBUILD_SUBSTITUTIONS_STRING} \
-    ${TMPDIR}/docker-source.tar.gz
+    --substitutions "${CLOUDBUILD_SUBSTITUTIONS_STRING}" \
+    "${TMPDIR}/docker-source.tar.gz"
 
 fi
 
