@@ -39,3 +39,14 @@ json=$(jq -n \
 curl -X POST -H 'Content-Type: application/json' \
   --data "$json" \
   "${ROCKETCHAT_HOOK}"
+  
+google_chat_json="{\"text\": \"* $MSG_USERNAME *\ : $MSG_TITLE, 
+$MSG_TEXT , 
+$MSG_LINK \"}"
+
+curl -X POST -H 'Content-Type: application/json' \
+  --data "$google_chat_json" \
+  "${GOOGLE_CHAT_WEBHOOK}"
+  
+  
+  
