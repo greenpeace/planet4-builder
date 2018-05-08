@@ -1,7 +1,7 @@
 # Planet 4 CircleCI build image
 # Branch: develop
-# Commit: 1e3d7aa0adfc0368974c32074b0d3a9e43fbc612
-# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/499
+# Commit: f304e989ed394d74a93dbea5907d3576986031a3
+# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/512
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
@@ -28,10 +28,10 @@ COPY ./etc/ /etc
 RUN git clone https://github.com/sstephenson/bats.git && \
     ./bats/install.sh /usr/local && \
     rm -fr /home/circleci/bats && \
-    curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 "https://releases.hashicorp.com/terraform/0.11.4/terraform_0.11.4_linux_amd64.zip" > /tmp/terraform.zip && \
+    curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 "https://releases.hashicorp.com/terraform/0.11.7/terraform_0.11.7_linux_amd64.zip" > /tmp/terraform.zip && \
     unzip /tmp/terraform.zip -d /usr/local/bin && \
     chmod 0755 /usr/local/bin/terraform && \
-    curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -sSOL https://github.com/gruntwork-io/terragrunt/releases/download/v0.14.2/terragrunt_linux_amd64 && \
+    curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -sSOL https://github.com/gruntwork-io/terragrunt/releases/download/v0.14.10/terragrunt_linux_amd64 && \
     chmod 0755 terragrunt_linux_amd64 && \
     mv terragrunt_linux_amd64 /usr/local/bin/terragrunt && \
     curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 "https://beyondgrep.com/ack-2.22-single-file" > /usr/local/bin/ack && \
@@ -40,17 +40,19 @@ RUN git clone https://github.com/sstephenson/bats.git && \
     chmod 0755 /usr/local/bin/docker-compose && \
     chmod 0755 /home/circleci/scripts/* && \
     curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -sL https://deb.nodesource.com/setup_8.x | bash - && \
-    export "DESIRED_VERSION=v2.8.2" && \
+    export "DESIRED_VERSION=v2.9.0" && \
     curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -sL https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get | bash - && \
     wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz && \
     tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.6.1.tar.gz && \
     chmod 755 /usr/local/bin/dockerize && \
     rm dockerize-linux-amd64-v0.6.1.tar.gz && \
     apt-get install -y --no-install-recommends \
-      wget \
       gettext \
+      jq \
       nodejs \
-      shellcheck && \
+      shellcheck \
+      wget \
+      && \
     npm install -g \
       junit-merge \
       tap-xunit && \
@@ -60,7 +62,7 @@ RUN git clone https://github.com/sstephenson/bats.git && \
 
 USER circleci
 
-RUN curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -L "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/""google-cloud-sdk-198.0.0-linux-x86_64.tar.gz" | tar xz && \
+RUN curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -L "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/""google-cloud-sdk-200.0.0-linux-x86_64.tar.gz" | tar xz && \
     CLOUDSDK_CORE_DISABLE_PROMPTS=1 ./google-cloud-sdk/install.sh \
         --usage-reporting false \
         --bash-completion false \
