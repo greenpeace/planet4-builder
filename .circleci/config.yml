@@ -65,7 +65,7 @@ jobs:
           name: Update build numbers
           command: |
             ${HOME}/scripts/update-build-numbers.sh
-            
+
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
@@ -127,13 +127,13 @@ jobs:
       - attach_workspace:
           at: /tmp/workspace
 
+      - setup_remote_docker
+
       - run:
           name: Configure
           command: |
             ${HOME}/scripts/activate-gcloud-account.sh
             gcloud auth configure-docker
-
-      - setup_remote_docker
 
       - deploy:
           name: Deploy latest tag on master branch
@@ -145,7 +145,7 @@ jobs:
               export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
               docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
               docker tag gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
-              gcloud docker -- push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
+              docker push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
             fi
 
 
