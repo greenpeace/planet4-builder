@@ -59,7 +59,13 @@ jobs:
           name: Sending build request to Google Container Builder
           command: |
             # Perform the build on GCP
-            make build && ${HOME}/scripts/notify-job-success.sh || ${HOME}/scripts/notify-job-failure.sh
+            if [[ $(make build) ]]
+            then
+              ${HOME}/scripts/notify-job-success.sh
+            else
+              ${HOME}/scripts/notify-job-failure.sh
+              exit 1
+            fi
 
       - deploy:
           name: Update build numbers
