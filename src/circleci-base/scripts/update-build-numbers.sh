@@ -46,6 +46,6 @@ git diff-index --quiet HEAD -- && exit 0
 
 # Get previous commit message and append a message, skipping CI
 OLD_MSG=$(git log --format=%B -n1)
-git commit -m ":robot: $OLD_MSG" -m "- update build numbers [skip ci]"
+git commit -m ":robot: Update build numbers ${CIRCLE_TAG:-${CIRCLE_BRANCH}}" -m " - $OLD_MSG [skip ci]"
 # Push updated files to the repo
 git push --force-with-lease --set-upstream origin ${CIRCLE_BRANCH}
