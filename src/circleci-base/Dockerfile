@@ -1,7 +1,7 @@
 # Planet 4 CircleCI build image
 # Branch: develop
-# Commit: f304e989ed394d74a93dbea5907d3576986031a3
-# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/512
+# Commit: 08e01d6b45164ab8113f32325740f42baaebaf71
+# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/520
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
@@ -9,9 +9,7 @@
 
 FROM circleci/php:7.0
 
-MAINTAINER Raymond Walker <raymond.walker@greenpeace.org>
-
-LABEL maintainer="Raymond Walker <raymond.walker@greenpeace.org>" \
+LABEL maintainer="${MAINTAINER}" \
       description="Planet 4 CircleCI build image: \
 Base image for performing CI/CD operations in CircleCI"
 
