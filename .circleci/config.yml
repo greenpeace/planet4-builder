@@ -153,7 +153,7 @@ jobs:
               docker tag gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
               docker push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
             fi
-            TYPE="Deploy" ${HOME}/scripts/notify-job-success.sh
+            TYPE="Deployment" ${HOME}/scripts/notify-job-success.sh
 
 
 workflows:
