@@ -96,6 +96,7 @@ jobs:
           command: |
             export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
             docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} php -v > /tmp/test-results/php_version.txt
+            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} php -r "phpinfo();" > /tmp/test-results/php_info.txt
             grep -q 'PHP 7' /tmp/test-results/php_version.txt
             cat /tmp/test-results/php_version.txt
 
