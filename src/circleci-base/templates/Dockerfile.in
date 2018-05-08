@@ -1,8 +1,6 @@
 FROM ${IMAGE_FROM}
 
-MAINTAINER ${IMAGE_MAINTAINER}
-
-LABEL maintainer="${IMAGE_MAINTAINER}" \
+LABEL maintainer="${MAINTAINER}" \
       description="${APPLICATION_NAME}: \
 ${APPLICATION_DESCRIPTION}"
 
@@ -38,10 +36,12 @@ RUN git clone https://github.com/sstephenson/bats.git && \
     chmod 755 /usr/local/bin/dockerize && \
     rm dockerize-linux-amd64-v${DOCKERIZE_VERSION}.tar.gz && \
     apt-get install -y --no-install-recommends \
-      wget \
       gettext \
+      jq \
       nodejs \
-      shellcheck && \
+      shellcheck \
+      wget \
+      && \
     npm install -g \
       junit-merge \
       tap-xunit && \

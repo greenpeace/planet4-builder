@@ -2,7 +2,7 @@ defaults: &defaults
   environment:
     GOOGLE_PROJECT_ID: planet-4-151612
   docker:
-    - image: gcr.io/planet-4-151612/circleci-base:latest
+    - image: gcr.io/planet-4-151612/circleci-base:develop
   working_directory:  /home/circleci/app
 
 version: 2
@@ -50,10 +50,6 @@ jobs:
             echo "${CIRCLE_BUILD_NUM}" > /tmp/workspace/var/circle-build-num
 
       - run:
-          name: Update build numbers
-          command: |
-            ${HOME}/scripts/update-build-numbers.sh
-      - run:
           name: Configure gcloud
           command: |
             # Configure gcloud authentication
@@ -63,7 +59,18 @@ jobs:
           name: Sending build request to Google Container Builder
           command: |
             # Perform the build on GCP
-            make build
+            if [[ $(make build) ]]
+            then
+              ${HOME}/scripts/notify-job-success.sh
+            else
+              ${HOME}/scripts/notify-job-failure.sh
+              exit 1
+            fi
+
+      - deploy:
+          name: Update build numbers
+          command: |
+            ${HOME}/scripts/update-build-numbers.sh
 
       - persist_to_workspace:
           root: /tmp/workspace
@@ -96,8 +103,15 @@ jobs:
           command: |
             export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
             docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} php -v > /tmp/test-results/php_version.txt
+            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} php -r "phpinfo();" > /tmp/test-results/php_info.txt
             grep -q 'PHP 7' /tmp/test-results/php_version.txt
-            cat /tmp/test-results/php_version.txt
+
+      - run:
+          name: Test Composer
+          command: |
+            export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
+            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} composer --version > /tmp/test-results/composer_version.txt
+            grep -q 'Composer version' /tmp/test-results/composer_version.txt
 
       - run:
           name: Test gcloud
@@ -106,6 +120,8 @@ jobs:
             docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} gcloud -v > /tmp/test-results/gcloud_version.txt
             grep -q 'kubectl' /tmp/test-results/gcloud_version.txt
             cat /tmp/test-results/gcloud_version.txt
+            gcloud config set project ${GOOGLE_PROJECT_ID}
+            gcloud config list
 
       - store_test_results:
           path: /tmp/test-results
@@ -117,32 +133,27 @@ jobs:
       - attach_workspace:
           at: /tmp/workspace
 
-      - run:
-          name: Configure gcloud
-          command: |
-            ${HOME}/scripts/activate-gcloud-account.sh
-
       - setup_remote_docker
 
       - run:
-          name: Restore container image
+          name: Configure
           command: |
-            export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
-            docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
+            ${HOME}/scripts/activate-gcloud-account.sh
+            gcloud auth configure-docker
 
       - deploy:
           name: Deploy latest tag on master branch
           command: |
-            set -x
-
-            # FIXME Hacky workaround for CircleCI checking commits out with detached HEAD
-            export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
+            # FIXME Hacky workaround for CircleCI checking tagged commits out with detached HEAD
             if [[ "${CIRCLE_BRANCH}" = "master" ]] ||
                [[ "$(cat /tmp/workspace/var/circle-branch-name)" = "master" ]]
             then
+              export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
+              docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
               docker tag gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
-              gcloud docker -- push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
+              docker push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
             fi
+            TYPE="Deployment" ${HOME}/scripts/notify-job-success.sh
 
 
 workflows:
@@ -150,10 +161,12 @@ workflows:
   build-test-and-deploy:
     jobs:
       - build:
+          context: org-global
           filters:
             tags:
               only: /.*/
       - test:
+          context: org-global
           requires:
             - build
           filters:
@@ -161,6 +174,7 @@ workflows:
               only: /.*/
       # Only run deploy job for tagged releases, any branch
       - deploy:
+          context: org-global
           requires:
             - test
           filters:
