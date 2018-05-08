@@ -50,7 +50,7 @@ google_chat_json=$(jq -n \
 '{
 	"text": "* $MSG_USERNAME * : $MSG_TITLE - $MSG_TYPE, 
 $MSG_TEXT , 
-$MSG_LINK \"
+$MSG_LINK "
 }')
 
 curl -X POST -H 'Content-Type: application/json' \
