@@ -17,10 +17,10 @@ fi
 # gcloud --quiet components update
 
 # Decode base64-encoded service key json
-echo "${GCLOUD_SERVICE_KEY}" | base64 --decode -i > ${HOME}/gcloud-service-key.json
+echo "${GCLOUD_SERVICE_KEY}" | base64 --decode -i > "${HOME}/gcloud-service-key.json"
 
 # Configure project
-gcloud config set project ${GOOGLE_PROJECT_ID}
+gcloud config set project "${GOOGLE_PROJECT_ID}"
 
 # Authenticate
-gcloud auth activate-service-account --key-file ${HOME}/gcloud-service-key.json
+gcloud auth activate-service-account --key-file "${HOME}/gcloud-service-key.json"
