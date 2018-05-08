@@ -61,7 +61,7 @@ jobs:
             # Perform the build on GCP
             make build
 
-      - run:
+      - deploy:
           name: Update build numbers
           command: |
             ${HOME}/scripts/update-build-numbers.sh
