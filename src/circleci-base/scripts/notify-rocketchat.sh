@@ -40,13 +40,19 @@ curl -X POST -H 'Content-Type: application/json' \
   --data "$json" \
   "${ROCKETCHAT_HOOK}"
   
-google_chat_json="{\"text\": \"* $MSG_USERNAME *\ : $MSG_TITLE, 
+
+google_chat_json=$(jq -n \
+  --arg MSG_USERNAME "$MSG_USERNAME" \
+  --arg MSG_TYPE "$MSG_TYPE" \
+  --arg MSG_TITLE "$MSG_TITLE" \
+  --arg MSG_LINK "$MSG_LINK" \
+  --arg MSG_TEXT "$MSG_TEXT" \
+'{
+	"text": "* $MSG_USERNAME * : $MSG_TITLE - $MSG_TYPE, 
 $MSG_TEXT , 
-$MSG_LINK \"}"
+$MSG_LINK \"
+}')
 
 curl -X POST -H 'Content-Type: application/json' \
   --data "$google_chat_json" \
   "${GOOGLE_CHAT_WEBHOOK}"
-  
-  
-  
