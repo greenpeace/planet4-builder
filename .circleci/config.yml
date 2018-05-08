@@ -155,10 +155,12 @@ workflows:
   build-test-and-deploy:
     jobs:
       - build:
+          context: org-global
           filters:
             tags:
               only: /.*/
       - test:
+          context: org-global
           requires:
             - build
           filters:
@@ -166,6 +168,7 @@ workflows:
               only: /.*/
       # Only run deploy job for tagged releases, any branch
       - deploy:
+          context: org-global
           requires:
             - test
           filters:
