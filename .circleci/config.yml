@@ -119,28 +119,22 @@ jobs:
           at: /tmp/workspace
 
       - run:
-          name: Configure gcloud
+          name: Configure
           command: |
             ${HOME}/scripts/activate-gcloud-account.sh
+            gcloud auth configure-docker
 
       - setup_remote_docker
-
-      - run:
-          name: Restore container image
-          command: |
-            export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
-            docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
 
       - deploy:
           name: Deploy latest tag on master branch
           command: |
-            set -x
-
-            # FIXME Hacky workaround for CircleCI checking commits out with detached HEAD
-            export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
+            # FIXME Hacky workaround for CircleCI checking tagged commits out with detached HEAD
             if [[ "${CIRCLE_BRANCH}" = "master" ]] ||
                [[ "$(cat /tmp/workspace/var/circle-branch-name)" = "master" ]]
             then
+              export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
+              docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
               docker tag gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
               gcloud docker -- push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
             fi
