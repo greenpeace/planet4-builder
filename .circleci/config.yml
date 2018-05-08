@@ -59,7 +59,7 @@ jobs:
           name: Sending build request to Google Container Builder
           command: |
             # Perform the build on GCP
-            make build
+            make build && ${HOME}/scripts/notify-job-success.sh || ${HOME}/scripts/notify-job-failure.sh
 
       - deploy:
           name: Update build numbers
@@ -147,6 +147,7 @@ jobs:
               docker tag gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
               docker push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
             fi
+            TYPE="Deploy" ${HOME}/scripts/notify-job-success.sh
 
 
 workflows:
