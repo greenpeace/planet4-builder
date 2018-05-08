@@ -98,7 +98,13 @@ jobs:
             docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} php -v > /tmp/test-results/php_version.txt
             docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} php -r "phpinfo();" > /tmp/test-results/php_info.txt
             grep -q 'PHP 7' /tmp/test-results/php_version.txt
-            cat /tmp/test-results/php_version.txt
+
+      - run:
+          name: Test Composer
+          command: |
+            export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
+            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} composer --version > /tmp/test-results/composer_version.txt
+            grep -q 'Composer version' /tmp/test-results/composer_version.txt
 
       - run:
           name: Test gcloud
@@ -107,6 +113,8 @@ jobs:
             docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} gcloud -v > /tmp/test-results/gcloud_version.txt
             grep -q 'kubectl' /tmp/test-results/gcloud_version.txt
             cat /tmp/test-results/gcloud_version.txt
+            gcloud config set project ${GOOGLE_PROJECT_ID}
+            gcloud config list
 
       - store_test_results:
           path: /tmp/test-results
