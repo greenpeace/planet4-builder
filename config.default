@@ -24,31 +24,31 @@ set -a
 CIRCLECI_USER="circleci"
 
 # Application environment
-DEFAULT_APPLICATION_NAME="Planet 4 CircleCI build image"
-DEFAULT_APPLICATION_DESCRIPTION="Base image for performing CI/CD operations in CircleCI"
-DEFAULT_GOOGLE_PROJECT_ID="planet-4-151612"
-DEFAULT_MAINTAINER="Raymond Walker <raymond.walker@greenpeace.org>"
+APPLICATION_NAME="Planet 4 CircleCI build image"
+APPLICATION_DESCRIPTION="Base image for performing CI/CD operations in CircleCI"
+GOOGLE_PROJECT_ID="planet-4-151612"
+MAINTAINER="Raymond Walker <raymond.walker@greenpeace.org>"
 
 # Container registry
-DEFAULT_NAMESPACE="gcr.io"
+NAMESPACE="gcr.io"
 
 # Upstream image
-DEFAULT_BASE_IMAGE="php"
-DEFAULT_BASE_NAMESPACE="circleci"
-DEFAULT_BASE_TAG="7.0"
+BASE_IMAGE="php"
+BASE_NAMESPACE="circleci"
+BASE_TAG="7.0"
 
 # Vendor application versions
 # https://beyondgrep.com/install/
-DEFAULT_ACK_VERSION='2.22'
+ACK_VERSION='2.22'
 # https://github.com/docker/compose/releases
-DEFAULT_DOCKER_COMPOSE_VERSION='1.21.0'
+DOCKER_COMPOSE_VERSION='1.21.0'
 # https://github.com/jwilder/dockerize/releases
 DOCKERIZE_VERSION='0.6.1'
 # https://cloud.google.com/sdk/docs/quickstart-linux
-DEFAULT_GOOGLE_SDK_VERSION='200.0.0'
+GOOGLE_SDK_VERSION='200.0.0'
 # https://github.com/kubernetes/helm/releases
-DEFAULT_HELM_VERSION='2.9.0'
+HELM_VERSION='2.9.0'
 # https://www.terraform.io/downloads.html
-DEFAULT_TERRAFORM_VERSION='0.11.7'
+TERRAFORM_VERSION='0.11.7'
 # https://github.com/gruntwork-io/terragrunt/releases
-DEFAULT_TERRAGRUNT_VERSION='0.14.10'
+TERRAGRUNT_VERSION='0.14.10'
