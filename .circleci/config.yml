@@ -50,10 +50,6 @@ jobs:
             echo "${CIRCLE_BUILD_NUM}" > /tmp/workspace/var/circle-build-num
 
       - run:
-          name: Update build numbers
-          command: |
-            ${HOME}/scripts/update-build-numbers.sh
-      - run:
           name: Configure gcloud
           command: |
             # Configure gcloud authentication
@@ -65,6 +61,11 @@ jobs:
             # Perform the build on GCP
             make build
 
+      - run:
+          name: Update build numbers
+          command: |
+            ${HOME}/scripts/update-build-numbers.sh
+            
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
