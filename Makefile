@@ -4,8 +4,9 @@ BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 
 .DEFAULT_GOAL := all
 
+.PHONY: all build pull
+
 all: build pull
-.PHONY: build pull
 
 build:
 		./bin/build.sh -r
