@@ -1,7 +1,7 @@
 # Planet 4 CircleCI build image
 # Branch: develop
-# Commit: 1a8393b65cdf3296704ffdcfabec36479732481f
-# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/561
+# Commit: 918cadb9ecd836e362e0556fafc756ff9f3a6fc9
+# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/568
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
@@ -49,6 +49,7 @@ RUN git clone https://github.com/sstephenson/bats.git && \
       jq \
       nodejs \
       shellcheck \
+      vim \
       wget \
       && \
     npm install -g \
