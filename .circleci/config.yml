@@ -59,7 +59,7 @@ jobs:
           name: Sending build request to Google Container Builder
           command: |
             # Perform the build on GCP
-            if [[ $(make build) ]]
+            if make build
             then
               ${HOME}/scripts/notify-job-success.sh
             else
