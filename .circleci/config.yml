@@ -50,16 +50,16 @@ jobs:
             echo "${CIRCLE_BUILD_NUM}" > /tmp/workspace/var/circle-build-num
 
       - run:
-          name: Configure gcloud
+          name: Configure
           command: |
-            # Configure gcloud authentication
             ${HOME}/scripts/activate-gcloud-account.sh
+            gcloud auth configure-docker
 
       - run:
           name: Sending build request to Google Container Builder
           command: |
             # Perform the build on GCP
-            if [[ $(make build) ]]
+            if make build
             then
               ${HOME}/scripts/notify-job-success.sh
             else
@@ -153,7 +153,7 @@ jobs:
               docker tag gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
               docker push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
             fi
-            TYPE="Deployment" ${HOME}/scripts/notify-job-success.sh
+            TYPE="gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest Tagged" ${HOME}/scripts/notify-job-success.sh
 
 
 workflows:
