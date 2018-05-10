@@ -151,9 +151,9 @@ jobs:
               export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
               docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
               docker tag gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
+              TYPE="gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest Tagged" ${HOME}/scripts/notify-job-success.sh
               docker push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
             fi
-            TYPE="gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest Tagged" ${HOME}/scripts/notify-job-success.sh
 
 
 workflows:
