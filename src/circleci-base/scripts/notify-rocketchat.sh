@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 set -eu
 
-# dockerize \
-#   -template "templates/notify_rocketchat.json.tmpl:${TMPDIR:-/tmp}/notify_rocketchat.json"
 MSG_USERNAME=${MSG_USERNAME:-CircleCI}
 MSG_TYPE=${MSG_TYPE:-Notification}
 MSG_ICON=${MSG_ICON:-'https://dmmj3mmt94rvw.cloudfront.net/favicon-undefined.ico'}
