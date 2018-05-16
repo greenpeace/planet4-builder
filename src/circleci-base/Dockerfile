@@ -1,7 +1,7 @@
 # Planet 4 CircleCI build image
-# Branch: master
-# Commit: 7ec11f705b6fc7c2b03dd834201912484242b6a2
-# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/587
+# Branch: develop
+# Commit: 4e4b8d0c956ff6a47a58d2ce094144ddc61ab5eb
+# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/592
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
@@ -16,7 +16,7 @@ Base image for performing CI/CD operations in CircleCI"
 USER root
 
 ENV CIRCLECI_USER="circleci" \
-    PATH="/home/circleci/google-cloud-sdk/bin:${PATH}"
+    PATH="/home/circleci/scripts:/home/circleci/google-cloud-sdk/bin:${PATH}"
 
 WORKDIR /home/circleci
 
