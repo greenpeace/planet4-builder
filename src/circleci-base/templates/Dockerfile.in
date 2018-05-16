@@ -7,7 +7,7 @@ ${APPLICATION_DESCRIPTION}"
 USER root
 
 ENV CIRCLECI_USER="${CIRCLECI_USER}" \
-    PATH="/home/${CIRCLECI_USER}/google-cloud-sdk/bin:${PATH}"
+    PATH="/home/${CIRCLECI_USER}/scripts:/home/${CIRCLECI_USER}/google-cloud-sdk/bin:${PATH}"
 
 WORKDIR /home/${CIRCLECI_USER}
 
