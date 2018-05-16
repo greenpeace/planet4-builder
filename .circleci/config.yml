@@ -56,7 +56,7 @@ jobs:
             gcloud auth configure-docker
 
       - run:
-          name: Sending build request to Google Container Builder
+          name: Build on Google Container Builder
           command: |
             # Perform the build on GCP
             if make build
@@ -68,7 +68,7 @@ jobs:
             fi
 
       - deploy:
-          name: Update build numbers
+          name: Commit updated build numbers
           command: |
             ${HOME}/scripts/update-build-numbers.sh
 
