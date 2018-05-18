@@ -7,6 +7,6 @@ set -eu
 # fallback to NEWRELIC_APPNAME or error if unset
 appname=${1:-${NEWRELIC_APPNAME}}
 
-./newrelic-get.sh \
+newrelic-get.sh \
   "https://api.newrelic.com/v2/applications.json" \
   jq "[.applications[] | select(.name == \"${appname}\")][] | .id"
