@@ -1,13 +1,13 @@
 # Planet 4 CircleCI build image
 # Branch: develop
-# Commit: e5895235da643e5df63cd5e8718dbad23e217573
-# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/627
+# Commit: 455b2a558887d53e9de28fd5ea2ef033542426b1
+# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/631
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
 # ------------------------------------------------------------------------
 
-FROM circleci/php:7.0
+FROM circleci/php:7.0-node-browsers
 
 LABEL maintainer="${MAINTAINER}" \
       description="Planet 4 CircleCI build image: \
@@ -47,7 +47,6 @@ RUN git clone https://github.com/sstephenson/bats.git && \
     apt-get install -y --no-install-recommends \
       gettext \
       jq \
-      nodejs \
       shellcheck \
       vim \
       wget \
