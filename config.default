@@ -35,7 +35,7 @@ NAMESPACE="gcr.io"
 # Upstream image
 BASE_IMAGE="php"
 BASE_NAMESPACE="circleci"
-BASE_TAG="7.0"
+BASE_TAG="7.0-node-browsers"
 
 # Vendor application versions
 # https://beyondgrep.com/install/
