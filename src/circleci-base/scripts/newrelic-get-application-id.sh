@@ -7,6 +7,11 @@ set -eu
 # fallback to NEWRELIC_APPNAME or error if unset
 appname=${1:-${NEWRELIC_APPNAME}}
 
-newrelic-get.sh \
-  "https://api.newrelic.com/v2/applications.json" \
-  "jq [.applications[] | select(.name == \"${appname}\")][] | .id"
+# Replace spaces with + characters
+appname=$(echo "$appname" | tr ' ' '+')
+
+appId=$(curl -s -X GET "https://api.newrelic.com/v2/applications.json" \
+     -H "X-Api-Key:${NEWRELIC_REST_API_KEY}" \
+     -G -d "filter[name]=${appname}" | jq ".applications[].id")
+
+echo "$appId"

@@ -37,6 +37,9 @@ jobs:
             # ack version
             ack --version
 
+            # nodejs version
+            nodejs --version
+
       - checkout
 
       - run:
@@ -179,4 +182,4 @@ workflows:
             - test
           filters:
             tags:
-              only: /v.*/
+              only: /^v.*/

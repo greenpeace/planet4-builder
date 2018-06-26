@@ -16,6 +16,14 @@ then
   git remote update
   # Find which remote branch contains the current commit
   CIRCLE_BRANCH=$(git branch -r --contains ${CIRCLE_SHA1} | grep -v 'HEAD' | awk '{split($1,a,"/"); print a[2]}')
+
+  if [[ -z "$CIRCLE_BRANCH" ]]
+  then
+      >&2 echo "Could not reliably determine branch"
+      >&2 echo "Forcing master (since they should be the only branches tagged)"
+      CIRCLE_BRANCH=master
+  fi
+
   # Checkout that branch / tag
   git checkout ${CIRCLE_BRANCH}
   if [[ "$(git rev-parse HEAD)" != "${CIRCLE_SHA1}" ]]
