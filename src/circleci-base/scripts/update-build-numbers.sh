@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -exo pipefail
+set -ex
 
 # If the build url isn't set, we're building locally so
 if [[ -z "${CIRCLE_BUILD_URL}" ]]
