@@ -1,7 +1,7 @@
 # Planet 4 CircleCI build image
 # Branch: develop
-# Commit: ca9a579876742b32094ac2468d88703580d1ea40
-# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/730
+# Commit: e60501ce2f4205cf8bb489b80bbaec8b217f64fa
+# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/734
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
@@ -43,6 +43,9 @@ RUN git clone https://github.com/sstephenson/bats.git && \
     tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.6.1.tar.gz && \
     chmod 755 /usr/local/bin/dockerize && \
     rm dockerize-linux-amd64-v0.6.1.tar.gz && \
+    wget --no-check-certificate -q https://raw.githubusercontent.com/petervanderdoes/gitflow-avh/develop/contrib/gitflow-installer.sh && \
+    bash gitflow-installer.sh install stable && \
+    rm gitflow-installer.sh && \
     apt-get install -y --no-install-recommends \
       gettext \
       jq \
