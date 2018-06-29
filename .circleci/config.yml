@@ -269,5 +269,7 @@ workflows:
           requires:
             - deploy
           filters:
+            branches:
+              ignore: /.*/
             tags:
               only: /^v.*/
