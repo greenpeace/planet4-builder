@@ -21,8 +21,8 @@ BRANCH_NAME ?= $(shell git rev-parse --abbrev-ref HEAD | sed 's/[^a-zA-Z0-9._-]/
 BUILD_TAG ?= $(shell git tag -l --points-at HEAD | tail -n1 | sed 's/[^a-zA-Z0-9._-]/-/g')
 endif
 
-# If BUILD_TAG is still not set, default to
-ifeq ($(BUILD_TAG),)
+# If BUILD_TAG is still not set, default to branch name
+ifeq ($(strip $(BUILD_TAG)),)
 BUILD_TAG := $(BRANCH_NAME)
 endif
 
