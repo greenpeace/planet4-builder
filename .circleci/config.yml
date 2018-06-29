@@ -19,7 +19,7 @@ jobs:
           name: Build
           environment:
             TYPE: Build
-          command: |
+          command: |            
             if make build
             then
               ${HOME}/scripts/notify-job-success.sh
