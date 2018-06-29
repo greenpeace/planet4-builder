@@ -3,10 +3,11 @@ set -xo pipefail
 
 new_version=$1
 commit_message=":robot: ${2:-Automated promotion}"
+diff_log=$(git log --oneline "$(git-current-tag.sh)..." | grep -v ":robot:")
 
 export GIT_MERGE_AUTOEDIT=no
 
-git flow release finish $new_version --showcommands -p -m $commit_message 2>&1 | tee ${TMPDIR:-/tmp}/gitflow.log
+git flow release finish $new_version --showcommands -p -m "$commit_message" -m "$diff_log" 2>&1 | tee ${TMPDIR:-/tmp}/gitflow.log
 
 status=$?
 
@@ -19,7 +20,8 @@ then
     # Force merge conflicts to be --ours
     grep -lr '<<<<<<<' . | xargs git checkout --ours
     git add .
-    git commit -m ":robot: Resolve merge conflicts --ours"
+    old_message=$(git log --format=%B -n1)
+    git commit --amend -m "$old_message" -m ":robot: Resolve merge conflicts --ours"
     git flow release finish $new_version --showcommands -p -m $commit_message
     exit $?
   fi
