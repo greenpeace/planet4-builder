@@ -8,8 +8,6 @@ set -eu
 # Replace spaces with + characters
 appname=$(tr ' ' '+' <<< ${1:-${NEWRELIC_APPNAME}})
 
-appId=$(curl -s -X GET "https://api.newrelic.com/v2/applications.json" \
+curl -s -X GET "https://api.newrelic.com/v2/applications.json" \
      -H "X-Api-Key:${NEWRELIC_REST_API_KEY}" \
-     -G -d "filter[name]=${appname}" | jq ".applications[].id")
-
-echo "$appId"
+     -G -d "filter[name]=${appname}" | jq ".applications[].id"
