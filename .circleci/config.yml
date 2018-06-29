@@ -129,7 +129,7 @@ jobs:
           name: Notify success
           command: TYPE="Tests" ${HOME}/scripts/notify-job-success.sh
           background: true
-          
+
       - checkout
 
       - deploy:
@@ -160,9 +160,7 @@ jobs:
 
             release-start.sh $new_version
 
-      - run:
-          name: Finish release
-          command: release-finish.sh $new_version
+            release-finish.sh $new_version
 
   deploy:
     <<: *defaults
