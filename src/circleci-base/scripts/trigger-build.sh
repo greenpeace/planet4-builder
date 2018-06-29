@@ -20,6 +20,11 @@ $CHECKOUT_KEY
 EOF
 )
 
+# Configure git user
+git config user.email "circleci-bot@greenpeace.org"
+git config user.name "CircleCI Bot"
+git config push.default simple
+
 # Checkout dependent repository and trigger CI with empty commit.
 git clone $repo && \
   cd planet4-builder && \
