@@ -53,7 +53,7 @@ jobs:
             echo "${CIRCLE_BUILD_NUM}" > /tmp/workspace/var/circle-build-num
 
       - run:
-          name: Configure
+          name: Authenticate
           command: |
             ${HOME}/scripts/activate-gcloud-account.sh
             gcloud auth configure-docker
