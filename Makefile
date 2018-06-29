@@ -28,6 +28,8 @@ ifeq ($(strip $(BUILD_TAG)),)
 # Default to branch name
 BUILD_TAG := $(BRANCH_NAME)
 else
+# Consider this the new :latest image
+# FIXME: implement build tests before tagging with :latest
 PUSH_LATEST := true
 endif
 
