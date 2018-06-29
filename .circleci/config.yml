@@ -136,6 +136,20 @@ jobs:
       - store_test_results:
           path: /tmp/test-results
 
+  promote:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+
+      - checkout
+
+      - run:
+          name: Promote release
+          command: |
+            CURRENT_VERSION=$(git describe --tags $(git rev-list --tags --max-count=1))
+            NEW_VERSION=$(increment-version.sh $CURRENT_VERSION)
+
   deploy:
     <<: *defaults
     steps:
@@ -165,7 +179,7 @@ jobs:
     working_directory:  /tmp/workspace
     steps:
       - checkout
-      
+
       - attach_workspace:
           at: /tmp/workspace
 
@@ -177,13 +191,43 @@ jobs:
 
 workflows:
   version: 2
+  build-test-promote:
+    jobs:
+      - build:
+          context: org-global
+          filters:
+            branches:
+              ignore: master
+            tags:
+              ignore: /^v.*/
+
+      - test:
+          context: org-global
+          requires:
+            - build
+          filters:
+            branches:
+              ignore: master
+            tags:
+              ignore: /^v.*/
+
+      - promote:
+          context: org-global
+          requires:
+            - test
+          filters:
+            branches:
+              ignore: master
+            tags:
+              ignore: /^v.*/
+
   build-test-deploy-trigger:
     jobs:
       - build:
           context: org-global
           filters:
             tags:
-              only: /.*/
+              only: /^v.*/
 
       - test:
           context: org-global
@@ -191,7 +235,7 @@ workflows:
             - build
           filters:
             tags:
-              only: /.*/
+              only: /^v.*/
 
       # Only run from this point on tags starting with v
       - deploy:
@@ -199,17 +243,13 @@ workflows:
           requires:
             - test
           filters:
-            branches:
-              ignore: /.*/
             tags:
               only: /^v.*/
 
-      - trigger-p4-builder:
-          context: org-global
-          requires:
-            - deploy
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v.*/
+    - trigger-p4-builder:
+        context: org-global
+        requires:
+          - deploy
+        filters:
+          tags:
+            only: /^v.*/
