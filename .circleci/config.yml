@@ -189,8 +189,6 @@ workflows:
           filters:
             branches:
               only: develop
-            tags:
-              ignore: /^v.*/
 
       - test:
           context: org-global
@@ -199,8 +197,6 @@ workflows:
           filters:
             branches:
               only: develop
-            tags:
-              ignore: /^v.*/
 
       - notify-promote:
           context: org-global
@@ -209,8 +205,6 @@ workflows:
           filters:
             branches:
               only: develop
-            tags:
-              ignore: /^v.*/
 
       - hold-promote:
           type: approval
@@ -219,8 +213,6 @@ workflows:
           filters:
             branches:
               only: develop
-            tags:
-              ignore: /^v.*/
 
       - promote:
           context: org-global
@@ -229,8 +221,6 @@ workflows:
           filters:
             branches:
               only: develop
-            tags:
-              ignore: /^v.*/
 
   build-test-deploy-trigger:
     jobs:
