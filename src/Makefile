@@ -219,21 +219,10 @@ deploy:
 	# Update Helm repositories
 	helm repo update
 
-	# Create WP-Stateless bucket if it doesn't exist
-	WP_STATELESS_OWNER=$(WP_STATELESS_OWNER) \
-	WP_STATELESS_BUCKET=$(WP_STATELESS_BUCKET) \
-	./make_bucket.sh
-
 	# Connect to cluster
 	gcloud container clusters get-credentials $(GCLOUD_CLUSTER) \
 	--zone $(GCLOUD_ZONE) \
 	--project $(GOOGLE_PROJECT_ID)
-
-		# Make Kubernetes namespace for the release if not exist
-	APP_ENVIRONMENT=$(APP_ENVIRONMENT) \
-	HELM_NAMESPACE=$(HELM_NAMESPACE) \
-	APP_HOSTPATH=$(APP_HOSTPATH) \
-	./make_namespace.sh
 
 	# Create Helm deploy secrets file from environment
 	envsubst < secrets.yaml.in > secrets.yaml
