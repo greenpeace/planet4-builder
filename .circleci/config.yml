@@ -184,11 +184,14 @@ workflows:
             tags:
               only: /.*/
       # Only run deploy job for tagged releases, any branch
+      # Only run from this point on tags starting with v
       - deploy:
           context: org-global
           requires:
             - test
           filters:
+            branches:
+              ignore: /.*/
             tags:
               only: /^v.*/
 
@@ -197,5 +200,7 @@ workflows:
           requires:
             - deploy
           filters:
+            branches:
+              ignore: /.*/
             tags:
               only: /^v.*/
