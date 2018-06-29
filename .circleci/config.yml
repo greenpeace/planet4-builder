@@ -20,12 +20,11 @@ jobs:
           environment:
             TYPE: "Build"
           command: |
-            if make build
+            if ! make build
             then
-              ${HOME}/scripts/notify-job-success.sh
-            else
               ${HOME}/scripts/notify-job-failure.sh
-            exit 1
+              exit 1
+            fi
 
       - run:
           name: Authenticate
