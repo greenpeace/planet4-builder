@@ -7,7 +7,7 @@ diff_log=$(git log --oneline "$(git-current-tag.sh)..." | grep -v ":robot:")
 
 export GIT_MERGE_AUTOEDIT=no
 
-git flow release finish $new_version --showcommands -p -m "$commit_message" -m "${diff_log//[\'\"\`]}}" 2>&1 | tee ${TMPDIR:-/tmp}/gitflow.log
+git flow release finish $new_version --showcommands -p -m "$commit_message" -m "${diff_log//[\'\"\`]}" 2>&1 | tee ${TMPDIR:-/tmp}/gitflow.log
 
 status=$?
 
