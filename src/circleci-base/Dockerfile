@@ -1,7 +1,7 @@
 # Planet 4 CircleCI build image
 # Branch: develop
-# Commit: f669c3e4b4a5e6191d38042f3b6c8e0a30ba46fc
-# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/671
+# Commit: d2048bdeaa5ef9afd937ecaa3c5e85a9f90de239
+# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/677
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
@@ -65,5 +65,4 @@ RUN curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max
         --bash-completion false \
         --path-update false \
         --rc-path "/home/circleci/.bashrc" && \
-    gcloud --quiet components update && \
     gcloud --quiet components update kubectl
