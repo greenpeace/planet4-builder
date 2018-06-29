@@ -56,5 +56,4 @@ RUN curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max
         --bash-completion false \
         --path-update false \
         --rc-path "/home/${CIRCLECI_USER}/.bashrc" && \
-    gcloud --quiet components update && \
     gcloud --quiet components update kubectl
