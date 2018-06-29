@@ -12,9 +12,11 @@ jobs:
     <<: *defaults
     steps:
       - setup_remote_docker
+
       - checkout
+
       - run:
-          name: Build container
+          name: Build
           environment:
             TYPE: Build
           command: |
@@ -25,15 +27,38 @@ jobs:
               ${HOME}/scripts/notify-job-failure.sh
             exit 1
 
-      - deploy:
-          name: Push containers to gcr.io
-          environment:
-            TYPE: Push
+      - run:
+          name: Authenticate
           command: |
-            mkdir -p /tmp/workspace/var
             ${HOME}/scripts/activate-gcloud-account.sh
             gcloud auth configure-docker
-            docker push gcr.io/planet-4-151612
+
+      - deploy:
+          name: Push
+          environment:
+            TYPE: Push:
+          command: |
+            if make push
+            then
+              ${HOME}/scripts/notify-job-success.sh
+            else
+              ${HOME}/scripts/notify-job-failure.sh
+            exit 1
+
+      - deploy:
+          name: Push :latest
+          environment:
+            TYPE: Push:latest
+          command: |
+            if [ ! -z "$CIRCLE_TAG" ]
+            then
+              if make push-latest
+              then
+                ${HOME}/scripts/notify-job-success.sh
+              else
+                ${HOME}/scripts/notify-job-failure.sh
+              exit 1
+            fi
 
 workflows:
   version: 2
