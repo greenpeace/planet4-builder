@@ -196,7 +196,7 @@ workflows:
           context: org-global
           filters:
             branches:
-              ignore: master
+              only: develop
             tags:
               ignore: /^v.*/
 
@@ -206,7 +206,7 @@ workflows:
             - build
           filters:
             branches:
-              ignore: master
+              only: develop
             tags:
               ignore: /^v.*/
 
@@ -216,7 +216,7 @@ workflows:
             - test
           filters:
             branches:
-              ignore: master
+              only: develop
             tags:
               ignore: /^v.*/
 
@@ -225,6 +225,8 @@ workflows:
       - build:
           context: org-global
           filters:
+            branches:
+              ignore: /.*/
             tags:
               only: /^v.*/
 
@@ -233,6 +235,8 @@ workflows:
           requires:
             - build
           filters:
+            branches:
+              ignore: /.*/
             tags:
               only: /^v.*/
 
@@ -242,6 +246,8 @@ workflows:
           requires:
             - test
           filters:
+            branches:
+              ignore: /.*/
             tags:
               only: /^v.*/
 
