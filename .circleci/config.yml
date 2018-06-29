@@ -35,7 +35,7 @@ jobs:
       - deploy:
           name: Push
           environment:
-            TYPE: "Push"
+            TYPE: "Build + Push gcr.io/planet-4-151612/p4-builder"
           command: |
             if make -j2 push
             then
