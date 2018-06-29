@@ -113,6 +113,13 @@ jobs:
       - store_test_results:
           path: /tmp/test-results
 
+  notify-promote:
+    <<: *defaults
+    steps:
+      - run:
+          name: Notify of held workflow
+          command: TYPE="Promotion" ${HOME}/scripts/notify-job-hold.sh
+
   promote:
     <<: *defaults
     steps:
@@ -195,10 +202,29 @@ workflows:
             tags:
               ignore: /^v.*/
 
+      - notify-promote:
+          requires:
+            - test
+          filters:
+            branches:
+              only: develop
+            tags:
+              ignore: /^v.*/
+
+      - hold-promote:
+          type: approval
+          requires:
+            - test
+          filters:
+            branches:
+              only: develop
+            tags:
+              ignore: /^v.*/
+
       - promote:
           context: org-global
           requires:
-            - test
+            - hold-promote
           filters:
             branches:
               only: develop
