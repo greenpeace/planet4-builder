@@ -1,13 +1,13 @@
 # Planet 4 CircleCI build image
-# Branch: master
-# Commit: 35ed6707ce26828ee75f96a6af9704a0464361e8
-# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/652
+# Branch: develop
+# Commit: 7bd0c3b8f88e9daec4aa54710090c21c7b5e2f41
+# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/658
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
 # ------------------------------------------------------------------------
 
-FROM circleci/php:7.0-node-browsers
+FROM circleci/php:7.0-node
 
 LABEL maintainer="${MAINTAINER}" \
       description="Planet 4 CircleCI build image: \
@@ -37,7 +37,6 @@ RUN git clone https://github.com/sstephenson/bats.git && \
     curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -L "https://github.com/docker/compose/releases/download/1.21.2/docker-compose-$(uname -s)-$(uname -m)" > /usr/local/bin/docker-compose && \
     chmod 0755 /usr/local/bin/docker-compose && \
     chmod 0755 /home/circleci/scripts/* && \
-    curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -sL https://deb.nodesource.com/setup_8.x | bash - && \
     export "DESIRED_VERSION=v2.9.1" && \
     curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -sL https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get | bash - && \
     wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz && \
