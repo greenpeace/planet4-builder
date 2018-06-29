@@ -38,26 +38,11 @@ jobs:
           environment:
             TYPE: "Push:"
           command: |
-            if make push
+            if make -j2 push
             then
               ${HOME}/scripts/notify-job-success.sh
             else
               ${HOME}/scripts/notify-job-failure.sh
-              exit 1
-            fi 
-
-      - deploy:
-          name: Push :latest
-          environment:
-            TYPE: Push:latest
-          command: |
-            if [ ! -z "$CIRCLE_TAG" ]
-            then
-              if make push-latest
-              then
-                ${HOME}/scripts/notify-job-success.sh
-              else
-                ${HOME}/scripts/notify-job-failure.sh
               exit 1
             fi
 
