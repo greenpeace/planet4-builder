@@ -153,7 +153,7 @@ jobs:
             new_version=$(increment-version.sh $current_version)
             echo "Promoting branch ${CIRCLE_BRANCH} to release/${new_version}"
 
-            start-release.sh $new_version
+            release-start.sh $new_version
 
       - run:
           name: Finish release
