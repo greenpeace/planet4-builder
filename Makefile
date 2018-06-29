@@ -23,9 +23,12 @@ BRANCH_NAME ?= $(shell git rev-parse --abbrev-ref HEAD | sed 's/$(SED_MATCH)/-/g
 BUILD_TAG ?= $(shell git tag -l --points-at HEAD | tail -n1 | sed 's/$(SED_MATCH)/-/g')
 endif
 
-# If BUILD_TAG is still not set, default to branch name
+# If BUILD_TAG is blank there's no tag on this commit
 ifeq ($(strip $(BUILD_TAG)),)
+# Default to branch name
 BUILD_TAG := $(BRANCH_NAME)
+else
+PUSH_LATEST := true
 endif
 
 REVISION_TAG = $(shell git rev-parse --short HEAD)
@@ -46,5 +49,9 @@ push-tag:
 	docker push $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:$(BUILD_NUM)
 
 push-latest:
-	docker tag $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:$(REVISION_TAG) $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:latest
-	docker push $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:latest
+	if [[ "$(PUSH_LATEST)" = "true" ]]; then { \
+		docker tag $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:$(REVISION_TAG) $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:latest; \
+		docker push $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:latest; \
+	}	else { \
+		echo "Not tagged.. skipping latest"; \
+	} fi
