@@ -6,9 +6,14 @@ branch=${2:-develop}
 
 export TYPE="Trigger: $repo:$branch"
 
+dir=$(echo $repo | tr -dc 'a-zA-Z0-9' | head -n 1)
+
+rm -fr $dir
+mkdir $dir
+
 # Checkout dependent repository and trigger CI with empty commit.
-git clone $repo && \
-  cd planet4-builder && \
+git clone $repo $dir && \
+  cd $dir && \
   git config user.email "circleci-bot@greenpeace.org" && \
   git config user.name "CircleCI Bot" && \
   git config push.default simple && \
