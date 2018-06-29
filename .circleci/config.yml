@@ -197,16 +197,16 @@ workflows:
             branches:
               only: develop
 
-      - notify-promote:
-          context: org-global
+      - hold-promote:
+          type: approval
           requires:
             - test
           filters:
             branches:
               only: develop
 
-      - hold-promote:
-          type: approval
+      - notify-promote:
+          context: org-global
           requires:
             - test
           filters:
@@ -255,7 +255,7 @@ workflows:
           context: org-global
           requires:
             - deploy
-          filters:            
+          filters:
             branches:
               ignore: /.*/
             tags:
