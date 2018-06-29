@@ -8,7 +8,7 @@ defaults: &defaults
 version: 2
 
 jobs:
-  make:
+  make-build-push:
     <<: *defaults
     steps:
       - setup_remote_docker
@@ -18,8 +18,8 @@ jobs:
       - run:
           name: Build
           environment:
-            TYPE: Build
-          command: |            
+            TYPE: "Build"
+          command: |
             if make build
             then
               ${HOME}/scripts/notify-job-success.sh
@@ -64,7 +64,7 @@ workflows:
   version: 2
   make-deploy:
     jobs:
-      - make:
+      - make-build-push:
           context: org-global
           filters:
             tags:
