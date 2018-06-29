@@ -227,7 +227,7 @@ workflows:
           context: org-global
           filters:
             tags:
-              only: /^v\p{Digit}+\.\p{Digit}+\.\]{Digit}.*/
+              only: /^v\p{Digit}+\.\p{Digit}+\.\p{Digit}+.*/
 
       - test:
           context: org-global
@@ -235,7 +235,7 @@ workflows:
             - build
           filters:
             tags:
-              only: /^v\p{Digit}+\.\p{Digit}+\.\]{Digit}.*/
+              only: /^v\p{Digit}+\.\p{Digit}+\.\p{Digit}+.*/
 
       - deploy:
           context: org-global
@@ -243,7 +243,7 @@ workflows:
             - test
           filters:
             tags:
-              only: /^v\p{Digit}+\.\p{Digit}+\.\]{Digit}.*/
+              only: /^v\p{Digit}+\.\p{Digit}+\.\p{Digit}+.*/
 
       - trigger-p4-builder:
           context: org-global
@@ -251,4 +251,4 @@ workflows:
             - deploy
           filters:
             tags:
-              only: /^v\p{Digit}+\.\p{Digit}+\.\]{Digit}.*/
+              only: /^v\p{Digit}+\.\p{Digit}+\.\p{Digit}+.*/
