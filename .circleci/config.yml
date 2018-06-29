@@ -43,7 +43,8 @@ jobs:
               ${HOME}/scripts/notify-job-success.sh
             else
               ${HOME}/scripts/notify-job-failure.sh
-            exit 1
+              exit 1
+            fi 
 
       - deploy:
           name: Push :latest
