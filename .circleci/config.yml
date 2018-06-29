@@ -35,7 +35,7 @@ jobs:
       - deploy:
           name: Push
           environment:
-            TYPE: "Push:"
+            TYPE: "Push"
           command: |
             if make -j2 push
             then
