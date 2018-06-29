@@ -124,7 +124,7 @@ jobs:
       - run:
           name: Start release
           command: |
-            current_version=$(git describe --tags "$(git rev-list --tags --max-count=1)")
+            current_version=$(git-current-tag.sh)
             echo "Found existing tag: $current_version"
 
             new_version=$(increment-version.sh $current_version)
