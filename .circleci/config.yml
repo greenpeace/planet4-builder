@@ -133,13 +133,12 @@ jobs:
             echo "Promoting branch ${CIRCLE_BRANCH} to ${new_version}"
 
             release-start.sh $new_version
-
             release-finish.sh $new_version
 
-        - deploy:
-            name: Commit updated build numbers
-            command: |
-              ${HOME}/scripts/update-build-numbers.sh
+      - deploy:
+          name: Commit updated build numbers
+          command: |
+            ${HOME}/scripts/update-build-numbers.sh
 
   deploy:
     <<: *defaults
