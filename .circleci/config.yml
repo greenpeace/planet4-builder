@@ -62,10 +62,8 @@ jobs:
           name: Build on Google Container Builder
           command: |
             # Perform the build on GCP
-            if make build
+            if ! make build
             then
-              ${HOME}/scripts/notify-job-success.sh
-            else
               ${HOME}/scripts/notify-job-failure.sh
               exit 1
             fi
