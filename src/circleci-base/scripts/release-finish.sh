@@ -14,7 +14,7 @@ if [ $status -ne 0 ]
 then
 
   # We have the technology
-  if grep "Fatal: There were merge conflicts" ${TMPDIR:-/tmp}/gitflow.log
+  if grep -q "Fatal: There were merge conflicts" ${TMPDIR:-/tmp}/gitflow.log
   then
     # Force merge conflicts to be --ours
     grep -lr '<<<<<<<' . | xargs git checkout --ours
