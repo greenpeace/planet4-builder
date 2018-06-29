@@ -1,0 +1,46 @@
+defaults: &defaults
+  environment:
+    GOOGLE_PROJECT_ID: planet-4-151612
+  docker:
+    - image: gcr.io/planet-4-151612/circleci-base:latest
+  working_directory:  /home/circleci/app
+
+version: 2
+
+jobs:
+  make:
+    <<: *defaults
+    steps:
+      - setup_remote_docker
+      - checkout
+      - run:
+          name: Build container
+          environment:
+            TYPE: Build
+          command: |
+            if make build
+            then
+              ${HOME}/scripts/notify-job-success.sh
+            else
+              ${HOME}/scripts/notify-job-failure.sh
+            exit 1
+
+      - deploy:
+          name: Push containers to gcr.io
+          environment:
+            TYPE: Push
+          command: |
+            mkdir -p /tmp/workspace/var
+            ${HOME}/scripts/activate-gcloud-account.sh
+            gcloud auth configure-docker
+            docker push gcr.io/planet-4-151612
+
+workflows:
+  version: 2
+  make-deploy:
+    jobs:
+      - make:
+          context: org-global
+          filters:
+            tags:
+              only: /.*/
