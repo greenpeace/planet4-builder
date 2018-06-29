@@ -129,6 +129,12 @@ jobs:
       - store_test_results:
           path: /tmp/test-results
 
+  notify-test:
+    <<: *defaults
+    steps:
+      - run:
+          name: Notify test success
+          command: TYPE="Tests" ${HOME}/scripts/notify-job-success.sh
 
   deploy:
     <<: *defaults
@@ -183,7 +189,15 @@ workflows:
           filters:
             tags:
               only: /.*/
-      # Only run deploy job for tagged releases, any branch
+
+      - notify-test:
+          context: org-global
+          requires:
+            - test
+          filters:
+            tags:
+              only: /.*/
+
       # Only run from this point on tags starting with v
       - deploy:
           context: org-global
