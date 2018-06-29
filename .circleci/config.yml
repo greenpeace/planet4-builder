@@ -147,8 +147,7 @@ jobs:
       - run:
           name: Promote release
           command: |
-            CURRENT_VERSION=$(git describe --tags $(git rev-list --tags --max-count=1))
-            NEW_VERSION=$(increment-version.sh $CURRENT_VERSION)
+            promote-release.sh
 
   deploy:
     <<: *defaults
