@@ -246,10 +246,10 @@ workflows:
             tags:
               only: /^v.*/
 
-    - trigger-p4-builder:
-        context: org-global
-        requires:
-          - deploy
-        filters:
-          tags:
-            only: /^v.*/
+      - trigger-p4-builder:
+          context: org-global
+          requires:
+            - deploy
+          filters:
+            tags:
+              only: /^v.*/
