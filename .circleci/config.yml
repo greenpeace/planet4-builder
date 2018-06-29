@@ -203,6 +203,7 @@ workflows:
               ignore: /^v.*/
 
       - notify-promote:
+          context: org-global
           requires:
             - test
           filters:
