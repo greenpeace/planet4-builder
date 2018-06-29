@@ -215,7 +215,13 @@ pull:
 	docker pull $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_PREFIX)-openresty:$(BUILD_TAG) &
 	wait
 
-deploy:
+deploy: deploy-helm update-meta
+
+update-meta:
+	# Set meta on stateless content
+	gsutil -m setmeta -r -h "Cache-Control:public, max-age=2678400" gs://$(WP_STATELESS_BUCKET) > /dev/null
+
+deploy-helm:
 	# Update Helm repositories
 	helm repo update
 
@@ -229,7 +235,8 @@ deploy:
 
 	# Ensure Helm release is in a usable state
 	# See: https://github.com/kubernetes/helm/issues/4004
-	HELM_RELEASE=$(HELM_RELEASE) ./helm_prepare.sh
+	HELM_RELEASE=$(HELM_RELEASE) \
+	./helm_prepare.sh
 
 	# Upgrade or install deployment to cluster
 	APP_ENVIRONMENT="$(APP_ENVIRONMENT)" \
