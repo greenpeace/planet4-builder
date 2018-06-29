@@ -36,7 +36,7 @@ jobs:
       - deploy:
           name: Push
           environment:
-            TYPE: Push:
+            TYPE: "Push:"
           command: |
             if make push
             then
