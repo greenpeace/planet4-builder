@@ -16,7 +16,7 @@ jobs:
       - checkout
 
       - run:
-          name: Initialise workspace
+          name: Configure
           command: |
             # Ensure all shell scripts are executable
             chmod +x ./bin/*.sh
@@ -32,7 +32,7 @@ jobs:
             gcloud auth configure-docker
 
       - run:
-          name: Build on Google Container Builder
+          name: Build
           command: |
             # Perform the build on GCP
             if ! make build
@@ -135,7 +135,7 @@ jobs:
             echo "Found existing tag: $current_version"
 
             new_version=$(increment-version.sh $current_version)
-            echo "Promoting branch ${CIRCLE_BRANCH} to release/${new_version}"
+            echo "Promoting branch ${CIRCLE_BRANCH} to v${new_version}"
 
             release-start.sh $new_version
 
@@ -251,7 +251,6 @@ workflows:
             tags:
               only: /^v.*/
 
-      # Only run from this point on tags starting with v
       - deploy:
           context: org-global
           requires:
