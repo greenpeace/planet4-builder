@@ -164,7 +164,7 @@ jobs:
       - deploy:
           name: Checkout github.com/greenpeace/planet4-builder
           command: |
-              trigger_build.sh git@github.com:greenpeace/planet4-builder.git develop
+              trigger-build.sh git@github.com:greenpeace/planet4-builder.git develop
 
 
 workflows:
