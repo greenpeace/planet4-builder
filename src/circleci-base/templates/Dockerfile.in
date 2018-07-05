@@ -25,21 +25,14 @@ RUN git clone https://github.com/sstephenson/bats.git && \
     mv terragrunt_linux_amd64 /usr/local/bin/terragrunt && \
     curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 "https://beyondgrep.com/ack-${ACK_VERSION}-single-file" > /usr/local/bin/ack && \
     chmod 0755 /usr/local/bin/ack && \
-    curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" > /usr/local/bin/docker-compose && \
-    chmod 0755 /usr/local/bin/docker-compose && \
     chmod 0755 /home/${CIRCLECI_USER}/scripts/* && \
     export "DESIRED_VERSION=v${HELM_VERSION}" && \
     curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -sL https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get | bash - && \
-    wget https://github.com/jwilder/dockerize/releases/download/v${DOCKERIZE_VERSION}/dockerize-linux-amd64-v${DOCKERIZE_VERSION}.tar.gz && \
-    tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v${DOCKERIZE_VERSION}.tar.gz && \
-    chmod 755 /usr/local/bin/dockerize && \
-    rm dockerize-linux-amd64-v${DOCKERIZE_VERSION}.tar.gz && \
     wget --no-check-certificate -q https://raw.githubusercontent.com/petervanderdoes/gitflow-avh/develop/contrib/gitflow-installer.sh && \
     bash gitflow-installer.sh install stable && \
     rm gitflow-installer.sh && \
     apt-get install -y --no-install-recommends \
       gettext \
-      jq \
       shellcheck \
       vim \
       wget \
