@@ -10,25 +10,26 @@ export GIT_MERGE_AUTOEDIT=no
 git flow release finish $new_version --showcommands -p -m "$commit_message" -m "${diff_log//[\'\"\`]}" 2>&1 | tee ${TMPDIR:-/tmp}/gitflow.log
 
 status=$?
+count=0
+limit=3
 
-if [ $status -ne 0 ]
-then
+while [ $status -ne 0 ]
+do
+  count=$((count+1))
+  [ $count -gt $limit ] && exit 1
 
   # We have the technology
-  if grep -q "Fatal: There were merge conflicts" ${TMPDIR:-/tmp}/gitflow.log
+  if grep -q "^Fatal\: " ${TMPDIR:-/tmp}/gitflow.log
   then
     # Force merge conflicts to be --ours
     grep -lr '<<<<<<<' . | xargs git checkout --ours
     git add .
-    old_message=$(git log --format=%B -n1)
-    git commit --amend -m "$old_message" -m ":robot: Resolve merge conflicts --ours"
-    git flow release finish $new_version --showcommands -p -m $commit_message
-    exit $?
+    old_message="$(git log --format=%B -n1)"
+    git commit --amend -m "$old_message" -m ":robot: Resolve merge conflicts --ours" \
+      && git flow release finish $new_version --showcommands -p -m "$commit_message" | tee ${TMPDIR:-/tmp}/gitflow.log
+    status=$?
   fi
-
-  # Can't fix this, return previous error
-  exit $status
-fi
+done
 
 unset GIT_MERGE_AUTOEDIT
 exit 0
