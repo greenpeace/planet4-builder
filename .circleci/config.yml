@@ -28,7 +28,7 @@ jobs:
       - run:
           name: Authenticate
           command: |
-            ${HOME}/scripts/activate-gcloud-account.sh
+            activate-gcloud-account.sh
             gcloud auth configure-docker
 
       - run:
@@ -37,7 +37,7 @@ jobs:
             # Perform the build on GCP
             if ! make build
             then
-              ${HOME}/scripts/notify-job-failure.sh
+              notify-job-failure.sh
               exit 1
             fi
 
@@ -96,11 +96,11 @@ jobs:
           name: Notify failure
           when: on_fail
           background: true
-          command: TYPE="Tests" ${HOME}/scripts/notify-job-failure.sh
+          command: TYPE="Tests" notify-job-failure.sh
 
       - run:
           name: Notify success
-          command: TYPE="Tests" ${HOME}/scripts/notify-job-success.sh
+          command: TYPE="Tests" notify-job-success.sh
           background: true
 
       - checkout
@@ -113,7 +113,7 @@ jobs:
     steps:
       - run:
           name: Notify of held workflow
-          command: TYPE="Promotion" ${HOME}/scripts/notify-job-hold.sh
+          command: TYPE="Promotion" EXTRA_TEXT="Notify: @rawalker" notify-job-hold.sh
 
   promote:
     <<: *defaults
@@ -151,7 +151,7 @@ jobs:
       - run:
           name: Configure
           command: |
-            ${HOME}/scripts/activate-gcloud-account.sh
+            activate-gcloud-account.sh
             gcloud auth configure-docker
 
       - deploy:
@@ -160,7 +160,7 @@ jobs:
             export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
             docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
             docker tag gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
-            TYPE="Tag: gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest" ${HOME}/scripts/notify-job-success.sh
+            TYPE="Tag: gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest" notify-job-success.sh
             docker push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
 
   trigger-p4-builder:
