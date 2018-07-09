@@ -22,14 +22,14 @@ jobs:
           command: |
             if ! make build
             then
-              ${HOME}/scripts/notify-job-failure.sh
+              notify-job-failure.sh
               exit 1
             fi
 
       - run:
           name: Authenticate
           command: |
-            ${HOME}/scripts/activate-gcloud-account.sh
+            activate-gcloud-account.sh
             gcloud auth configure-docker
 
       - deploy:
@@ -39,9 +39,9 @@ jobs:
           command: |
             if make -j2 push
             then
-              ${HOME}/scripts/notify-job-success.sh
+              notify-job-success.sh
             else
-              ${HOME}/scripts/notify-job-failure.sh
+              notify-job-failure.sh
               exit 1
             fi
 
