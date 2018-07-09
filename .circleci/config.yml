@@ -95,13 +95,11 @@ jobs:
       - run:
           name: Notify failure
           when: on_fail
-          background: true
           command: TYPE="Tests" notify-job-failure.sh
 
       - run:
           name: Notify success
           command: TYPE="Tests" notify-job-success.sh
-          background: true
 
       - checkout
 
