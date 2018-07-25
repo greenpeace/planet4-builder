@@ -266,5 +266,9 @@ deploy-helm:
 	HELM_RELEASE=$(HELM_RELEASE) \
 	./helm_confirm.sh
 
+	HELM_NAMESPACE=$(HELM_NAMESPACE) \
+	HELM_RELEASE=$(HELM_RELEASE) \
+	./activate_plugins.sh
+
 	HELM_RELEASE=$(HELM_RELEASE) \
 	./newrelic_deployment.sh
