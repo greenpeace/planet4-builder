@@ -12,7 +12,7 @@ git checkout release/$new_version
 
 export GIT_MERGE_AUTOEDIT=no
 
-git flow release finish $new_version --showcommands -p -m "$commit_message" -m "${diff_log//[\'\"\`]}" 2>&1 | tee ${TMPDIR:-/tmp}/gitflow.log
+git flow release finish $new_version --showcommands -p -b -m "$commit_message" -m "${diff_log//[\'\"\`]}" 2>&1 | tee ${TMPDIR:-/tmp}/gitflow.log
 
 status=$?
 count=0
