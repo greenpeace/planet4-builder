@@ -29,26 +29,19 @@ RUN git clone https://github.com/sstephenson/bats.git && \
     curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 "https://releases.hashicorp.com/terraform/0.11.7/terraform_0.11.7_linux_amd64.zip" > /tmp/terraform.zip && \
     unzip /tmp/terraform.zip -d /usr/local/bin && \
     chmod 0755 /usr/local/bin/terraform && \
-    curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -sSOL https://github.com/gruntwork-io/terragrunt/releases/download/v0.14.11/terragrunt_linux_amd64 && \
+    curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -sSOL https://github.com/gruntwork-io/terragrunt/releases/download/v0.16.3/terragrunt_linux_amd64 && \
     chmod 0755 terragrunt_linux_amd64 && \
     mv terragrunt_linux_amd64 /usr/local/bin/terragrunt && \
     curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 "https://beyondgrep.com/ack-2.24-single-file" > /usr/local/bin/ack && \
     chmod 0755 /usr/local/bin/ack && \
-    curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -L "https://github.com/docker/compose/releases/download/1.21.2/docker-compose-$(uname -s)-$(uname -m)" > /usr/local/bin/docker-compose && \
-    chmod 0755 /usr/local/bin/docker-compose && \
     chmod 0755 /home/circleci/scripts/* && \
     export "DESIRED_VERSION=v2.9.1" && \
     curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -sL https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get | bash - && \
-    wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz && \
-    tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.6.1.tar.gz && \
-    chmod 755 /usr/local/bin/dockerize && \
-    rm dockerize-linux-amd64-v0.6.1.tar.gz && \
     wget --no-check-certificate -q https://raw.githubusercontent.com/petervanderdoes/gitflow-avh/develop/contrib/gitflow-installer.sh && \
     bash gitflow-installer.sh install stable && \
     rm gitflow-installer.sh && \
     apt-get install -y --no-install-recommends \
       gettext \
-      jq \
       shellcheck \
       vim \
       wget \
@@ -62,7 +55,7 @@ RUN git clone https://github.com/sstephenson/bats.git && \
 
 USER circleci
 
-RUN curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -L "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/""google-cloud-sdk-206.0.0-linux-x86_64.tar.gz" | tar xz && \
+RUN curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -L "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/""google-cloud-sdk-209.0.0-linux-x86_64.tar.gz" | tar xz && \
     CLOUDSDK_CORE_DISABLE_PROMPTS=1 ./google-cloud-sdk/install.sh \
         --usage-reporting false \
         --bash-completion false \

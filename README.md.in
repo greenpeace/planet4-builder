@@ -8,6 +8,7 @@ Performs builds and tests for the Planet 4 web application and associated infras
 The base image builds upon the `${IMAGE_FROM}` image and adds:
 -   [ack](https://beyondgrep.com/) ${ACK_VERSION}
 -   [bats](https://github.com/sstephenson/bats) latest
+-   [git-flow AVH](https://github.com/petervanderdoes/gitflow-avh) ${GIT_FLOW_VERSION}
 -   [Google Cloud SDK](https://cloud.google.com/sdk/docs/#install_the_latest_cloud_tools_version_cloudsdk_current_version) ${GOOGLE_SDK_VERSION}
 -   [Helm](https://github.com/kubernetes/helm/releases) ${HELM_VERSION}
 -   [junit-merge](https://www.npmjs.com/package/junit-merge)

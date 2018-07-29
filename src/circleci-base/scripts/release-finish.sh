@@ -5,9 +5,14 @@ new_version=$1
 commit_message=":robot: ${2:-Automated promotion}"
 diff_log=$(git log --oneline "$(git-current-tag.sh)..." | grep -v ":robot:")
 
+# Ensure master branch is up to date with origin
+git checkout master
+git reset --hard origin/master
+git checkout release/$new_version
+
 export GIT_MERGE_AUTOEDIT=no
 
-git flow release finish $new_version --showcommands -p -m "$commit_message" -m "${diff_log//[\'\"\`]}" 2>&1 | tee ${TMPDIR:-/tmp}/gitflow.log
+git flow release finish $new_version --showcommands -p -b -m "$commit_message" -m "${diff_log//[\'\"\`]}" 2>&1 | tee ${TMPDIR:-/tmp}/gitflow.log
 
 status=$?
 count=0
