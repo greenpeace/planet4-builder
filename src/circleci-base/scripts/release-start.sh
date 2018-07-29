@@ -14,16 +14,26 @@ git config user.email "circleci-bot@greenpeace.org"
 git config user.name "CircleCI Bot"
 git config push.default simple
 
-git flow init -d
+# Store any local changes
+git stash
 
+# Initialised git flow in this repository
+git flow init -d || exit 1
+
+# Apply any stashed changes
+git stash pop
+
+# Begin a new release
 git flow release start $new_version
 
+# Merge origin/master into this release, preferring our changes
 git merge -Xours origin/master --commit 2>&1 | tee "${TMPDIR:-/tmp}/merge-master.log.0"
 
 status=$?
 count=0
 limit=3
 
+# If the merge wasn't clean, attempt to resolve
 while [ $status -ne 0 ]
 do
   # File is deleted in HEAD but exists in master
