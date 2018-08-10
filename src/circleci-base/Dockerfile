@@ -1,7 +1,7 @@
 # Planet 4 CircleCI build image
 # Branch: develop
-# Commit: 2f67daa89d557bcdee11a333d0dbbc98ad4bd152
-# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/780
+# Commit: ad1e02597c28c81bedd826a5989b440823572031
+# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/890
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
@@ -40,8 +40,11 @@ RUN git clone https://github.com/sstephenson/bats.git && \
     wget --no-check-certificate -q https://raw.githubusercontent.com/petervanderdoes/gitflow-avh/develop/contrib/gitflow-installer.sh && \
     bash gitflow-installer.sh install stable && \
     rm gitflow-installer.sh && \
+    curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -sL https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 > /usr/local/bin/cloud_sql_proxy && \
+    chmod 0755 /usr/local/bin/cloud_sql_proxy && \
     apt-get install -y --no-install-recommends \
       gettext \
+      mysql-client \
       shellcheck \
       vim \
       wget \
