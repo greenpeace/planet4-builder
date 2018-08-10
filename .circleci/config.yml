@@ -64,29 +64,25 @@ jobs:
       - run:
           name: Pull new image
           command: |
-            export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
-            docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
+            docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num)
 
       - run:
           name: Test PHP
           command: |
-            export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
-            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} php -v > /tmp/test-results/php_version.txt
-            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} php -r "phpinfo();" > /tmp/test-results/php_info.txt
+            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) php -v > /tmp/test-results/php_version.txt
+            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) php -r "phpinfo();" > /tmp/test-results/php_info.txt
             grep -q 'PHP 7' /tmp/test-results/php_version.txt
 
       - run:
           name: Test Composer
           command: |
-            export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
-            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} composer --version > /tmp/test-results/composer_version.txt
+            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) composer --version > /tmp/test-results/composer_version.txt
             grep -q 'Composer version' /tmp/test-results/composer_version.txt
 
       - run:
           name: Test gcloud
           command: |
-            export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
-            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} gcloud -v > /tmp/test-results/gcloud_version.txt
+            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) gcloud -v > /tmp/test-results/gcloud_version.txt
             grep -q 'kubectl' /tmp/test-results/gcloud_version.txt
             cat /tmp/test-results/gcloud_version.txt
             gcloud config set project ${GOOGLE_PROJECT_ID}
@@ -95,13 +91,13 @@ jobs:
       - run:
           name: Test cloud_sql_proxy
           command: |
-            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} cloud_sql_proxy --version > /tmp/test-results/cloud_sql_proxy.txt
+            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) cloud_sql_proxy --version > /tmp/test-results/cloud_sql_proxy.txt
             grep -q 'Cloud SQL Proxy' /tmp/test-results/cloud_sql_proxy.txt
 
       - run:
           name: Test mysqldump
           command: |
-            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} mysqldump --version > /tmp/test-results/mysqldump.txt
+            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) mysqldump --version > /tmp/test-results/mysqldump.txt
             grep -q 'mysqldump' /tmp/test-results/mysqldump.txt
 
       - run:
