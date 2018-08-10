@@ -31,7 +31,7 @@ do
     git add .
     old_message="$(git log --format=%B -n1)"
     git commit --amend -m "$old_message" -m ":robot: Resolve merge conflicts --ours" \
-      && git flow release finish $new_version --showcommands -p -m "$commit_message" | tee ${TMPDIR:-/tmp}/gitflow.log
+      && git flow release finish $new_version --showcommands -b -p -m "$commit_message" | tee ${TMPDIR:-/tmp}/gitflow.log
     status=$?
   fi
 done
