@@ -93,6 +93,18 @@ jobs:
             gcloud config list
 
       - run:
+          name: Test cloud_sql_proxy
+          command: |
+            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} cloud_sql_proxy --version > /tmp/test-results/cloud_sql_proxy.txt
+            grep -q 'Cloud SQL Proxy' /tmp/test-results/cloud_sql_proxy.txt
+
+      - run:
+          name: Test mysqldump
+          command: |
+            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} mysqldump --version > /tmp/test-results/mysqldump.txt
+            grep -q 'mysqldump' /tmp/test-results/mysqldump.txt
+
+      - run:
           name: Notify failure
           when: on_fail
           command: TYPE="Tests" notify-job-failure.sh
@@ -100,6 +112,8 @@ jobs:
       - run:
           name: Notify success
           command: TYPE="Tests" notify-job-success.sh
+
+
 
       - checkout
 
