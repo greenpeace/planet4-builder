@@ -41,17 +41,15 @@ docker-compose -p build logs -f &
 until [[ $success -ge $threshold ]]
 do
   # Curl to container and expect status code 200
-  set +e
-  docker run --network "container:build_app_1" --rm appropriate/curl -s -k "http://localhost:80" | grep -q "greenpeace"
 
-  if [[ $? -eq 0 ]]
+
+  if docker run --network "container:build_app_1" --rm appropriate/curl -s -k "http://localhost:80" | grep -s "greenpeace" > /dev/null
   then
     success=$((success+1))
     echo "Success: $success/$threshold"
   else
     success=0
   fi
-  set -e
 
   loop=$((loop-1))
   if [[ $loop -lt 1 ]]
