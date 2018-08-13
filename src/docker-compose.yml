@@ -27,6 +27,7 @@ services:
       - MYSQL_DATABASE=${MYSQL_DATABASE:-p4_test}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD:-CeciNestUnePassword}
       - MYSQL_USER=${MYSQL_USER:-planet4}
+      - OVERWRITE_EXISTING_FILES=true
       - WP_DEFAULT_CONTENT=false
     volumes:
     - type: volume

@@ -13,33 +13,17 @@ jobs:
     steps:
       - setup_remote_docker
       - checkout
+      - run: make build
+      - run: activate-gcloud-account.sh
+      - run: gcloud auth configure-docker
+      - run: make -j2 push
       - run:
-          name: Build
-          environment:
-            TYPE: "Build"
-          command: |
-            if ! make build
-            then
-              notify-job-failure.sh
-              exit 1
-            fi
+          name: Notify failure
+          when: on_fail
+          command: TYPE="Build-push gcr.io/planet-4-151612/p4-builder" notify-job-failure.sh
       - run:
-          name: Authenticate
-          command: |
-            activate-gcloud-account.sh
-            gcloud auth configure-docker
-      - deploy:
-          name: Push
-          environment:
-            TYPE: "Build-push gcr.io/planet-4-151612/p4-builder"
-          command: |
-            if ! make -j2 push
-            then
-              notify-job-failure.sh
-              exit 1
-            fi
-            notify-job-success.sh
-
+          name: Notify success
+          command: TYPE="Build-push gcr.io/planet-4-151612/p4-builder" notify-job-success.sh
 
 workflows:
   version: 2
