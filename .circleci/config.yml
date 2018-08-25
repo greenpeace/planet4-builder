@@ -37,7 +37,7 @@ jobs:
           at: /tmp/workspace
       - checkout
       - run:
-          name: Start release
+          name: Release
           command: |
             current_version=$(git-current-tag.sh)
             echo "Found existing tag: $current_version"
