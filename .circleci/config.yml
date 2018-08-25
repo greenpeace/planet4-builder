@@ -195,16 +195,14 @@ workflows:
           context: org-global
           filters:
             branches:
-              only: develop
-
+              ignore: master
       - test:
           context: org-global
           requires:
             - build
           filters:
             branches:
-              only: develop
-
+              ignore: master
       - hold-promote:
           type: approval
           requires:
@@ -212,7 +210,6 @@ workflows:
           filters:
             branches:
               only: develop
-
       - notify-promote:
           context: org-global
           requires:
@@ -220,7 +217,6 @@ workflows:
           filters:
             branches:
               only: develop
-
       - promote:
           context: org-global
           requires:
