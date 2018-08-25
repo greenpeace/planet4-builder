@@ -271,6 +271,7 @@ deploy-helm:
 	./activate_plugins.sh
 
 	HELM_NAMESPACE=$(HELM_NAMESPACE) \
+	HELM_RELEASE=$(HELM_RELEASE) \
 	./flush_redis.sh
 
 	HELM_RELEASE=$(HELM_RELEASE) \
