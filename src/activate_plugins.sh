@@ -5,7 +5,7 @@ php=$(kubectl get pods --namespace "${HELM_NAMESPACE}" -l "app=wordpress-php,rel
 
 if [[ -z "$php" ]]
 then
-  >&2
+  >&2 echo "ERROR: php pod not found in release ${HELM_RELEASE}"
 fi
 
 kubectl exec -n ${HELM_NAMESPACE} $php -- wp plugin activate --all
