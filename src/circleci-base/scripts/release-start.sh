@@ -24,7 +24,7 @@ git flow init -d || exit 1
 git stash pop
 
 # Begin a new release
-git flow release start $new_version
+git flow release start $new_version || exit 1
 
 # Merge origin/master into this release, preferring our changes
 git merge -Xours origin/master --commit 2>&1 | tee "${TMPDIR:-/tmp}/merge-master.log.0"
