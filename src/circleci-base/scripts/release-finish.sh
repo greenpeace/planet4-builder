@@ -3,16 +3,12 @@ set -xo pipefail
 
 new_version=$1
 commit_message=":robot: ${2:-Automated promotion}"
-diff_log=$(git log --oneline "$(git-current-tag.sh)..." | grep -v ":robot:")
+# diff_log=$(git log --oneline "$(git-current-tag.sh)..." | grep -v ":robot:")
 
 # Ensure master branch is up to date with origin
 git checkout master
 git reset --hard origin/master
-git checkout release/$new_version
-
-export GIT_MERGE_AUTOEDIT=no
-
-git flow release finish $new_version --showcommands -p -b -m "$commit_message" -m "${diff_log//[\'\"\`]}" 2>&1 | tee ${TMPDIR:-/tmp}/gitflow.log
+git merge --no-edit --no-ff --log -m "$commit_message" release/${new_version}
 
 status=$?
 count=0
@@ -30,11 +26,15 @@ do
     grep -lr '<<<<<<<' . | xargs git checkout --ours
     git add .
     old_message="$(git log --format=%B -n1)"
-    git commit --amend -m "$old_message" -m ":robot: Resolve merge conflicts --ours" \
-      && git flow release finish $new_version --showcommands -b -p -m "$commit_message" | tee ${TMPDIR:-/tmp}/gitflow.log
+    git commit --amend -m "$old_message" -m ":robot: Resolve merge conflicts --ours"
     status=$?
   fi
 done
 
-unset GIT_MERGE_AUTOEDIT
+git tag -m "$commit_message" -a $new_version
+
+git push origin master
+
+git push origin --tags
+
 exit 0
