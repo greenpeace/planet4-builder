@@ -26,10 +26,15 @@ do
     grep -lr '<<<<<<<' . | xargs git checkout --ours
     git add .
     old_message="$(git log --format=%B -n1)"
-    git commit --amend -m "$old_message" -m ":robot: Resolve merge conflicts --ours" \
-      && git flow release finish $new_version --showcommands -b -p -m "$commit_message" | tee ${TMPDIR:-/tmp}/gitflow.log
+    git commit --amend -m "$old_message" -m ":robot: Resolve merge conflicts --ours"
     status=$?
   fi
 done
+
+git tag -a $new_version
+
+git push origin master
+
+git push origin --tags
 
 exit 0
