@@ -2,7 +2,7 @@ defaults: &defaults
   environment:
     GOOGLE_PROJECT_ID: planet-4-151612
   docker:
-    - image: gcr.io/planet-4-151612/circleci-base:latest
+    - image: gcr.io/planet-4-151612/circleci-base:feature-release-finish
   working_directory:  /home/circleci/app
 
 version: 2
@@ -25,6 +25,30 @@ jobs:
           name: Notify success
           command: TYPE="Build-push gcr.io/planet-4-151612/p4-builder" notify-job-success.sh
 
+  notify-promote:
+    <<: *defaults
+    steps:
+      - run: TYPE="@rawalker Promotion" notify-job-hold.sh
+
+  promote:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - checkout
+      - run:
+          name: Release
+          command: |
+            current_version=$(git-current-tag.sh)
+            echo "Found existing tag: $current_version"
+
+            new_version=$(increment-version.sh $current_version)
+            echo "Promoting branch ${CIRCLE_BRANCH} to ${new_version}"
+
+            release-start.sh $new_version
+            release-finish.sh $new_version
+
+
 workflows:
   version: 2
   branch:
@@ -34,6 +58,28 @@ workflows:
           filters:
             branches:
               ignore: master
+      - hold-promote:
+          type: approval
+          requires:
+            - build-push
+          filters:
+            branches:
+              only: develop
+      - notify-promote:
+          context: org-global
+          requires:
+            - build-push
+          filters:
+            branches:
+              only: develop
+      - promote:
+          context: org-global
+          requires:
+            - hold-promote
+          filters:
+            branches:
+              only: develop
+
   tag:
     jobs:
       - build-push:
