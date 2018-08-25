@@ -61,14 +61,14 @@ workflows:
       - hold-promote:
           type: approval
           requires:
-            - test
+            - build-push
           filters:
             branches:
               only: develop
       - notify-promote:
           context: org-global
           requires:
-            - test
+            - build-push
           filters:
             branches:
               only: develop
