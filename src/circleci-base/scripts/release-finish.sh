@@ -31,7 +31,7 @@ do
   fi
 done
 
-git tag -a $new_version
+git tag -m "$commit_message" -a $new_version
 
 git push origin master
 
