@@ -270,5 +270,8 @@ deploy-helm:
 	HELM_RELEASE=$(HELM_RELEASE) \
 	./activate_plugins.sh
 
+	HELM_NAMESPACE=$(HELM_NAMESPACE) \
+	./flush_redis.sh
+
 	HELM_RELEASE=$(HELM_RELEASE) \
 	./newrelic_deployment.sh
