@@ -12,40 +12,26 @@ jobs:
     <<: *defaults
     steps:
       - setup_remote_docker
-
       - checkout
-
       - run:
           name: Configure
           command: |
             # Ensure all shell scripts are executable
             chmod +x ./bin/*.sh
-
             # Store current build number for future jobs
             mkdir -p /tmp/workspace/var
             echo "${CIRCLE_BUILD_NUM}" > /tmp/workspace/var/circle-build-num
-
+      - run: activate-gcloud-account.sh
+      - run: gcloud auth configure-docker
+      - run: make build
       - run:
-          name: Authenticate
-          command: |
-            activate-gcloud-account.sh
-            gcloud auth configure-docker
-
-      - run:
-          name: Build
-          command: |
-            # Perform the build on GCP
-            if ! make build
-            then
-              notify-job-failure.sh
-              exit 1
-            fi
-
+          name: Notify failure
+          when: on_fail
+          command: notify-job-failure.sh
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
             - var
-
 
   test:
     <<: *defaults
