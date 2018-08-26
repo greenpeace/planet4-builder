@@ -9,7 +9,9 @@ else
 fi
 
 commit_message=":robot: ${2:-Automated promotion}"
-# diff_log=$(git log --oneline "$(git-current-tag.sh)..." | grep -v ":robot:")
+
+git config user.email "circleci-bot@greenpeace.org"
+git config user.name "CircleCI Bot"
 
 # Ensure master branch is up to date with origin
 git checkout master
