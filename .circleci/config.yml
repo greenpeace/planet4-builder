@@ -157,7 +157,7 @@ jobs:
             TYPE="Tag: gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest" notify-job-success.sh
             docker push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
 
-  trigger-p4-builder:
+  trigger:
     docker:
       - image: gcr.io/planet-4-151612/circleci-base:latest
     working_directory:  /tmp/workspace
@@ -241,7 +241,7 @@ workflows:
             tags:
               only: /^v\p{Digit}+\.\p{Digit}+\.\p{Digit}+.*/
 
-      - trigger-p4-builder:
+      - trigger:
           context: org-global
           requires:
             - deploy
