@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
-set -eu
+set -eux
 
-release=${1:-$(git flow release | cut -d" " -f2)}
+git flow release
+
+release=${1:-$(git flow release | head | tr -s ' ' | cut -d' ' -f2)}
 
 git reset --hard
 
-git checkout $CIRCLE_SHA1
+git checkout ${CIRCLE_SHA1:-develop}
 
-git flow release delete $release
+git flow release delete -f $release
