@@ -11,7 +11,5 @@ then
 fi
 
 kubectl cp $external_script $php:/app/source/public/$external_script
-kubectl exec ${HELM_NAMESPACE} $php -- chown app:app /app/source/public/$external_script
-kubectl exec ${HELM_NAMESPACE} $php -- chmod 744 /app/source/public/$external_script
 kubectl exec ${HELM_NAMESPACE} $php bash /app/source/public/$external_script
 kubectl exec ${HELM_NAMESPACE} $php -- rm /app/source/public/$external_script
