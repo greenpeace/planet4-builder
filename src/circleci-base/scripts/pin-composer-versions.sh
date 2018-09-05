@@ -24,6 +24,18 @@ function finish {
 }
 trap finish EXIT
 
+function remove {
+  echo "dev-develop => **remove**"
+  COMPOSER=$composer composer remove --no-update $1
+  echo
+}
+
+function pin {
+  echo "dev-develop => $new_version"
+  # curl_string "https://api.github.com/repos/${repo}/releases/latest"
+  COMPOSER=$composer composer require --no-update $repo $new_version
+  echo
+}
 jq -r ".require|to_entries|map(\"\(.key)=\(.value|tostring)\")|.[]" $composer | tee "$tmpdir/requires"
 echo
 while IFS="" read -r require || [ -n "$require" ]
@@ -32,20 +44,20 @@ do
   do
     if [[ $version = "dev-develop" ]]
     then
-      echo "$repo"
+      echo $repo
       if inArray $repo "${BLACKLIST[@]}"
       then
-        echo "dev-develop => **remove**"
-        COMPOSER=$composer composer remove --no-update $repo
-        echo
+        remove $repo
       else
         new_version=$(git-latest-remote-tag.awk https://github.com/$repo | cut -d'v' -f2)
-        echo "dev-develop => $new_version"
-        # curl_string "https://api.github.com/repos/${repo}/releases/latest"
-        COMPOSER=$composer composer require --no-update $repo $new_version
-        echo
-      fi
+        if [[ -z "$new_version" ]]
+        then
+          remove $repo
+        else
+          pin $repo $new_version
+        fi
 
+      fi
     fi
   done <<< "$require"
 done < "$tmpdir/requires"
