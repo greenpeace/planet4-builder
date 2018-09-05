@@ -276,3 +276,7 @@ deploy-helm:
 
 	HELM_RELEASE=$(HELM_RELEASE) \
 	./newrelic_deployment.sh
+
+	HELM_NAMESPACE=$(HELM_NAMESPACE) \
+	HELM_RELEASE=$(HELM_RELEASE) \
+	./run_bash_script_in_php_pod.sh modify_users.sh
