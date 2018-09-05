@@ -10,6 +10,6 @@ then
   >&2 echo "ERROR: php pod not found in release ${HELM_RELEASE}"
 fi
 
-kubectl -n ${HELM_NAMESPACE} cp $external_script $php:/app/bin/$external_script
-kubectl -n ${HELM_NAMESPACE} exec $php bash /app/bin/$external_script
-kubectl -n ${HELM_NAMESPACE} exec $php rm /app/bin/$external_script
+kubectl cp $external_script ${HELM_NAMESPACE}/$php:/app/bin/$external_script
+kubectl -n ${HELM_NAMESPACE} -p $php exec bash /app/bin/$external_script
+kubectl -n ${HELM_NAMESPACE} -p $php exec rm /app/bin/$external_script
