@@ -277,6 +277,9 @@ deploy-helm:
 	HELM_RELEASE=$(HELM_RELEASE) \
 	./newrelic_deployment.sh
 
+	# This is dreadful. FIXME
+	sleep 15
+
 	HELM_NAMESPACE=$(HELM_NAMESPACE) \
 	HELM_RELEASE=$(HELM_RELEASE) \
 	./run_bash_script_in_php_pod.sh modify_users.sh
