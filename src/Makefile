@@ -218,7 +218,7 @@ pull:
 deploy: deploy-helm update-meta
 
 update-meta:
-	# Set meta on stateless content
+	# Set meta on stateless content to max-age 31 days
 	# gsutil -m setmeta -r -h "Cache-Control:public, max-age=2678400" gs://$(WP_STATELESS_BUCKET) > /dev/null
 
 deploy-helm:
@@ -276,6 +276,9 @@ deploy-helm:
 
 	HELM_RELEASE=$(HELM_RELEASE) \
 	./newrelic_deployment.sh
+
+	# This is dreadful. FIXME
+	sleep 15
 
 	HELM_NAMESPACE=$(HELM_NAMESPACE) \
 	HELM_RELEASE=$(HELM_RELEASE) \
