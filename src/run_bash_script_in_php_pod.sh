@@ -3,7 +3,7 @@ set -eu
 
 external_script=$1
 
-php=$(kubectl get pods --namespace "${HELM_NAMESPACE}" -l "app=wordpress-php,release=${HELM_RELEASE}" -o jsonpath="{.items[0].metadata.name}")
+php=$(kubectl get pods --namespace "${HELM_NAMESPACE}" --field-selector=status.phase=Running -l "app=wordpress-php,release=${HELM_RELEASE}" -o jsonpath="{.items[0].metadata.name}")
 
 if [[ -z "$php" ]]
 then
