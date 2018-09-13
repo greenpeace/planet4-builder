@@ -278,7 +278,7 @@ deploy-helm:
 	./newrelic_deployment.sh
 
 	# This is dreadful. FIXME
-	sleep 15
+	sleep 20
 
 	HELM_NAMESPACE=$(HELM_NAMESPACE) \
 	HELM_RELEASE=$(HELM_RELEASE) \
