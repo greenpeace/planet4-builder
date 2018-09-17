@@ -37,6 +37,8 @@ RUN git clone https://github.com/sstephenson/bats.git && \
       gawk \
       gettext \
       mysql-client \
+      python-pkg-resources \
+      python-setuptools \
       shellcheck \
       vim \
       wget \
