@@ -37,13 +37,14 @@ RUN git clone https://github.com/sstephenson/bats.git && \
       gawk \
       gettext \
       mysql-client \
+      python-pip \
       python-pkg-resources \
       python-setuptools \
       shellcheck \
       vim \
       wget \
-      yamllint \
       && \
+    pip install yamllint && \
     npm install -g \
       junit-merge \
       tap-xunit && \
