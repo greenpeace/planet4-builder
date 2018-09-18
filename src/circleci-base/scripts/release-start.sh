@@ -4,7 +4,7 @@ set -o pipefail
 if [[ -z "$1" ]]
 then
   current_version=$(git-current-tag.sh)
-  new_version=$(increment-version.sh $current_version)
+  new_version=$(increment-version.sh "$current_version")
 else
   new_version=$1
 fi
@@ -24,7 +24,7 @@ git flow init -d || exit 1
 git stash pop
 
 # Begin a new release
-git flow release start $new_version || exit 1
+git flow release start "$new_version" || exit 1
 
 # Merge origin/master into this release, preferring our changes
 # git merge -Xours origin/master --commit 2>&1 | tee "${TMPDIR:-/tmp}/merge-master.log.0"

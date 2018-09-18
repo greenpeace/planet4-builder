@@ -66,6 +66,7 @@ BUILD_DIR="$( cd -P "$( dirname "$source" )/.." && pwd )"
 # -----------------------------------------------------------------------------
 
 # Setup environment variables
+# shellcheck source=/dev/null
 . "${BUILD_DIR}/bin/env.sh"
 
 # Rewrite only the variables we want to change
@@ -111,16 +112,18 @@ DOCKER_BUILD_STRING="# ${APPLICATION_NAME}
 "
 
 _build "Rewriting Dockerfile from template ..."
-echo -e "${DOCKER_BUILD_STRING}\n$(cat "${BUILD_DIR}/src/circleci-base/Dockerfile.tmp")" > "${BUILD_DIR}/src/circleci-base/Dockerfile"
+echo -e "${DOCKER_BUILD_STRING}
+$(cat "${BUILD_DIR}/src/circleci-base/Dockerfile.tmp")" > "${BUILD_DIR}/src/circleci-base/Dockerfile"
 rm "${BUILD_DIR}/src/circleci-base/Dockerfile.tmp"
 
 _build "Rewriting README.md from template ..."
-echo -e "$(cat "${BUILD_DIR}/README.md.tmp")\nBuild: ${CIRCLE_BUILD_URL:-"(local)"}" > "${BUILD_DIR}/README.md"
+echo -e "$(cat "${BUILD_DIR}/README.md.tmp")
+Build: ${CIRCLE_BUILD_URL:-"(local)"}" > "${BUILD_DIR}/README.md"
 rm "${BUILD_DIR}/README.md.tmp"
 
 # Process array of cloudbuild substitutions
 function getSubstitutions() {
-  local -a arg=($@)
+  local -a arg=("$@")
   s="$(printf "%s," "${arg[@]}" )"
   echo "${s%,}"
 }

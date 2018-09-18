@@ -12,6 +12,6 @@ fi
 
 git reset --hard
 
-git checkout ${CIRCLE_SHA1:-develop}
+git checkout "${CIRCLE_SHA1:-develop}"
 
-git flow release delete -f $release
+git flow release delete -f "$release"

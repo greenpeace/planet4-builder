@@ -26,6 +26,7 @@ then
   _fatal "ERROR :: Default configuration file not found: ${DEFAULT_CONFIG_FILE}"
 fi
 
+# shellcheck source=config.default
 . "${DEFAULT_CONFIG_FILE}"
 
 # Read custom config file
@@ -37,6 +38,7 @@ if [ ! -z "${CONFIG_FILE}" ]; then
   _build "Reading config from: ${CONFIG_FILE}"
 
   # https://github.com/koalaman/shellcheck/wiki/SC1090
+  # shellcheck source=/dev/null
   . "${CONFIG_FILE}"
 fi
 
