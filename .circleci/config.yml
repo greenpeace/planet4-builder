@@ -1,9 +1,10 @@
+---
 defaults: &defaults
   environment:
     GOOGLE_PROJECT_ID: planet-4-151612
   docker:
     - image: gcr.io/planet-4-151612/circleci-base:develop
-  working_directory:  /home/circleci/app
+  working_directory: /home/circleci/app
 
 version: 2
 
@@ -101,8 +102,6 @@ jobs:
           name: Notify success
           command: TYPE="Tests" notify-job-success.sh
 
-
-
       - checkout
 
       - store_test_results:
@@ -166,7 +165,7 @@ jobs:
   trigger:
     docker:
       - image: gcr.io/planet-4-151612/circleci-base:latest
-    working_directory:  /tmp/workspace
+    working_directory: /tmp/workspace
     steps:
       - checkout
 
