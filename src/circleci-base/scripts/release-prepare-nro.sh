@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -exuo pipefail
+set -euo pipefail
 
 # Description: Prepare NRO release branch
 #
