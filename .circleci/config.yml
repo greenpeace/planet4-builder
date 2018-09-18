@@ -53,6 +53,12 @@ jobs:
             docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num)
 
       - run:
+          name: Test yamllint
+          command: |
+            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) yamllint -d "{extends: default, rules: {line-length: {max: 80, level: warning}}}" ./circleci/config.yml > /tmp/test-results/yamllint.txt
+            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) yamllint -d "{extends: default, rules: {line-length: {max: 80, level: warning}}}" cloudbuild.yaml >> /tmp/test-results/yamllint.txt
+
+      - run:
           name: Test PHP
           command: |
             docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) php -v > /tmp/test-results/php_version.txt
