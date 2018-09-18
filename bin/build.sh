@@ -165,13 +165,12 @@ then
   # https://cloud.google.com/container-builder/docs/concepts/build-requests#substitutions
   tar --exclude='.git/' --exclude='.circleci/' -zcf "${TMPDIR}/docker-source.tar.gz" .
 
-  time gcloud container builds submit \
+  time gcloud builds submit \
     --verbosity=${VERBOSITY:-"warning"} \
     --timeout=10m \
     --config cloudbuild.yaml \
     --substitutions "${CLOUDBUILD_SUBSTITUTIONS_STRING}" \
     "${TMPDIR}/docker-source.tar.gz"
-
 fi
 
 if [[ -z "$BUILD_LOCALLY" ]] && [[ -z "${BUILD_REMOTELY}" ]]
