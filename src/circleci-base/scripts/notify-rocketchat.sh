@@ -10,6 +10,7 @@ MSG_TEXT=${MSG_TEXT:-'https://circleci.com/gh/greenpeace'}
 MSG_COLOUR=${MSG_COLOUR:-'f5f5f5'}
 MSG_IMAGE=${MSG_IMAGE:-}
 
+# shellcheck disable=SC2016
 json=$(jq -n \
   --arg MSG_USERNAME "$MSG_USERNAME" \
   --arg MSG_TYPE "$MSG_TYPE" \
@@ -37,9 +38,9 @@ json=$(jq -n \
 curl -X POST -H 'Content-Type: application/json' \
   --data "$json" \
   "${ROCKETCHAT_HOOK}"
-  
+
 GOOGLE_CHAT_TEXT='* '$MSG_USERNAME' * : '$MSG_TYPE' - '$MSG_TITLE',
-'$MSG_TEXT' , 
+'$MSG_TEXT' ,
 '$MSG_LINK
 
 google_chat_json=$(jq -n \
