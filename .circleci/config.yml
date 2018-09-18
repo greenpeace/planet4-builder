@@ -57,42 +57,42 @@ jobs:
       - run:
           name: Test yamllint
           command: |
-            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) yamllint -d "{extends: default, rules: {line-length: {max: 80, level: warning}}}" ./circleci/config.yml > /tmp/test-results/yamllint.txt
-            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) yamllint -d "{extends: default, rules: {line-length: {max: 80, level: warning}}}" cloudbuild.yaml >> /tmp/test-results/yamllint.txt
+            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) yamllint --version > /tmp/test-results/yamllint_version.txt
+            grep -E "yamllint\s[0-9.]{1,}" /tmp/test-results/yamllint_version.txt
 
       - run:
           name: Test PHP
           command: |
             docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) php -v > /tmp/test-results/php_version.txt
             docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) php -r "phpinfo();" > /tmp/test-results/php_info.txt
-            grep 'PHP 7' /tmp/test-results/php_version.txt
+            grep -E "PHP\s[0-9.]{1,}" /tmp/test-results/php_version.txt
 
       - run:
           name: Test Composer
           command: |
             docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) composer --version > /tmp/test-results/composer_version.txt
-            grep 'Composer version' /tmp/test-results/composer_version.txt
+            grep -E 'Composer version [0-9.]{1,}' /tmp/test-results/composer_version.txt
 
       - run:
           name: Test gcloud
           command: |
             docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) gcloud -v > /tmp/test-results/gcloud_version.txt
-            grep 'kubectl' /tmp/test-results/gcloud_version.txt
-            cat /tmp/test-results/gcloud_version.txt
+            grep -E 'Google Cloud SDK [0-9.]{1,}' /tmp/test-results/gcloud_version.txt
+            grep -E 'kubectl [0-9.]{1,}' /tmp/test-results/gcloud_version.txt
             gcloud config set project ${GOOGLE_PROJECT_ID}
-            gcloud config list
+            grep $GOOGLE_PROJECT_ID <<< $(gcloud config list)
 
       - run:
           name: Test cloud_sql_proxy
           command: |
             docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) cloud_sql_proxy --version > /tmp/test-results/cloud_sql_proxy.txt
-            grep 'Cloud SQL Proxy' /tmp/test-results/cloud_sql_proxy.txt
+            grep -E 'Cloud SQL Proxy: version [0-9.]{1,}' /tmp/test-results/cloud_sql_proxy.txt
 
       - run:
           name: Test mysqldump
           command: |
             docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) mysqldump --version > /tmp/test-results/mysqldump.txt
-            grep 'mysqldump' /tmp/test-results/mysqldump.txt
+            grep -E 'mysqldump  Ver [0-9.]{1,}' /tmp/test-results/mysqldump.txt
 
       - run:
           name: Notify failure
