@@ -15,7 +15,7 @@ then
   # Why is this so hard, CircleCI?
   git remote update
   # Find which remote branch contains the current commit
-  CIRCLE_BRANCH=$(git branch -r --contains ${CIRCLE_SHA1} | grep -v 'HEAD' | awk '{split($1,a,"/"); print a[2]}')
+  CIRCLE_BRANCH=$(git branch -r --contains "${CIRCLE_SHA1}" | grep -v 'HEAD' | awk '{split($1,a,"/"); print a[2]}')
 
   if [[ -z "$CIRCLE_BRANCH" ]]
   then

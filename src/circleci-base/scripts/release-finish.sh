@@ -16,7 +16,7 @@ git config user.name "CircleCI Bot"
 # Ensure master branch is up to date with origin
 git checkout master
 git reset --hard origin/master
-git merge --no-edit --no-ff --log -m "$commit_message" release/${new_version} | tee ${TMPDIR:-/tmp}/git.log
+git merge --no-edit --no-ff --log -m "$commit_message" "release/${new_version}" | tee "${TMPDIR:-/tmp}/git.log"
 
 status=$?
 count=0
@@ -28,7 +28,7 @@ do
   [ $count -gt $limit ] && exit 1
 
   # We have the technology
-  if grep -q "^Fatal\: " ${TMPDIR:-/tmp}/git.log
+  if grep -q "^Fatal\\: " "${TMPDIR:-/tmp}/git.log"
   then
     # Force merge conflicts to be --ours
     grep -lr '<<<<<<<' . | xargs git checkout --ours
@@ -39,7 +39,7 @@ do
   fi
 done
 
-git tag -m "$commit_message" -a $new_version
+git tag -m "$commit_message" -a "$new_version"
 
 git push origin master
 
