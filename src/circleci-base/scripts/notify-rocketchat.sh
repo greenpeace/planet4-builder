@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2016
 set -eu
 
 MSG_USERNAME=${MSG_USERNAME:-CircleCI}
