@@ -14,6 +14,10 @@ BUCKET_DESTINATION=gs://${CONTAINER_PREFIX}-source
 export GOOGLE_APPLICATION_CREDENTIALS="/tmp/workspace/src/key.json"
 export SQL_TAG=$CIRCLE_TAG
 
+echo ""
+echo "We will try to get connected to: ${CLOUDSQL_INSTANCE}"
+echo ""
+
 trap finish EXIT
 cloud_sql_proxy \
   -instances="${CLOUDSQL_INSTANCE}=tcp:3306" &
