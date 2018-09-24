@@ -9,7 +9,7 @@ function finish {
 WP_DB_USERNAME_DC=$(echo "${WP_DB_USERNAME}" | base64 -d)
 WP_DB_PASSWORD_DC=$(echo "${WP_DB_PASSWORD}" | base64 -d)
 WP_STATELESS_KEY_DC=$(echo "${WP_STATELESS_KEY}" | base64 -d)
-CLOUDSQL_INSTANCE=planet4-production:us-central1:planet4-prod
+CLOUDSQL_INSTANCE=${GCLOUD_CLUSTER}:us-central1:${CLOUDSQL_INSTANCE}
 BUCKET_DESTINATION=gs://${CONTAINER_PREFIX}-source
 export GOOGLE_APPLICATION_CREDENTIALS="/tmp/workspace/src/key.json"
 export SQL_TAG=$CIRCLE_TAG
