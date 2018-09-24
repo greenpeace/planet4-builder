@@ -9,6 +9,7 @@ function finish {
 WP_DB_USERNAME_DC=$(echo "${WP_DB_USERNAME}" | base64 -d)
 WP_DB_PASSWORD_DC=$(echo "${WP_DB_PASSWORD}" | base64 -d)
 WP_STATELESS_KEY_DC=$(echo "${WP_STATELESS_KEY}" | base64 -d)
+SITE_ENV=$1
 CLOUDSQL_INSTANCE=planet4-production:us-central1:planet4-prod
 export GOOGLE_APPLICATION_CREDENTIALS="/tmp/workspace/src/key.json"
 export SQL_TAG=$CIRCLE_TAG
@@ -31,7 +32,7 @@ sleep 2
 
 export BUCKET_DESTINATION="gs://${CONTAINER_PREFIX}-source"
 export FILE_TO_IMPORT=${WP_DB_NAME_PREFIX}_master-${SQL_TAG}.sql
-export WP_DB_TO_IMPORT_TO=${WP_DB_NAME_PREFIX}_release
+export WP_DB_TO_IMPORT_TO=${WP_DB_NAME_PREFIX}_${SITE_ENV}
 
 echo ""
 echo "Copying the file from the container"
@@ -61,7 +62,6 @@ echo ""
 
 SOURCE_BUCKET="${CONTAINER_PREFIX}-stateless"
 echo ""
-echo "--- We are missing a step here."
 echo "Actually replacing the contents of the release stateless with the production stateless bucket"
 echo "Source bucket: $SOURCE_BUCKET"
 echo "Target bucket: $WP_STATELESS_BUCKET"
@@ -80,7 +80,7 @@ POD=$($kc get pods -l component=php | grep ${HELM_RELEASE} | head -n1 | cut -d' 
 echo "Pod:        $POD"
 
 OLD_PATH="https://storage.googleapis.com/${CONTAINER_PREFIX}-stateless/"
-NEW_PATH="https://storage.googleapis.com/${CONTAINER_PREFIX}-stateless-release/"
+NEW_PATH="https://storage.googleapis.com/${CONTAINER_PREFIX}-stateless-${SITE_ENV}/"
 echo ""
 echo "Replacing the path $OLD_PATH with $NEW_PATH for the images themselves"
 echo ""
