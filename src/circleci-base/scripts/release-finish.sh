@@ -16,7 +16,9 @@ git config user.name "CircleCI Bot"
 # Ensure master branch is up to date with origin
 git checkout master
 git reset --hard origin/master
-git merge --no-edit --no-ff --log -m "$commit_message" "release/${new_version}" | tee "${TMPDIR:-/tmp}/git.log"
+
+# Merge release into master, with strategy Xtheirs
+git merge -Xtheirs --no-edit --no-ff --log -m "$commit_message" "release/${new_version}" | tee "${TMPDIR:-/tmp}/git.log"
 
 status=$?
 count=0
