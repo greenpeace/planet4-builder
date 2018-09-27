@@ -3,7 +3,7 @@ set -xo pipefail
 
 if [[ -z "$1" ]]
 then
-  new_version=$(increment-version.sh "$(git-current-tag.sh)")
+  new_version=$(increment-version.sh "$(git-latest-remote-tag.sh)")
 else
   new_version=$1
 fi
