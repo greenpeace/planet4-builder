@@ -10,7 +10,7 @@ set -euo pipefail
 # Pushes changes to origin
 #
 
-old_release=${1:-$(git-latest-remote-tag.awk)}
+old_release=${1:-$(git-current-tag.sh)}
 new_release=${2:-$(increment-version.sh "$old_release")}
 
 merged=false

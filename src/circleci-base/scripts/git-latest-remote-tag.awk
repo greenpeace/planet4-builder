@@ -6,8 +6,6 @@ BEGIN {
   }
   FS = "[ /^]+"
   while ("git ls-remote " ARGV[1] "| sort -Vk2" | getline) {
-    if (!sha)
-      sha = substr($0, 1, 7)
     if ($2~/tags/ && $3~/^v[0-9]+/)
       tag = $3
   }
