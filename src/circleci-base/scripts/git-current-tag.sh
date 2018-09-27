@@ -9,4 +9,4 @@ fi
 
 repo="https://github.com/$(git remote get-url origin | cut -d: -f2 | cut -d'.' -f1)"
 
-./git-latest-remote-tag.awk "$repo"
+git-latest-remote-tag.awk "$repo"
