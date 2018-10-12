@@ -140,7 +140,12 @@ jobs:
             docker tag gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
             TYPE="Tag: gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest" notify-job-success.sh
             docker push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
-            update-build-numbers.sh
+
+  update-tag:
+    <<: *defaults
+    steps:
+      - checkout
+      - deploy: update-build-numbers.sh
 
   trigger:
     docker:
@@ -154,6 +159,15 @@ jobs:
           name: Checkout github.com/greenpeace/planet4-builder
           command: |
               trigger-build.sh git@github.com:greenpeace/planet4-builder.git develop
+
+workflow_common:
+  tag_common: &tag_common
+    context: org-global
+    filters:
+      branches:
+        ignore: /.*/
+      tags:
+        only: /^v\p{Digit}+\.\p{Digit}+\.\p{Digit}+.*/
 
 workflows:
   version: 2
@@ -196,39 +210,20 @@ workflows:
   tag:
     jobs:
       - build:
-          context: org-global
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v\p{Digit}+\.\p{Digit}+\.\p{Digit}+.*/
-
+          <<: *tag_common
       - test:
-          context: org-global
+          <<: *tag_common
           requires:
             - build
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v\p{Digit}+\.\p{Digit}+\.\p{Digit}+.*/
-
       - deploy:
-          context: org-global
+          <<: *tag_common
           requires:
             - test
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v\p{Digit}+\.\p{Digit}+\.\p{Digit}+.*/
-
+      - update-tag:
+          <<: *tag_common
+          requires:
+            - test
       - trigger:
-          context: org-global
+          <<: *tag_common
           requires:
             - deploy
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v\p{Digit}+\.\p{Digit}+\.\p{Digit}+.*/
