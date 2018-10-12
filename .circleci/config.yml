@@ -145,7 +145,10 @@ jobs:
     <<: *defaults
     steps:
       - checkout
-      - deploy: update-build-numbers.sh
+      - deploy:
+          name: Update build numbers
+          command: |
+            update-build-numbers.sh
 
   trigger:
     docker:
