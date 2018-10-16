@@ -282,4 +282,8 @@ deploy-helm:
 
 	HELM_NAMESPACE=$(HELM_NAMESPACE) \
 	HELM_RELEASE=$(HELM_RELEASE) \
+	./configure_redis.sh
+
+	HELM_NAMESPACE=$(HELM_NAMESPACE) \
+	HELM_RELEASE=$(HELM_RELEASE) \
 	./run_bash_script_in_php_pod.sh modify_users.sh
