@@ -18,6 +18,11 @@ COPY . /app/
 
 WORKDIR /app/source
 
-RUN if [ -f "${SOURCE_PATH}/composer-local.json" ]; then composer -v config --no-ansi extra.merge-plugin.require composer-local.json; fi && \
-    composer -v update --no-ansi && \
-    composer -v install --no-ansi --no-interaction
+RUN \
+    composer --profile -v update --no-dev --no-ansi && \
+    composer --profile -v install --no-dev --no-ansi --no-interaction && \
+    if [ -f "${SOURCE_PATH}/composer-local.json" ]; then \
+      composer --profile -v config --no-ansi extra.merge-plugin.require composer-local.json; \
+    fi && \
+    composer --profile -v update --no-dev --no-ansi && \
+    composer --profile -v install --no-dev --no-ansi --no-interaction
