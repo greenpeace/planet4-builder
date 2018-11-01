@@ -147,10 +147,6 @@ checkout:
 	MERGE_SOURCE=$(MERGE_SOURCE) \
 	MERGE_REF=$(MERGE_REF) \
 	./checkout.sh
-	@echo "Source directory:"
-	ls -al source
-	@echo "Merge directory:"
-	ls -al merge
 
 rewrite:
 	GIT_REF=$(GIT_REF) \
@@ -163,7 +159,6 @@ rewrite:
 	./rewrite_dockerfiles.sh
 
 bake:
-	mkdir -p source/public
 	./bake.sh | tee source/bake.log
 
 build: rewrite build-app build-openresty
