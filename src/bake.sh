@@ -10,6 +10,9 @@ generated files for use elsewhere.
 "
 }
 
+# Create composer cache directory if not exist
+mkdir -p source/cache
+
 [[ -d source ]] && rsync --exclude '.git' -av source/ build/source
 [[ -d merge ]] && rsync --exclude '.git' -av merge/ build/source
 
@@ -65,10 +68,18 @@ done
 
 docker-compose logs php-fpm
 echo ""
+echo "Copying build artifacts..."
+docker cp build_php-fpm_1:/app/source/bake.log source
+docker cp build_php-fpm_1:/app/source/cache source
+docker cp build_php-fpm_1:/app/source/public source
 
-echo "Copying built source directory..."
-docker cp build_app_1:/app/source/public/ source
-echo ""
+echo "Contents of public folder:"
+ls -al source/public
+echo
+
+echo "Contents of cache folder:"
+ls -al source/cache
+echo
 
 echo "Bringing down containers..."
 docker-compose -p build down -v &
