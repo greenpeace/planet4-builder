@@ -35,9 +35,21 @@ endif
 
 REVISION_TAG = $(shell git rev-parse --short HEAD)
 
-ALL: build
+ALL: test build
 
-build:
+test: test-yaml test-json test-composer
+
+test-yaml:
+	find . -type f -name '*.yml' | xargs yamllint
+	find . -type f -name '*.yaml' | xargs yamllint
+
+test-json:
+	find . -type f -name '*.json' | xargs jq .
+
+test-composer:
+	find . -type f -name 'composer*.json' | xargs composer validate
+
+build: test
 	docker build \
 		--tag=$(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:$(BUILD_TAG) \
 		--tag=$(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:$(BUILD_NUM) \
