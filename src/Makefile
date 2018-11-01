@@ -121,7 +121,7 @@ SOURCE_BUCKET_PATH  ?= $(BUILD_TAG)
 
 .PHONY: clean test rewrite checkout bake build build-app build-openresty pull push save
 
-all: clean test rewrite checkout bake build push save
+all: test rewrite checkout bake build push save
 
 dev: clean rewrite checkout bake build
 
