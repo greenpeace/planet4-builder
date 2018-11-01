@@ -19,8 +19,6 @@ services:
   php-fpm:
     image: p4-build
     build: ./build
-    dns:
-      - ${DNS_RESOLVER:-1.1.1.1}
     environment:
       - APP_ENV=production
       - APP_HOSTNAME=${APP_HOSTNAME:-build.planet4.local}
