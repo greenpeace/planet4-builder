@@ -41,7 +41,6 @@ test: test-yaml test-json test-composer
 
 test-yaml:
 	find . -type f -name '*.yml' | xargs yamllint
-	find . -type f -name '*.yaml' | xargs yamllint
 
 test-json:
 	find . -type f -name '*.json' | xargs jq .
