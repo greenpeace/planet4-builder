@@ -19,7 +19,7 @@ fi
 
 echo "Helm: ${HELM_RELEASE} is in a failed state"
 
-release_revision=$(helm history "${HELM_RELEASE}" | tail -1 | awk '{ print $1 }' | xargs)
+release_revision=$(helm history "${HELM_RELEASE}" --max=10 | tail -1 | awk '{ print $1 }' | xargs)
 
 if [[ $release_revision = "1" ]]
 then
@@ -29,5 +29,5 @@ then
 fi
 
 echo "Helm: ${HELM_RELEASE} has a previous revision - rolling back..."
-previous=$(helm history "${HELM_RELEASE}" | tail -2 | head -1 | awk '{ print $1 }')
+previous=$(helm history "${HELM_RELEASE}" --max=10 | tail -2 | head -1 | awk '{ print $1 }')
 helm rollback "${HELM_RELEASE}" "$previous"
