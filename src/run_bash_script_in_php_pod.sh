@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -eu
+set -exu
 
 external_script="$1"
 
