@@ -5,6 +5,7 @@ LABEL authors="${MAINTAINER}"
 WORKDIR /app
 
 ENV \
+    COMPOSER_CACHE_DIR=/app/source/cache \
     WP_SET_OPTIONS_ON_BOOT=false
 
 RUN rm -fr "${SOURCE_PATH}" && \
