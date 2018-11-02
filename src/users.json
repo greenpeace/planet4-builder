@@ -1,0 +1,91 @@
+{
+  "users": [
+    {
+      "user_login": "rawalker",
+      "user_email": "rawalker@greenpeace.org",
+      "display_name": "Raymond",
+      "first_name": "Raymond",
+      "last_name": "Walker  - P4 team",
+      "role": "administrator"
+    },{
+      "user_login": "amelekou",
+      "user_email": "amelekou@greenpeace.org",
+      "display_name": "Anastasia",
+      "first_name": "Anastasia",
+      "last_name": "Melekou - Global Support",
+      "role": "administrator"
+    },
+    {
+      "user_login": "apapamat",
+      "user_email": "apapamat@greenpeace.org",
+      "display_name": "Athanasios",
+      "first_name": "Athanasios",
+      "last_name": "Papamathaiou - Global Support",
+      "role": "administrator"
+    },
+    {
+      "user_login": "dgracian",
+      "user_email": "dgracian@greenpeace.org",
+      "display_name": "Daniel",
+      "first_name": "Daniel",
+      "last_name": "Gracian - Global Support",
+      "role": "administrator"
+    },
+    {
+      "user_login": "eberger",
+      "user_email": "eberger@greenpeace.org",
+      "display_name": "Ernesto",
+      "first_name": "Ernesto",
+      "last_name": "Berger - Global Support",
+      "role": "administrator"
+    },
+    {
+      "user_login": "econsejo",
+      "user_email": "econsejo@greenpeace.org",
+      "display_name": "Daniel",
+      "first_name": "Daniel",
+      "last_name": "Gracian - Global Support",
+      "role": "administrator"
+    },
+    {
+      "user_login": "tzetterl",
+      "user_email": "tzetterl@greenpeace.org",
+      "display_name": "Torbjorn",
+      "first_name": "Torbjorn",
+      "last_name": "Zetterlund - Global Support",
+      "role": "administrator"
+    },
+    {
+      "user_login": "atheodor",
+      "user_email": "atheodor@greenpeace.org",
+      "display_name": "Angelos",
+      "first_name": "Angelos",
+      "last_name": "Theodorakopoulos  - P4 team",
+      "role": "administrator"
+    },
+    {
+      "user_login": "kdiamant",
+      "user_email": "kdiamant@greenpeace.org",
+      "display_name": "Kyriakos",
+      "first_name": "Kyriakos",
+      "last_name": "Diamantis  - P4 team",
+      "role": "administrator"
+    },
+    {
+      "user_login": "nroussos",
+      "user_email": "nroussos@greenpeace.org",
+      "display_name": "Nikos",
+      "first_name": "Nikos",
+      "last_name": "Roussos  - P4 team",
+      "role": "administrator"
+    },
+    {
+      "user_login": "sdeshmuk",
+      "user_email": "sdeshmuk@greenpeace.org",
+      "display_name": "Sagar",
+      "first_name": "Sagar",
+      "last_name": "Deshmukh  - P4 team",
+      "role": "administrator"
+    }
+  ]
+}
