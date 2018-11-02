@@ -35,7 +35,7 @@ endif
 
 REVISION_TAG = $(shell git rev-parse --short HEAD)
 
-ALL: test build
+ALL: test build push
 
 test: test-yaml test-json test-composer
 
