@@ -41,6 +41,7 @@ else
   # git clone "$GIT_SOURCE" .
 fi
 
+ls -al
 
 ################################################################################
 
@@ -57,3 +58,5 @@ else
 fi
 
 git checkout "${CIRCLE_TAG:-${CIRCLE_BRANCH}}"
+
+ls -al
