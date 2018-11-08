@@ -87,14 +87,6 @@
       "first_name": "Raymond",
       "last_name": "Walker  - P4 team",
       "role": "administrator"
-    },
-    {
-      "user_login": "test1",
-      "user_email": "rawalker+test1@greenpeace.org",
-      "display_name": "Test1",
-      "first_name": "Testing",
-      "last_name": "Tester  - P4 team",
-      "role": "subscriber"
     }
   ]
 }
