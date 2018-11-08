@@ -5,9 +5,10 @@ LABEL authors="${MAINTAINER}"
 WORKDIR /app
 
 ENV \
+    COMPOSER_CACHE_DIR=/app/source/cache \
     WP_SET_OPTIONS_ON_BOOT=false
 
-RUN rm -fr "${SOURCE_PATH}" && \
+RUN rm -fr "${SOURCE_PATH}/public" && \
     groupadd -r -g 1000 app && \
     useradd -r -s /usr/sbin/nologin -u 1000 -g 1000 app && \
     rm -f /app/bin/add_user.sh && \
@@ -17,6 +18,11 @@ COPY . /app/
 
 WORKDIR /app/source
 
-RUN if [ -f "${SOURCE_PATH}/composer-local.json" ]; then composer -v config --no-ansi extra.merge-plugin.require composer-local.json; fi && \
-    composer -v update --no-ansi && \
-    composer -v install --no-ansi --no-interaction
+RUN \
+    composer --profile -v update --no-dev --no-ansi && \
+    composer --profile -v install --no-dev --no-ansi --no-interaction && \
+    if [ -f "${SOURCE_PATH}/composer-local.json" ]; then \
+      composer --profile -v config --no-ansi extra.merge-plugin.require composer-local.json; \
+    fi && \
+    composer --profile -v update --no-dev --no-ansi && \
+    composer --profile -v install --no-dev --no-ansi --no-interaction

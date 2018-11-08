@@ -1,1 +1,5 @@
-{}
+{
+  "name": "greenpeace/nro-placeholder",
+  "description": "Empty NRO placeholder, simulating NRO customised composer merge definition. Will be overridden by NRO repository.",
+  "license": "MIT"
+}

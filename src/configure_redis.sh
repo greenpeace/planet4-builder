@@ -2,22 +2,58 @@
 set -euo pipefail
 
 #
-# Find the first php pod in the release
+# Find the youngest php pod in the release
 #
-pod=$(kubectl get pods --namespace "${HELM_NAMESPACE}" --field-selector=status.phase=Running -l "app=wordpress-php,release=${HELM_RELEASE}" -o jsonpath="{.items[0].metadata.name}")
+main() {
+  pod=$(kubectl get pods --namespace "${HELM_NAMESPACE}" \
+    --sort-by=.metadata.creationTimestamp \
+    --field-selector=status.phase=Running \
+    -l "app=wordpress-php,release=${HELM_RELEASE}" \
+    -o jsonpath="{.items[-1:].metadata.name}")
 
-if [[ -z "$pod" ]]
-then
-  >&2 echo "ERROR: php pod not found in release ${HELM_RELEASE}"
-fi
+  if [[ -z "$pod" ]]
+  then
+    >&2 echo "ERROR: php pod not found in release ${HELM_RELEASE}"
+    return 1
+  fi
 
-redis_servicename=$(helm status ${HELM_RELEASE} | grep Service -A 10 | grep redis-master | head -n1 | cut -d' ' -f1)
+  redis_service=$(kubectl get service --namespace "${HELM_NAMESPACE}" \
+    -l "app=redis,release=${HELM_RELEASE}" \
+    -o jsonpath="{.items[0].metadata.name}")
 
-echo "Pod:        $pod"
-echo ""
-echo "Option:     rt_wp_nginx_helper_options"
-echo "Key:        redis_hostname"
-echo "Value:      $redis_servicename"
-echo ""
 
-kubectl -n ${HELM_NAMESPACE} exec $pod -- wp option patch update rt_wp_nginx_helper_options redis_hostname $redis_servicename
+  if [[ -z "$redis_service" ]]
+  then
+    >&2 echo "ERROR: redis service not found in release ${HELM_RELEASE}"
+    return 1
+  fi
+
+  echo "Pod:        $pod"
+  echo ""
+  echo "Option:     rt_wp_nginx_helper_options"
+  echo "Key:        redis_hostname"
+  echo "Value:      $redis_service"
+  echo ""
+
+  if kubectl -n "${HELM_NAMESPACE}" exec "$pod" \
+    -- wp option patch update rt_wp_nginx_helper_options redis_hostname "$redis_service"
+  then
+    return 0
+  fi
+
+  return $?
+
+}
+
+
+i=0
+retry=3
+while [[ $i -lt $retry ]]
+do
+  main && exit 0
+  i=$((i+1))
+  echo "Retry: $i/$retry"
+done
+
+>&2 echo "FAILED"
+exit 1

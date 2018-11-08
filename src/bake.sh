@@ -10,7 +10,13 @@ generated files for use elsewhere.
 "
 }
 
+# Create composer cache directory if not exist
+mkdir -p source/cache
+
+# Copy source files to build container context
 [[ -d source ]] && rsync --exclude '.git' -av source/ build/source
+
+# Copy merge files to build container context, overwriting as required
 [[ -d merge ]] && rsync --exclude '.git' -av merge/ build/source
 
 # ----------------------------------------------------------------------------
@@ -22,11 +28,11 @@ docker-compose -p build down -v --remove-orphans
 # Build the container and start
 echo "Building containers..."
 docker-compose -p build build
-echo ""
+echo
 
 echo "Starting containers..."
 docker-compose -p build up -d
-echo ""
+echo
 
 # 2 seconds * 150 == 5+ minutes
 interval=2
@@ -41,8 +47,6 @@ docker-compose -p build logs -f &
 until [[ $success -ge $threshold ]]
 do
   # Curl to container and expect status code 200
-
-
   if docker run --network "container:build_app_1" --rm appropriate/curl -s -k "http://localhost:80" | grep -s "greenpeace" > /dev/null
   then
     success=$((success+1))
@@ -60,23 +64,31 @@ do
   fi
 
   [[ $success -ge $threshold ]] || sleep $interval
-
 done
 
 docker-compose logs php-fpm
-echo ""
+echo
 
-echo "Copying built source directory..."
-docker cp build_app_1:/app/source/public/ source
-echo ""
+echo "Copying build artifacts..."
+docker cp build_php-fpm_1:/app/source/bake.log source
+docker cp build_php-fpm_1:/app/source/cache source
+docker cp build_php-fpm_1:/app/source/public source
+
+echo "Contents of public folder:"
+ls -al source/public
+echo
+
+echo "Contents of cache folder:"
+ls -al source/cache
+echo
 
 echo "Bringing down containers..."
 docker-compose -p build down -v &
-echo ""
+echo
 
 shopt -s nullglob
-numfiles=(source/public/*)
-numfiles=${#numfiles[@]}
+files=(source/public/*)
+numfiles=${#files[@]}
 
 echo "$numfiles files in source/public"
 
@@ -87,7 +99,7 @@ then
   exit 1
 fi
 
-# FIXME volume: nocopy not working in the docker-compse.yml file
+# FIXME volume: nocopy not working in the docker-compose.yml file
 rm -f source/public/index.html
 
 # Tagged releases are production, remove the robots.txt

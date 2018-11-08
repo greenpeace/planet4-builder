@@ -1,14 +1,14 @@
+---
 version: '3.2'
 services:
-
   app:
     image: gcr.io/planet-4-151612/openresty:${OPENRESTY_BUILD_TAG:-develop}
     volumes:
-    - type: volume
-      source: data
-      target: /app/source/public
-      volume:
-        nocopy: true
+      - type: volume
+        source: data
+        target: /app/source/public
+        volume:
+          nocopy: true
     environment:
       - APP_ENV=production
       - APP_HOSTNAME=${APP_HOSTNAME:-build.planet4.local}
@@ -19,8 +19,6 @@ services:
   php-fpm:
     image: p4-build
     build: ./build
-    dns:
-      - ${DNS_RESOLVER:-1.1.1.1}
     environment:
       - APP_ENV=production
       - APP_HOSTNAME=${APP_HOSTNAME:-build.planet4.local}
@@ -30,11 +28,11 @@ services:
       - OVERWRITE_EXISTING_FILES=true
       - WP_DEFAULT_CONTENT=false
     volumes:
-    - type: volume
-      source: data
-      target: /app/source/public
-      volume:
-        nocopy: true
+      - type: volume
+        source: data
+        target: /app/source/public
+        volume:
+          nocopy: true
 
   db:
     image: ${DB_IMAGE:-mysql:5.7}
@@ -45,7 +43,7 @@ services:
       - MYSQL_USER=${MYSQL_USER:-planet4}
 
   redis:
-    image: redis:4-alpine
+    image: redis:4
 
 volumes:
   data:

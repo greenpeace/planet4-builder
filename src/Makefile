@@ -121,7 +121,7 @@ SOURCE_BUCKET_PATH  ?= $(BUILD_TAG)
 
 .PHONY: clean test rewrite checkout bake build build-app build-openresty pull push save
 
-all: clean test rewrite checkout bake build push save
+all: test rewrite checkout bake build push save
 
 dev: clean rewrite checkout bake build
 
@@ -147,10 +147,6 @@ checkout:
 	MERGE_SOURCE=$(MERGE_SOURCE) \
 	MERGE_REF=$(MERGE_REF) \
 	./checkout.sh
-	@echo "Source directory:"
-	ls -al source
-	@echo "Merge directory:"
-	ls -al merge
 
 rewrite:
 	GIT_REF=$(GIT_REF) \
@@ -163,7 +159,6 @@ rewrite:
 	./rewrite_dockerfiles.sh
 
 bake:
-	mkdir -p source/public
 	./bake.sh | tee source/bake.log
 
 build: rewrite build-app build-openresty
@@ -277,13 +272,10 @@ deploy-helm:
 	HELM_RELEASE=$(HELM_RELEASE) \
 	./newrelic_deployment.sh
 
-	# This is dreadful. FIXME
-	sleep 20
-
 	HELM_NAMESPACE=$(HELM_NAMESPACE) \
 	HELM_RELEASE=$(HELM_RELEASE) \
 	./configure_redis.sh
 
 	HELM_NAMESPACE=$(HELM_NAMESPACE) \
 	HELM_RELEASE=$(HELM_RELEASE) \
-	./run_bash_script_in_php_pod.sh modify_users.sh
+	./run_bash_script_in_php_pod.sh modify_users.sh "$(shell base64 -w 0 users.json)"

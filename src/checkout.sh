@@ -27,21 +27,28 @@ git config --global url."ssh://git@github.com".insteadOf "https://github.com" ||
 
 if [ -e /home/circleci/source/.git ]
 then
+  echo "WARNING: source directory is already a Git repository: /home/circleci/source"
   cd /home/circleci/source
   git remote set-url origin "$GIT_SOURCE" || true
 else
   mkdir -p /home/circleci/source
   cd /home/circleci/source
-  git clone "$GIT_SOURCE" .
+  git init
+  git remote add origin "$GIT_SOURCE"
+  git fetch
+  git reset "origin/${GIT_REF}"
+  git checkout -- .
+  # git clone "$GIT_SOURCE" .
 fi
 
-git checkout "${GIT_REF}"
+ls -al
 
 ################################################################################
 
 
 if [ -e /home/circleci/merge/.git ]
 then
+  echo "WARNING: merge directory is already a Git repository: /home/circleci/merge"
   cd /home/circleci/merge
   git remote set-url origin "$CIRCLE_REPOSITORY_URL" || true
 else
@@ -51,3 +58,5 @@ else
 fi
 
 git checkout "${CIRCLE_TAG:-${CIRCLE_BRANCH}}"
+
+ls -al
