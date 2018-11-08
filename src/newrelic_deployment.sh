@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -exu
+set -eu
 
 NEWRELIC_APPLICATION_ID="${NEWRELIC_APPLICATION_ID:-$(newrelic-get-application-id.sh)}"
 
