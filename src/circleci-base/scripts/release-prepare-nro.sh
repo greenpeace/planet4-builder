@@ -41,7 +41,7 @@ then
   if [[ "$merged" = "true" ]]
   then
     echo "Since we've merged changes from develop, let's amend that commit"
-    git commit --amend --no-edit
+    git commit --amend --no-edit --allow-empty
   else
     echo "New commit with automated modifications"
     git commit -m ":robot: release/$new_release Automated modifications "
