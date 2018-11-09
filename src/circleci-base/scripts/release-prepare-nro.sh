@@ -37,33 +37,38 @@ pin-composer-versions.sh
 if ! git diff --exit-code
 then
   git add .
+  echo "---2. We have local changes"
   # We have local changes
   if [[ "$merged" = "true" ]]
   then
-    echo "Since we've merged changes from develop, let's amend that commit"
+    echo "---2.1. Since we've merged changes from develop, let's amend that commit"
     git commit --amend --no-edit --allow-empty
   else
-    echo "New commit with automated modifications"
+    echo "---2.2 New commit with automated modifications"
     git commit -m ":robot: release/$new_release Automated modifications "
   fi
 else
   # No local changes
+  echo "---3. No local changes"
   if [[ "$merged" = "true" ]]
   then
-    echo "Nothing to do: no new changes and have already merged develop -> release in this job"
+    echo "---3.1 Nothing to do: no new changes and have already merged develop -> release in this job"
   else
-    echo "Creating empty commit as new build trigger ..."
+    echo "---3.2 Creating empty commit as new build trigger ..."
     git commit --allow-empty -m ":robot: release/$new_release Build trigger"
   fi
 fi
 
 message=$(git show --format=%B | grep -v ":robot: Build trigger")
 
+echo "---4. Remove all the build trigger notifications from the latest commit message"
 # Remove all the build trigger notifications from the latest commit message
 git commit --allow-empty --amend -m "$message"
 
+echo "---5. Create the new release branch "
 # Create the new release branch
 git push -u origin "release/$new_release"
 
+echo "---6. Delete the old release branch "
 # Delete the old release branch
 git push origin --delete "release/$old_release" || exit 0
