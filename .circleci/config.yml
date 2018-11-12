@@ -22,9 +22,6 @@ jobs:
           name: Notify failure
           when: on_fail
           command: TYPE="Build-push gcr.io/planet-4-151612/p4-builder" notify-job-failure.sh
-      - run:
-          name: Notify success
-          command: TYPE="Build-push gcr.io/planet-4-151612/p4-builder" notify-job-success.sh
 
   notify-promote:
     <<: *defaults
