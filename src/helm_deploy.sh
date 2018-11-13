@@ -2,8 +2,7 @@
 set -uo pipefail
 
 # env | sort
-main() {
-  set -x
+function install() {
   helm upgrade --install --force --wait --timeout 300 "${HELM_RELEASE}" \
     --namespace "${HELM_NAMESPACE}" \
     --values secrets.yaml \
@@ -30,24 +29,45 @@ main() {
     --set sqlproxy.cloudsql.instances[0].port="3306" \
     --set wp.siteUrl="${APP_HOSTNAME}/${APP_HOSTPATH}" \
     --set wp.stateless.bucket="${WP_STATELESS_BUCKET}" \
-    p4-helm-charts/wordpress 2>&1 | tee helm_output.txt && return 0
+    p4-helm-charts/wordpress 2>&1 | tee -a helm_output.txt && return 0
 
   return 1
 }
 
-i=0
-retry=3
-while [[ $i -lt $retry ]]
-do
-  set -x
-  time main && exit 0
-  { set +x; } 2>/dev/null
+# Retries a command a configurable number of times with backoff.
+#
+# The retry count is given by ATTEMPTS (default 5), the initial backoff
+# timeout is given by TIMEOUT in seconds (default 1.)
+#
+# Successive backoffs double the timeout.
+function with_backoff {
+  local max_attempts=${ATTEMPTS:-5}
+  local timeout=${TIMEOUT:-1}
+  local attempt=1
+  local exitCode=0
 
-  i=$((i+1))
-  echo "Retry: $i/$retry"
-done
+  while (( attempt < max_attempts ))
+  do
+    if "$@"
+    then
+      return 0
+    fi
+    exitCode=$?
 
+    >&2 echo "Helm deployment failed. Retrying in $timeout ..."
+    sleep "$timeout"
+    attempt=$(( attempt + 1 ))
+    timeout=$(( timeout * 2 ))
+  done
 
+  [[ $exitCode != 0 ]] && >&2 echo "You've failed me for the last time! ($*)"
+
+  return $exitCode
+}
+
+with_backoff install && exit 0
+
+>&2 echo "Exit code: $?"
 >&2 echo "FAILED to deploy!"
 
 echo "ERROR: Helm release ${HELM_RELEASE} failed to deploy"
