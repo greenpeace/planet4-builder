@@ -79,3 +79,5 @@ $(cat helm_output.txt)
 \`\`\`" "${HOME}/scripts/notify-job-failure.sh"
 
 ./helm_rollback.sh
+
+exit 1
