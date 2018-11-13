@@ -41,8 +41,8 @@ function install() {
 #
 # Successive backoffs double the timeout.
 function with_backoff {
-  local max_attempts=${ATTEMPTS:-5}
-  local timeout=${TIMEOUT:-1}
+  local max_attempts=${ATTEMPTS:-6}
+  local timeout=${TIMEOUT:-10}
   local attempt=1
   local exitCode=0
 
@@ -54,7 +54,7 @@ function with_backoff {
     fi
     exitCode=$?
 
-    >&2 echo "Helm deployment failed. Retrying in $timeout ..."
+    >&2 echo "Helm deployment try #$attempt failed. Retrying in $timeout ..."
     sleep "$timeout"
     attempt=$(( attempt + 1 ))
     timeout=$(( timeout * 2 ))
@@ -67,10 +67,9 @@ function with_backoff {
 
 with_backoff install && exit 0
 
->&2 echo "Exit code: $?"
->&2 echo "FAILED to deploy!"
 
-echo "ERROR: Helm release ${HELM_RELEASE} failed to deploy"
+>&2 echo "ERROR: Helm release ${HELM_RELEASE} failed to deploy"
+
 TYPE="Helm Deployment" EXTRA_TEXT="\`\`\`
 History:
 $(helm history "${HELM_RELEASE}" --max=5)
