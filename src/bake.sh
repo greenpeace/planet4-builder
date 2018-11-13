@@ -14,10 +14,10 @@ generated files for use elsewhere.
 mkdir -p source/cache
 
 # Copy source files to build container context
-[[ -d source ]] && rsync --exclude '.git' -av source/ build/source
+[[ -d source ]] && rsync --exclude '.git' -a source/ build/source
 
 # Copy merge files to build container context, overwriting as required
-[[ -d merge ]] && rsync --exclude '.git' -av merge/ build/source
+[[ -d merge ]] && rsync --exclude '.git' -a merge/ build/source
 
 # ----------------------------------------------------------------------------
 
