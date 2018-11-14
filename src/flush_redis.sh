@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
-
 set -eu
 
-main() {
+# shellcheck disable=SC1091
+. lib/retry.sh
+
+function flush() {
   redis=$(kubectl get pods --namespace "${HELM_NAMESPACE}" \
     --field-selector=status.phase=Running \
     -l "app=redis,role=master,release=${HELM_RELEASE}" \
@@ -17,14 +19,7 @@ main() {
   kubectl --namespace "${HELM_NAMESPACE}" exec "$redis" redis-cli flushdb
 }
 
-i=0
-retry=3
-while [[ $i -lt $retry ]]
-do
-  main && exit 0
-  i=$((i+1))
-  echo "Retry: $i/$retry"
-done
+retry flush && exit 0
 
 >&2 echo "FAILED"
 exit 1

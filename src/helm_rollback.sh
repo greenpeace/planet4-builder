@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# shellcheck disable=SC1091
+. lib/retry.sh
+
 release=${1:-${HELM_RELEASE}}
-current=$(helm history "$release" --max=1 | tail -1 | awk '{ print $1 }' | xargs)
+helm history "$release" --max=10
+
+helm get "$release" > helm_get_release.txt
+current=$(grep '^REVISION:' helm_get_release.txt | cut -d' ' -f2)
 
 re='^[0-9]+$'
 if ! [[ $current =~ $re ]] ; then
@@ -10,28 +16,51 @@ if ! [[ $current =~ $re ]] ; then
    exit 1
 fi
 
+helm status "$release" | tee helm_release_status.txt
+
 if [[ $current -eq 1 ]]
 then
   >&2 echo "ERROR: $release is first revision, cannot perform helm rollback"
   exit 1
 fi
 
-previous=${2:-$((current-1))}
-echo "Helm: Rolling back $release to revision $previous"
+status=$(grep '^STATUS:' helm_release_status.txt | cut -d' ' -f2)
+echo "Release #current of $release is in state: $status"
 
-if helm rollback "$release" "$previous"
-then
-  helm history "$release" --max=10
+# Find last good deployment
+previous=${2:-$(( current - 1 ))}
+while [[ $previous -gt 0 ]]
+do
+  [[ $(helm status "$release" --revision "$previous" | grep '^STATUS:' | cut -d' ' -f2 | xargs) == "SUPERSEDED"  ]] && break
+  previous=$(( previous - 1 ))
+done
 
-  TYPE="Helm Rollback" \
-  EXTRA_TEXT="\`\`\`
-  History:
-  $(helm history "${HELM_RELEASE}" --max=5)
-  \`\`\`" \
-  notify-job-success.sh
+# Nothing found, exit with error
+[[ $previous -lt 1 ]] && >&2 echo "ERROR: No good releases to roll back to!" && exit 1
 
-  exit 0
-fi
+# Success
+function rollback() {
+  echo "Rolling back $release to revision: $previous"
+
+  # Perform rollback
+  if helm rollback "$release" "$previous"
+  then
+    echo "SUCCESS: Release $release now at revision: $previous"
+    TYPE="Helm Rollback" \
+    EXTRA_TEXT="\`\`\`
+    History:
+    $(helm history "${HELM_RELEASE}" --max=5)
+    \`\`\`" \
+    notify-job-success.sh
+
+    return 0
+  fi
+
+  >&2 echo "ERROR: Failed to rollback $release to revision: $previous"
+  return 1
+}
+
+retry rollback && exit 0
 
 >&2 echo "ERROR: Failed during rollback"
 helm status "$release

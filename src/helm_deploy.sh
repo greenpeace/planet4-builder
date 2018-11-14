@@ -1,10 +1,15 @@
 #!/usr/bin/env bash
 set -uo pipefail
 
-# env | sort
-main() {
-  set -x
-  helm upgrade --install --force --wait --timeout 300 "${HELM_RELEASE}" \
+# shellcheck disable=SC1091
+. lib/retry.sh
+
+echo
+echo "Deploying $HELM_RELEASE in $HELM_NAMESPACE ..."
+echo
+
+function install() {
+  if helm upgrade --install --force --wait --timeout 300 "${HELM_RELEASE}" \
     --namespace "${HELM_NAMESPACE}" \
     --values secrets.yaml \
     --set dbDatabase="${WP_DB_NAME}" \
@@ -30,33 +35,29 @@ main() {
     --set sqlproxy.cloudsql.instances[0].port="3306" \
     --set wp.siteUrl="${APP_HOSTNAME}/${APP_HOSTPATH}" \
     --set wp.stateless.bucket="${WP_STATELESS_BUCKET}" \
-    p4-helm-charts/wordpress 2>&1 | tee helm_output.txt && return 0
+    p4-helm-charts/wordpress 2>&1 | tee -a helm_output.txt
+  then
+    echo "SUCCESS: Deployed release $HELM_RELEASE"
+    return 0
+  fi
 
   return 1
 }
 
-i=0
-retry=3
-while [[ $i -lt $retry ]]
-do
-  set -x
-  time main && exit 0
-  { set +x; } 2>/dev/null
+TIMEOUT=10 retry install && exit 0
 
-  i=$((i+1))
-  echo "Retry: $i/$retry"
-done
+>&2 echo "ERROR: Helm release ${HELM_RELEASE} failed to deploy"
 
-
->&2 echo "FAILED to deploy!"
-
-echo "ERROR: Helm release ${HELM_RELEASE} failed to deploy"
-TYPE="Helm Deployment" EXTRA_TEXT="\`\`\`
+TYPE="Helm Deployment" \
+EXTRA_TEXT="\`\`\`
 History:
 $(helm history "${HELM_RELEASE}" --max=5)
 
 Build:
 $(cat helm_output.txt)
-\`\`\`" "${HOME}/scripts/notify-job-failure.sh"
+\`\`\`" \
+notify-job-failure.sh
 
 ./helm_rollback.sh
+
+exit 1

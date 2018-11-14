@@ -14,10 +14,10 @@ generated files for use elsewhere.
 mkdir -p source/cache
 
 # Copy source files to build container context
-[[ -d source ]] && rsync --exclude '.git' -av source/ build/source
+[[ -d source ]] && rsync --exclude '.git' -a source/ build/source
 
 # Copy merge files to build container context, overwriting as required
-[[ -d merge ]] && rsync --exclude '.git' -av merge/ build/source
+[[ -d merge ]] && rsync --exclude '.git' -a merge/ build/source
 
 # ----------------------------------------------------------------------------
 
@@ -42,12 +42,17 @@ loop=150
 threshold=3
 success=0
 
-docker-compose -p build logs -f &
+docker-compose -p build logs -f php-fpm &
+
+# Not going to be ready immediately
+sleep 20
+
+proxy_container=$(docker ps | grep build_proxy | head -n1 | cut -d' ' -f1)
 
 until [[ $success -ge $threshold ]]
 do
   # Curl to container and expect status code 200
-  if docker run --network "container:build_app_1" --rm appropriate/curl -s -k "http://localhost:80" | grep -s "greenpeace" > /dev/null
+  if docker run --network "container:$proxy_container" --rm appropriate/curl -s -k "http://localhost:80" | grep -s "greenpeace" > /dev/null
   then
     success=$((success+1))
     echo "Success: $success/$threshold"
@@ -66,13 +71,12 @@ do
   [[ $success -ge $threshold ]] || sleep $interval
 done
 
-docker-compose logs php-fpm
-echo
+php_container=$(docker ps | grep build_php | head -n1 | cut -d' ' -f1)
 
 echo "Copying build artifacts..."
-docker cp build_php-fpm_1:/app/source/bake.log source
-docker cp build_php-fpm_1:/app/source/cache source
-docker cp build_php-fpm_1:/app/source/public source
+docker cp "$php_container:/app/source/bake.log" source
+docker cp "$php_container:/app/source/cache" source
+docker cp "$php_container:/app/source/public" source
 
 echo "Contents of public folder:"
 ls -al source/public
@@ -108,7 +112,5 @@ if [[ ! -z "${CIRCLE_TAG:-}" ]]
 then
   rm -f source/public/robots.txt
 fi
-
-wait # for docker-compose down to finish
 
 echo "Done"

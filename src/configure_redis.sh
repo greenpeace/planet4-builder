@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+. lib/retry.sh
+
 #
 # Find the youngest php pod in the release
 #
@@ -35,8 +37,8 @@ main() {
   echo "Value:      $redis_service"
   echo ""
 
-  if kubectl -n "${HELM_NAMESPACE}" exec "$pod" \
-    -- wp option patch update rt_wp_nginx_helper_options redis_hostname "$redis_service"
+  if kubectl -n "${HELM_NAMESPACE}" exec "$pod" -- \
+    wp option patch update rt_wp_nginx_helper_options redis_hostname "$redis_service"
   then
     return 0
   fi
@@ -45,15 +47,7 @@ main() {
 
 }
 
-
-i=0
-retry=3
-while [[ $i -lt $retry ]]
-do
-  main && exit 0
-  i=$((i+1))
-  echo "Retry: $i/$retry"
-done
+retry main && exit 0
 
 >&2 echo "FAILED"
 exit 1
