@@ -13,7 +13,7 @@ function retry {
   local attempt=1
   local exitCode=0
 
-  while (( attempt < max_attempts ))
+  while (( attempt <= max_attempts ))
   do
     if "$@"
     then
@@ -21,9 +21,11 @@ function retry {
     fi
     exitCode=$?
 
-    >&2 echo "Attempt #$attempt failed. Retrying in $timeout seconds ..."
+    >&2 echo "Attempt #$attempt/$max_attempts failed."
     sleep "$timeout"
     attempt=$(( attempt + 1 ))
+    (( attempt > max_attempts )) && break
+    echo "Retrying in $timeout seconds ..."
     timeout=$(( timeout * 2 ))
   done
 
