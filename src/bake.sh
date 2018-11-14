@@ -74,9 +74,9 @@ done
 php_container=$(docker ps | grep build_php | head -n1 | cut -d' ' -f1)
 
 echo "Copying build artifacts..."
-docker cp $php_container:/app/source/bake.log source
-docker cp $php_container:/app/source/cache source
-docker cp $php_container:/app/source/public source
+docker cp "$php_container:/app/source/bake.log" source
+docker cp "$php_container:/app/source/cache" source
+docker cp "$php_container:/app/source/public" source
 
 echo "Contents of public folder:"
 ls -al source/public
