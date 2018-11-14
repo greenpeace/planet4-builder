@@ -8,7 +8,7 @@ release=${1:-${HELM_RELEASE}}
 helm history "$release" --max=10
 
 helm get "$release" > helm_get_release.txt
-current=$(grep '^RELEASE:' helm_get_release.txt | cut -d' ' -f2)
+current=$(grep '^REVISION:' helm_get_release.txt | cut -d' ' -f2)
 
 re='^[0-9]+$'
 if ! [[ $current =~ $re ]] ; then
