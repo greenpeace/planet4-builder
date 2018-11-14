@@ -1,9 +1,15 @@
 #!/usr/bin/env bash
 set -uo pipefail
 
-# env | sort
+# shellcheck disable=SC1091
+. lib/retry.sh
+
+echo
+echo "Deploying $HELM_RELEASE in $HELM_NAMESPACE ..."
+echo
+
 function install() {
-  helm upgrade --install --force --wait --timeout 300 "${HELM_RELEASE}" \
+  if helm upgrade --install --force --wait --timeout 300 "${HELM_RELEASE}" \
     --namespace "${HELM_NAMESPACE}" \
     --values secrets.yaml \
     --set dbDatabase="${WP_DB_NAME}" \
@@ -29,54 +35,28 @@ function install() {
     --set sqlproxy.cloudsql.instances[0].port="3306" \
     --set wp.siteUrl="${APP_HOSTNAME}/${APP_HOSTPATH}" \
     --set wp.stateless.bucket="${WP_STATELESS_BUCKET}" \
-    p4-helm-charts/wordpress 2>&1 | tee -a helm_output.txt && return 0
+    p4-helm-charts/wordpress 2>&1 | tee -a helm_output.txt
+  then
+    echo "SUCCESS: Deployed release $HELM_RELEASE"
+    return 0
+  fi
 
   return 1
 }
 
-# Retries a command a configurable number of times with backoff.
-#
-# The retry count is given by ATTEMPTS (default 5), the initial backoff
-# timeout is given by TIMEOUT in seconds (default 1.)
-#
-# Successive backoffs double the timeout.
-function with_backoff {
-  local max_attempts=${ATTEMPTS:-6}
-  local timeout=${TIMEOUT:-10}
-  local attempt=1
-  local exitCode=0
-
-  while (( attempt < max_attempts ))
-  do
-    if "$@"
-    then
-      return 0
-    fi
-    exitCode=$?
-
-    >&2 echo "Helm deployment try #$attempt failed. Retrying in $timeout ..."
-    sleep "$timeout"
-    attempt=$(( attempt + 1 ))
-    timeout=$(( timeout * 2 ))
-  done
-
-  [[ $exitCode != 0 ]] && >&2 echo "You've failed me for the last time! ($*)"
-
-  return $exitCode
-}
-
-with_backoff install && exit 0
-
+TIMEOUT=10 retry install && exit 0
 
 >&2 echo "ERROR: Helm release ${HELM_RELEASE} failed to deploy"
 
-TYPE="Helm Deployment" EXTRA_TEXT="\`\`\`
+TYPE="Helm Deployment" \
+EXTRA_TEXT="\`\`\`
 History:
 $(helm history "${HELM_RELEASE}" --max=5)
 
 Build:
 $(cat helm_output.txt)
-\`\`\`" "${HOME}/scripts/notify-job-failure.sh"
+\`\`\`" \
+notify-job-failure.sh
 
 ./helm_rollback.sh
 
