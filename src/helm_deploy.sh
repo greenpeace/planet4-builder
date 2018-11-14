@@ -4,11 +4,10 @@ set -uo pipefail
 # shellcheck disable=SC1091
 . lib/retry.sh
 
-echo
-echo "Deploying $HELM_RELEASE in $HELM_NAMESPACE ..."
-echo
-
 function install() {
+
+  echo "Deploying $HELM_RELEASE in $HELM_NAMESPACE ..."
+  echo
   if helm upgrade --install --force --wait --timeout 300 "${HELM_RELEASE}" \
     --namespace "${HELM_NAMESPACE}" \
     --values secrets.yaml \
@@ -35,12 +34,12 @@ function install() {
     --set sqlproxy.cloudsql.instances[0].port="3306" \
     --set wp.siteUrl="${APP_HOSTNAME}/${APP_HOSTPATH}" \
     --set wp.stateless.bucket="${WP_STATELESS_BUCKET}" \
-    p4-helm-charts/wordpress 2>&1 | tee -a helm_output.txt
+    p4/wordpress 2>&1 | tee -a helm_output.txt
   then
     echo "SUCCESS: Deployed release $HELM_RELEASE"
     return 0
   fi
-
+  echo "FAILURE: Could not deploy release $HELM_RELEASE"
   return 1
 }
 
