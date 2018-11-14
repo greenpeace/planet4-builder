@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -eu
 
+# shellcheck disable=SC1091
 . lib/retry.sh
 
 function flush() {

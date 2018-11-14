@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# shellcheck disable=SC1091
 . lib/retry.sh
 
 release=${1:-${HELM_RELEASE}}
