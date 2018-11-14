@@ -17,5 +17,6 @@ then
   exit 0
 fi
 
-echo "Helm: ${HELM_RELEASE} is in a failed state"
+echo "Helm: ${HELM_RELEASE} is in a failed state, rolling back."
+
 ./helm_rollback.sh
