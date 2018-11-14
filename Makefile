@@ -48,7 +48,10 @@ test-json:
 test-composer:
 	find . -type f -name 'composer*.json' | xargs composer validate
 
-build: test
+pull:
+	docker pull gcr.io/planet-4-151612/circleci-base:latest
+
+build: test pull
 	docker build \
 		--tag=$(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:$(BUILD_TAG) \
 		--tag=$(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:$(BUILD_NUM) \
