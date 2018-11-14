@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+. lib/retry.sh
+
 release=${1:-${HELM_RELEASE}}
 helm history "$release" --max=10
 
