@@ -153,17 +153,9 @@ jobs:
             update-build-numbers.sh
 
   trigger:
-    docker:
-      - image: gcr.io/planet-4-151612/circleci-base:latest
-    working_directory: /tmp/workspace
+    <<: *defaults
     steps:
-      - checkout
-      - attach_workspace:
-          at: /tmp/workspace
-      - deploy:
-          name: Checkout github.com/greenpeace/planet4-builder
-          command: |
-              trigger-build-api.sh git@github.com:greenpeace/planet4-builder.git develop
+      - run: trigger-build-api.sh planet4-builder develop
 
 workflow_common:
   tag_common: &tag_common
