@@ -47,7 +47,7 @@ docker-compose -p build logs -f php-fpm &
 # Not going to be ready immediately
 sleep 20
 
-proxy_container=$(docker-compose -p build ps -q build_proxy)
+proxy_container=$(docker-compose -p build ps -q app)
 
 until [[ $success -ge $threshold ]]
 do
