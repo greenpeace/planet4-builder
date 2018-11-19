@@ -47,7 +47,7 @@ docker-compose -p build logs -f php-fpm &
 # Not going to be ready immediately
 sleep 20
 
-proxy_container=$(docker ps | grep build_proxy | head -n1 | cut -d' ' -f1)
+proxy_container=$(docker-compose -p build ps -q build_proxy)
 
 until [[ $success -ge $threshold ]]
 do
@@ -71,7 +71,10 @@ do
   [[ $success -ge $threshold ]] || sleep $interval
 done
 
-php_container=$(docker ps | grep build_php | head -n1 | cut -d' ' -f1)
+# Debug running container names
+docker ps
+
+php_container=$(docker-compose -p build ps -q php-fpm)
 
 echo "Copying build artifacts..."
 docker cp "$php_container:/app/source/bake.log" source
