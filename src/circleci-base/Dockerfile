@@ -1,7 +1,7 @@
 # Planet 4 CircleCI build image
 # Branch: master
-# Commit: 406a377858d1aa30523a78f22cdb0e868a36608a
-# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/1136
+# Commit: 7989dacbda08e766e46d6f54e8b8aa089d40970c
+# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/1146
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
@@ -55,17 +55,15 @@ RUN git clone https://github.com/sstephenson/bats.git && \
       && \
     pip install yamllint && \
     npm install -g \
-      gulp \
       junit-merge \
-      tap-xunit \
-      yarn && \
+      tap-xunit && \
     rm -rf /tmp/* && \
     rm -rf /var/tmp/* && \
     rm -rf /var/lib/apt/lists/*
 
 USER circleci
 
-RUN curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -L "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-223.0.0-linux-x86_64.tar.gz" | tar xz && \
+RUN curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -L "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-225.0.0-linux-x86_64.tar.gz" | tar xz && \
     CLOUDSDK_CORE_DISABLE_PROMPTS=1 ./google-cloud-sdk/install.sh \
         --usage-reporting false \
         --bash-completion false \
