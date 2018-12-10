@@ -6,6 +6,7 @@ composer=${1:-${COMPOSER:-composer-local.json}}
 tmpdir=$(mktemp -d "${TMPDIR:-/tmp/}$(basename "$0").XXXXXXXXXXXX")
 
 BLACKLIST=( \
+  greenpeace/planet4-gpnl-plugin-blocks \
   greenpeace/planet4-master-theme \
   greenpeace/planet4-plugin-blocks \
   greenpeace/planet4-plugin-engagingnetworks \
