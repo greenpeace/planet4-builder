@@ -11,6 +11,7 @@ then
   echo "ERROR: Namespace '$namespace' not found."
   exit 1
 fi
+
 echo
 echo "Backup release database:"
 echo "Release:   $release"
@@ -26,6 +27,12 @@ php=$(kubectl get pods --namespace "${namespace}" \
   --field-selector=status.phase=Running \
   -l "app=wordpress-php,release=${release}" \
   -o jsonpath="{.items[-1:].metadata.name}")
+
+if ! $kc exec "$php" -- wp core is-installed
+then
+  echo "SKIP: Wordpress is not yet installed"
+  exit 0
+fi
 
 datestring=$(date -u +"%Y%m%dT%H%M%SZ")
 working_dir=$(mktemp -d "${TMPDIR:-/tmp/}$(basename "$0").XXXXXXXXXXXX")
