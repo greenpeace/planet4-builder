@@ -29,6 +29,7 @@ services:
       - MYSQL_USER=${MYSQL_USER:-planet4}
       - OVERWRITE_EXISTING_FILES=true
       - WP_DEFAULT_CONTENT=false
+      - WP_VERSION=${WP_VERSION:-latest}
     volumes:
       - type: volume
         source: data
