@@ -4,7 +4,7 @@ set -euo pipefail
 release=${HELM_RELEASE:-$1}
 namespace=${HELM_NAMESPACE:-${2:-$(helm status "$release" | grep NAMESPACE: | cut -d' ' -f2 | sed 's/planet4-//' | sed 's/-master$//' | sed 's/-release$//' | xargs)}}
 
-tag=${BUILD_TAG:-${3:-$(git rev-parse --abbrev-ref HEAD)}}
+tag=${CIRCLE_TAG:-${CIRCLE_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}}
 
 if ! kubectl get namespace "$namespace" > /dev/null
 then
