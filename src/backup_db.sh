@@ -20,6 +20,10 @@ echo "Namespace: $namespace"
 echo "Tag:       $tag"
 echo
 
+# Set kubernetes command with namespace
+kc="kubectl -n $namespace"
+
+set +e
 release_exists=$(helm status "${HELM_RELEASE}" | xargs)
 
 if [[ -z "$release_exists" ]]
@@ -28,10 +32,6 @@ then
   exit 0
 fi
 
-# Set kubernetes command with namespace
-kc="kubectl -n $namespace"
-
-set +e
 php=$(kubectl get pods --namespace "${namespace}" \
   --sort-by=.metadata.creationTimestamp \
   --field-selector=status.phase=Running \
