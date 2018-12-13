@@ -233,6 +233,11 @@ deploy-helm:
 	HELM_RELEASE=$(HELM_RELEASE) \
 	./helm_prepare.sh
 
+	APP_HOSTPATH=$(APP_HOSTPATH) \
+	APP_ENVIRONMENT=$(APP_ENVIRONMENT) \
+	HELM_RELEASE=$(HELM_RELEASE) \
+	./backup_db.sh
+
 	# Upgrade or install deployment to cluster
 	APP_ENVIRONMENT="$(APP_ENVIRONMENT)" \
 	APP_HOSTNAME="$(APP_HOSTNAME)" \
@@ -279,3 +284,7 @@ deploy-helm:
 	HELM_NAMESPACE=$(HELM_NAMESPACE) \
 	HELM_RELEASE=$(HELM_RELEASE) \
 	./run_bash_script_in_php_pod.sh modify_users.sh "$(shell base64 -w 0 users.json)"
+
+	HELM_NAMESPACE=$(HELM_NAMESPACE) \
+	HELM_RELEASE=$(HELM_RELEASE) \
+	./run_post_deploy_scripts.sh

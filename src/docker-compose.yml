@@ -3,7 +3,7 @@ version: '3.2'
 services:
   app:
     container_name: build_proxy
-    image: gcr.io/planet-4-151612/openresty:${OPENRESTY_BUILD_TAG:-develop}
+    image: gcr.io/planet-4-151612/openresty:${INFRA_VERSION:-develop}
     volumes:
       - type: volume
         source: data
@@ -29,6 +29,7 @@ services:
       - MYSQL_USER=${MYSQL_USER:-planet4}
       - OVERWRITE_EXISTING_FILES=true
       - WP_DEFAULT_CONTENT=false
+      - WP_VERSION=${WP_VERSION:-4.9.8}
     volumes:
       - type: volume
         source: data
