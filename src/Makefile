@@ -233,6 +233,12 @@ deploy-helm:
 	HELM_RELEASE=$(HELM_RELEASE) \
 	./helm_prepare.sh
 
+	APP_HOSTPATH=$(APP_HOSTPATH) \
+	APP_ENVIRONMENT=$(APP_ENVIRONMENT) \
+	BUILD_TAG=$(BUILD_TAG) \
+	HELM_RELEASE=$(HELM_RELEASE) \
+	./backup_db.sh
+
 	# Upgrade or install deployment to cluster
 	APP_ENVIRONMENT="$(APP_ENVIRONMENT)" \
 	APP_HOSTNAME="$(APP_HOSTNAME)" \
