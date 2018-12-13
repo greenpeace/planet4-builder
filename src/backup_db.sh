@@ -20,14 +20,30 @@ echo "Namespace: $namespace"
 echo "Tag:       $tag"
 echo
 
+release_exists=$(helm status "${HELM_RELEASE}" | xargs)
+
+if [[ -z "$release_exists" ]]
+then
+  echo "SKIP: Release not yet deployed"
+  exit 0
+fi
+
 # Set kubernetes command with namespace
 kc="kubectl -n $namespace"
 
+set +e
 php=$(kubectl get pods --namespace "${namespace}" \
   --sort-by=.metadata.creationTimestamp \
   --field-selector=status.phase=Running \
   -l "app=wordpress-php,release=${release}" \
   -o jsonpath="{.items[-1:].metadata.name}")
+set -e
+
+if [[ -z "$php" ]]
+then
+  echo "SKIP: Release not yet deployed"
+  exit 0
+fi
 
 if ! $kc exec "$php" -- wp core is-installed
 then
