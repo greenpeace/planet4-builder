@@ -128,13 +128,13 @@ dev: clean rewrite checkout bake build
 test:
 	set -eu
 	@echo "Building $(CONTAINER_PREFIX) containers..."
-		@echo "APP_HOSTNAME:      $(APP_HOSTNAME)"
-		@echo "APP_HOSTPATH:      $(APP_HOSTPATH)"
-		@echo "NEWRELIC_APPNAME:  $(NEWRELIC_APPNAME)"
-		@echo "INFRA_VERSION:     $(INFRA_VERSION)"
-		@echo "BUILD_TAG:         $(BUILD_TAG)"
-		@echo "MERGE_REF:         $(MERGE_REF)"
-		@echo "GIT_REF:           $(GIT_REF)"
+	@echo "APP_HOSTNAME:      $(APP_HOSTNAME)"
+	@echo "APP_HOSTPATH:      $(APP_HOSTPATH)"
+	@echo "NEWRELIC_APPNAME:  $(NEWRELIC_APPNAME)"
+	@echo "INFRA_VERSION:     $(INFRA_VERSION)"
+	@echo "BUILD_TAG:         $(BUILD_TAG)"
+	@echo "MERGE_REF:         $(MERGE_REF)"
+	@echo "GIT_REF:           $(GIT_REF)"
 	@echo ""
 
 clean:
@@ -149,6 +149,7 @@ checkout:
 	./checkout.sh
 
 rewrite:
+	source ./lib/retry.sh && \
 	GIT_REF=$(GIT_REF) \
 	GIT_SOURCE=$(GIT_SOURCE) \
 	GOOGLE_PROJECT_ID=$(GOOGLE_PROJECT_ID) \
@@ -156,18 +157,19 @@ rewrite:
 	MAINTAINER="$(MAINTAINER)" \
 	MERGE_REF=$(MERGE_REF) \
 	MERGE_SOURCE=$(MERGE_SOURCE) \
-	./rewrite_dockerfiles.sh
+	retry ./rewrite_dockerfiles.sh
 
 bake:
-	./bake.sh | tee source/bake.log
+	source ./lib/retry.sh && retry ./bake.sh | tee source/bake.log
 
 build: rewrite build-app build-openresty
 
 build-app:
 	mkdir -p app/source/public
 	rsync -a --delete source/public/ app/source/public
+	source ./lib/retry.sh && \
 	pushd app && \
-	docker build \
+	retry docker build \
 	-t $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_PREFIX)-app:$(BUILD_TAG) \
 	-t $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_PREFIX)-app:build-$(CIRCLE_BUILD_NUM) \
 	. && \
@@ -183,8 +185,9 @@ build-openresty:
 	./rewrite_dockerfiles.sh
 	mkdir -p openresty/source/public
 	rsync -a --delete source/public/ openresty/source/public
+	source ./lib/retry.sh && \
 	pushd openresty && \
-	docker build \
+	retry docker build \
 	-t $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_PREFIX)-openresty:$(BUILD_TAG) \
 	-t $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_PREFIX)-openresty:build-$(CIRCLE_BUILD_NUM) \
 	. && \
