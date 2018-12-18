@@ -149,7 +149,6 @@ checkout:
 	./checkout.sh
 
 rewrite:
-	source ./lib/retry.sh && \
 	GIT_REF=$(GIT_REF) \
 	GIT_SOURCE=$(GIT_SOURCE) \
 	GOOGLE_PROJECT_ID=$(GOOGLE_PROJECT_ID) \
@@ -157,7 +156,7 @@ rewrite:
 	MAINTAINER="$(MAINTAINER)" \
 	MERGE_REF=$(MERGE_REF) \
 	MERGE_SOURCE=$(MERGE_SOURCE) \
-	retry ./rewrite_dockerfiles.sh
+	./rewrite_dockerfiles.sh
 
 bake:
 	source ./lib/retry.sh && retry ./bake.sh | tee source/bake.log
