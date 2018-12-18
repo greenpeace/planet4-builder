@@ -30,7 +30,7 @@ function retry {
     timeout=$(( timeout * 2 ))
   done
 
-  [[ $exitCode != 0 ]] && >&2 echo "You've failed me for the last time! ($*)"
+  [[ $exitCode -ne 0 ]] && >&2 echo "You've failed me for the last time! ($*)"
 
   return $exitCode
 }
