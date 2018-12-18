@@ -2,10 +2,24 @@
 set -euo pipefail
 
 release=${HELM_RELEASE:-$1}
-namespace=${HELM_NAMESPACE:-${2:-$(helm status "$release" | grep NAMESPACE: | cut -d' ' -f2 | sed 's/planet4-//' | sed 's/-master$//' | sed 's/-release$//' | xargs)}}
 
 tag=${CIRCLE_TAG:-${CIRCLE_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}}
 tag=$(echo "$tag" |  tr -c '[[:alnum:]]._-' '-' | sed 's/-$//')
+
+
+echo
+echo "Backup release database:"
+echo "Release:   $release"
+echo "Tag:       $tag"
+echo
+
+if ! helm status "${HELM_RELEASE}" | tee release_status.txt
+then
+  echo "SKIP: Release not yet deployed"
+  exit 0
+fi
+
+namespace=${HELM_NAMESPACE:-${2:-$(grep 'NAMESPACE:' release_status.txt | cut -d' ' -f2 | sed 's/planet4-//' | sed 's/-master$//' | sed 's/-release$//' | xargs)}}
 
 if ! kubectl get namespace "$namespace" > /dev/null
 then
@@ -13,36 +27,19 @@ then
   exit 1
 fi
 
-echo
-echo "Backup release database:"
-echo "Release:   $release"
-echo "Namespace: $namespace"
-echo "Tag:       $tag"
-echo
-
 # Set kubernetes command with namespace
 kc="kubectl -n $namespace"
-
-set +e
-release_exists=$(helm status "${HELM_RELEASE}" | xargs)
-
-if [[ -z "$release_exists" ]]
-then
-  echo "SKIP: Release not yet deployed"
-  exit 0
-fi
 
 php=$(kubectl get pods --namespace "${namespace}" \
   --sort-by=.metadata.creationTimestamp \
   --field-selector=status.phase=Running \
   -l "app=wordpress-php,release=${release}" \
   -o jsonpath="{.items[-1:].metadata.name}")
-set -e
 
 if [[ -z "$php" ]]
 then
-  echo "SKIP: Release not yet deployed"
-  exit 0
+  echo "ERROR: PHP pod not found!"
+  exit 1
 fi
 
 if ! $kc exec "$php" -- wp core is-installed
