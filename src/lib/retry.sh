@@ -22,10 +22,11 @@ function retry {
     exitCode=$?
 
     >&2 echo "Attempt #$attempt/$max_attempts failed."
-    sleep "$timeout"
     attempt=$(( attempt + 1 ))
     (( attempt > max_attempts )) && break
+
     echo "Retrying in $timeout seconds ..."
+    sleep "$timeout"
     timeout=$(( timeout * 2 ))
   done
 
