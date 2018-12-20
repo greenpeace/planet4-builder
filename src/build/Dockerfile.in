@@ -21,8 +21,8 @@ WORKDIR /app/source
 RUN \
     time composer -v update --no-dev --no-ansi && \
     time composer -v install --no-dev --no-ansi --no-interaction && \
-    time if [ -f "${SOURCE_PATH}/composer-local.json" ]; then \
-      composer -v config --no-ansi extra.merge-plugin.require composer-local.json; \
+    if [ -f "${SOURCE_PATH}/composer-local.json" ]; then \
+      time composer -v config --no-ansi extra.merge-plugin.require composer-local.json; \
     fi && \
     time composer -v update --no-dev --no-ansi && \
     time composer -v install --no-dev --no-ansi --no-interaction
