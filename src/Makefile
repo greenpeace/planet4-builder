@@ -241,9 +241,9 @@ deploy-helm:
 	HELM_RELEASE=$(HELM_RELEASE) \
 	./helm_prepare.sh
 
-	APP_HOSTPATH=$(APP_HOSTPATH) \
-	APP_ENVIRONMENT=$(APP_ENVIRONMENT) \
-	HELM_RELEASE=$(HELM_RELEASE) \
+	APP_HOSTPATH="$(APP_HOSTPATH)" \
+	APP_ENVIRONMENT="$(APP_ENVIRONMENT)" \
+	HELM_RELEASE="$(HELM_RELEASE)" \
 	./backup_db.sh
 
 	# Upgrade or install deployment to cluster
