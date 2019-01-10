@@ -55,6 +55,11 @@ BUILD_TAG          ?= $(shell echo $(MERGE_REF) | tr -c '[[:alnum:]]._-' '-' | s
 
 APP_HOSTNAME        ?= greenpeace.org
 APP_HOSTPATH        ?= test
+# YAML interprets 'empty' values as 'nil'
+ifeq ($(APP_HOSTPATH),<nil>)
+# So if APP_HOSTPATH is set, but blank, clean this value
+APP_HOSTPATH :=
+endif
 APP_ENVIRONMENT     ?= production
 BUILD_NAMESPACE     ?= gcr.io
 GOOGLE_PROJECT_ID   ?= planet-4-151612
