@@ -12,7 +12,7 @@ else
 fi
 
 
-FILE=/home/circleci/build/source/composer.json
+FILE=/home/circleci/merge/composer.json
 
 if [ ! -z "$MASTER_THEME_BRANCH" ]
 then
