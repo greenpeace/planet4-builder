@@ -54,9 +54,9 @@ then
 else
   mkdir -p /home/circleci/merge
   cd /home/circleci/merge
-  git clone "$CIRCLE_REPOSITORY_URL" .
+  git clone "$MERGE_SOURCE" .
 fi
 
-git checkout "${CIRCLE_TAG:-${CIRCLE_BRANCH}}"
+git checkout "$MERGE_REF"
 
 ls -al
