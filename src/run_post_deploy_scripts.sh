@@ -18,6 +18,7 @@ done
 
 echo "Now check the common post deploy scripts and run them as well"
 
+mkdir source
 pushd source
 git pull https://github.com/greenpeace/planet4-base-fork .
 
