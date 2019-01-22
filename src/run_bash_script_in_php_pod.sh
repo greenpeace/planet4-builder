@@ -3,6 +3,7 @@ set -euo pipefail
 
 # First parameter is name of script to execute in the PHP pod
 external_script=$1
+base_external_script=$(basename "$external_script")
 shift
 
 if [[ ! -e "$external_script" ]]
@@ -23,6 +24,6 @@ then
   exit 1
 fi
 
-kubectl -n "${HELM_NAMESPACE}" cp "$external_script" "$php:/tmp/$external_script"
-kubectl -n "${HELM_NAMESPACE}" exec "$php" -- "/tmp/$external_script" "$*"
-kubectl -n "${HELM_NAMESPACE}" exec "$php" -- rm "/tmp/$external_script"
+kubectl -n "${HELM_NAMESPACE}" cp "$external_script" "$php:/tmp/$base_external_script"
+kubectl -n "${HELM_NAMESPACE}" exec "$php" -- "/tmp/$base_external_script" "$*"
+kubectl -n "${HELM_NAMESPACE}" exec "$php" -- rm "/tmp/$base_external_script"
