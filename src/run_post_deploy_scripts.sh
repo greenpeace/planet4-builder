@@ -26,7 +26,7 @@ for file in tasks/post-deploy/*; do
     echo ""
     echo "Running the common script : $(basename "$file")"
     echo ""
-    HELM_NAMESPACE=$(HELM_NAMESPACE) \
-	  HELM_RELEASE=$(HELM_RELEASE) \
+    HELM_NAMESPACE=${HELM_NAMESPACE} \
+	  HELM_RELEASE=${HELM_RELEASE} \
 	  ./run_bash_script_in_php_pod.sh modify_users.sh "$(shell base64 -w 0 users.json)"
 done
