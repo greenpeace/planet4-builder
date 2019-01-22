@@ -20,7 +20,7 @@ echo "Now check the common post deploy scripts and run them as well"
 
 mkdir source
 pushd source
-git pull https://github.com/greenpeace/planet4-base-fork .
+git clone https://github.com/greenpeace/planet4-base-fork .
 
 for file in tasks/post-deploy/*; do
     echo ""
