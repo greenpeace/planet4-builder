@@ -21,8 +21,9 @@ echo "Now check the common post deploy scripts and run them as well"
 mkdir source
 pushd source
 git clone https://github.com/greenpeace/planet4-base-fork .
+popd
 
-for file in tasks/post-deploy/*; do
+for file in source/tasks/post-deploy/*; do
     echo ""
     echo "Running the common script : $(basename "$file")"
     echo ""
