@@ -126,7 +126,7 @@ SOURCE_BUCKET_PATH  ?= $(BUILD_TAG)
 
 .PHONY: clean test rewrite checkout bake build build-app build-openresty pull push save
 
-all: test rewrite checkout bake build push save
+all: test rewrite checkout rewrite-app-repos bake build push save
 
 dev: clean rewrite checkout bake build
 
@@ -152,6 +152,10 @@ checkout:
 	MERGE_SOURCE=$(MERGE_SOURCE) \
 	MERGE_REF=$(MERGE_REF) \
 	./checkout.sh
+
+rewrite-app-repos:
+	MASTER_THEME_BRANCH=$(MASTER_THEME_BRANCH) \
+    ./rewrite_app_repos.sh
 
 rewrite:
 	GIT_REF=$(GIT_REF) \
