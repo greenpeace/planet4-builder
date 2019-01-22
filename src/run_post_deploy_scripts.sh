@@ -15,3 +15,17 @@ for file in $(kubectl -n "${HELM_NAMESPACE}" exec $php -- ls ./post_deploy_scrip
     kubectl -n "${HELM_NAMESPACE}" exec "$php" -- bash "post_deploy_scripts/$file"
 done
 
+
+echo "Now check the common post deploy scripts and run them as well"
+
+pushd source
+git pull https://github.com/greenpeace/planet4-base-fork .
+
+for file in tasks/post-deploy/*; do
+    echo ""
+    echo "Running the common script : $(basename "$file")"
+    echo ""
+    HELM_NAMESPACE=$(HELM_NAMESPACE) \
+	  HELM_RELEASE=$(HELM_RELEASE) \
+	  ./run_bash_script_in_php_pod.sh modify_users.sh "$(shell base64 -w 0 users.json)"
+done
