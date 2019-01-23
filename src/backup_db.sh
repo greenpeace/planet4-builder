@@ -19,6 +19,12 @@ then
   exit 0
 fi
 
+if grep -q "STATUS: FAILED" release_status.txt
+then
+  echo "SKIP: Release is in a failed state"
+  exit 0
+fi
+
 namespace=${HELM_NAMESPACE:-${2:-$(grep 'NAMESPACE:' release_status.txt | cut -d' ' -f2 | sed 's/planet4-//' | sed 's/-master$//' | sed 's/-release$//' | xargs)}}
 
 if ! kubectl get namespace "$namespace" > /dev/null
