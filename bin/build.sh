@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
-# UTILITY
+# Builds the planet4-circleci:base containers
+# Optionally builds locally or on Google's cloud builder service 
 
+# UTILITY
 function usage {
   >&2 echo "Usage: $0 [-l|r|v] [-c <configfile>] ...
 
