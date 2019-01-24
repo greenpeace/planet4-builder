@@ -38,8 +38,6 @@ BASE_NAMESPACE="circleci"
 BASE_TAG="7.0-node"
 
 # Vendor application versions
-# https://beyondgrep.com/install/
-ACK_VERSION='2.24'
 # https://github.com/petervanderdoes/gitflow-avh/releases
 GIT_FLOW_VERSION='stable'
 # https://cloud.google.com/sdk/docs/quickstart-linux

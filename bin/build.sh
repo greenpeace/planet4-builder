@@ -72,7 +72,6 @@ BUILD_DIR="$( cd -P "$( dirname "$source" )/.." && pwd )"
 # Rewrite only the variables we want to change
 # shellcheck disable=SC2016
 ENVVARS=(
-  '${ACK_VERSION}' \
   '${APPLICATION_DESCRIPTION}' \
   '${APPLICATION_NAME}' \
   '${BRANCH_NAME}' \
