@@ -22,7 +22,7 @@ jobs:
             # Store current build number for future jobs
             mkdir -p /tmp/workspace/var
             echo "${CIRCLE_BUILD_NUM}" > /tmp/workspace/var/circle-build-num
-      - run: make test
+      - run: make lint
       - run: activate-gcloud-account.sh
       - run: gcloud auth configure-docker
       - run: make build
