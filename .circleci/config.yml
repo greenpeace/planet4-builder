@@ -50,6 +50,11 @@ jobs:
           command: |
             docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num)
       - run:
+          name: Test Silver Searcher
+          command: |
+            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) ag --version >/tmp/test-results/ag_version.txt
+            grep -E "ag version\s[0-9.]{1,}" /tmp/test-results/ag_version.txt
+      - run:
           name: Test yamllint
           command: |
             docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) yamllint --version 2>/tmp/test-results/yamllint_version.txt
