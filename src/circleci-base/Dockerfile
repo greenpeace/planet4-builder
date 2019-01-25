@@ -1,7 +1,7 @@
 # Planet 4 CircleCI build image
 # Branch: master
-# Commit: ee7940dca74bb7ff051a7fbc692b125bdf2294d8
-# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/1192
+# Commit: 74ddf4d1f2b5fa47fe5f0bf9e1e24a69008a78a0
+# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/1203
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
@@ -20,27 +20,26 @@ ENV CIRCLECI_USER="circleci" \
 
 WORKDIR /home/circleci
 
+COPY .curlrc /home/circleci
+
 COPY ./scripts /home/circleci/scripts
-COPY ./etc/ /etc
 
 RUN git clone https://github.com/sstephenson/bats.git && \
     ./bats/install.sh /usr/local && \
     rm -fr /home/circleci/bats && \
-    curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 "https://releases.hashicorp.com/terraform/0.11.10/terraform_0.11.10_linux_amd64.zip" > /tmp/terraform.zip && \
+    curl -sS "https://releases.hashicorp.com/terraform/0.11.10/terraform_0.11.10_linux_amd64.zip" > /tmp/terraform.zip && \
     unzip /tmp/terraform.zip -d /usr/local/bin && \
     chmod 0755 /usr/local/bin/terraform && \
-    curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -sSOL https://github.com/gruntwork-io/terragrunt/releases/download/v0.17.2/terragrunt_linux_amd64 && \
+    curl -sSO https://github.com/gruntwork-io/terragrunt/releases/download/v0.17.2/terragrunt_linux_amd64 && \
     chmod 0755 terragrunt_linux_amd64 && \
     mv terragrunt_linux_amd64 /usr/local/bin/terragrunt && \
-    curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 "https://beyondgrep.com/ack-2.24-single-file" > /usr/local/bin/ack && \
-    chmod 0755 /usr/local/bin/ack && \
     chmod 0755 /home/circleci/scripts/* && \
-    export "DESIRED_VERSION=v2.12.0" && \
-    curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -sL https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get | bash - && \
+    export "DESIRED_VERSION=v2.12.3" && \
+    curl -sS https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get | bash - && \
     wget --no-check-certificate -q https://raw.githubusercontent.com/petervanderdoes/gitflow-avh/develop/contrib/gitflow-installer.sh && \
     bash gitflow-installer.sh install stable && \
     rm gitflow-installer.sh && \
-    curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -sL https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 > /usr/local/bin/cloud_sql_proxy && \
+    curl -s https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 > /usr/local/bin/cloud_sql_proxy && \
     chmod 0755 /usr/local/bin/cloud_sql_proxy && \
     apt-get install -y --no-install-recommends \
       gawk \
@@ -50,6 +49,7 @@ RUN git clone https://github.com/sstephenson/bats.git && \
       python-pkg-resources \
       python-setuptools \
       shellcheck \
+      silversearcher-ag \
       vim \
       wget \
       && \
@@ -63,7 +63,7 @@ RUN git clone https://github.com/sstephenson/bats.git && \
 
 USER circleci
 
-RUN curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -L "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-228.0.0-linux-x86_64.tar.gz" | tar xz && \
+RUN curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -L "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-231.0.0-linux-x86_64.tar.gz" | tar xz && \
     CLOUDSDK_CORE_DISABLE_PROMPTS=1 ./google-cloud-sdk/install.sh \
         --usage-reporting false \
         --bash-completion false \
