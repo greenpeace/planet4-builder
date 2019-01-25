@@ -1,7 +1,7 @@
 # Planet 4 CircleCI build image
-# Branch: master
-# Commit: 74ddf4d1f2b5fa47fe5f0bf9e1e24a69008a78a0
-# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/1203
+# Branch: develop
+# Commit: f1f9cbf5f73c66abf7cd162be2c0a7d7d3019afd
+# Build:  (local)
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
@@ -37,8 +37,8 @@ RUN git clone https://github.com/sstephenson/bats.git && \
     export "DESIRED_VERSION=v2.12.3" && \
     curl -sS https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get | bash - && \
     wget --no-check-certificate -q https://raw.githubusercontent.com/petervanderdoes/gitflow-avh/develop/contrib/gitflow-installer.sh && \
-    bash gitflow-installer.sh install stable && \
-    rm gitflow-installer.sh && \
+    bash gitflow-installer.sh install version 1.11.0 && \
+    rm -fr git-flow gitflow-installer.sh && \
     curl -s https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 > /usr/local/bin/cloud_sql_proxy && \
     chmod 0755 /usr/local/bin/cloud_sql_proxy && \
     apt-get install -y --no-install-recommends \
@@ -63,7 +63,7 @@ RUN git clone https://github.com/sstephenson/bats.git && \
 
 USER circleci
 
-RUN curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -L "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-231.0.0-linux-x86_64.tar.gz" | tar xz && \
+RUN curl "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-231.0.0-linux-x86_64.tar.gz" | tar xz && \
     CLOUDSDK_CORE_DISABLE_PROMPTS=1 ./google-cloud-sdk/install.sh \
         --usage-reporting false \
         --bash-completion false \
