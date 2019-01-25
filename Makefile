@@ -35,23 +35,28 @@ endif
 
 REVISION_TAG = $(shell git rev-parse --short HEAD)
 
-ALL: test build push
+ALL: lint template build push
 
-test: test-yaml test-json test-composer
+lint: lint-yaml lint-json lint-composer
 
-test-yaml:
+lint-yaml:
 	find . -type f -name '*.yml' | xargs yamllint
 
-test-json:
+lint-json:
 	find . -type f -name '*.json' | xargs jq .
 
-test-composer:
+lint-composer:
 	find . -type f -name 'composer*.json' | xargs composer validate
 
 pull:
-	docker pull gcr.io/planet-4-151612/circleci-base:latest
+	BASE_IMAGE_VERSION=$(BASE_IMAGE_VERSION) \
+	docker pull gcr.io/planet-4-151612/circleci-base:$(BASE_IMAGE_VERSION)
 
-build: test pull
+template:
+	BASE_IMAGE_VERSION=$(BASE_IMAGE_VERSION) \
+	envsubst < src/templates/Dockerfile.in > src/Dockerfile
+
+build: lint pull template
 	docker build \
 		--tag=$(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:$(BUILD_TAG) \
 		--tag=$(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:$(BUILD_NUM) \
