@@ -3,7 +3,7 @@ defaults: &defaults
   environment:
     GOOGLE_PROJECT_ID: planet-4-151612
   docker:
-    - image: gcr.io/planet-4-151612/circleci-base:develop
+    - image: gcr.io/planet-4-151612/circleci-base:latest
   working_directory: /home/circleci/app
 
 version: 2
@@ -22,7 +22,7 @@ jobs:
             # Store current build number for future jobs
             mkdir -p /tmp/workspace/var
             echo "${CIRCLE_BUILD_NUM}" > /tmp/workspace/var/circle-build-num
-      - run: make test
+      - run: make lint
       - run: activate-gcloud-account.sh
       - run: gcloud auth configure-docker
       - run: make build
@@ -49,6 +49,11 @@ jobs:
           name: Pull new image
           command: |
             docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num)
+      - run:
+          name: Test Silver Searcher
+          command: |
+            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) ag --version >/tmp/test-results/ag_version.txt
+            grep -E "ag version\s[0-9.]{1,}" /tmp/test-results/ag_version.txt
       - run:
           name: Test yamllint
           command: |
