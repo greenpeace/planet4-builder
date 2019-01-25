@@ -13,6 +13,13 @@ set -euo pipefail
 old_release=${1:-$(git-current-tag.sh)}
 new_release=${2:-$(increment-version.sh "$old_release")}
 
+# Check for numeric value of new release version
+# Permits optional leading 'v' character
+[[ ${new_release#v} =~ ^[0-9] ]] || {
+  echo "ERROR: release is not numeric: '${new_release#v}'"
+  exit 1
+}
+
 echo "-- 0.1   The old release is $old_release"
 echo "-- 0.2   The new release is $new_release"
 
