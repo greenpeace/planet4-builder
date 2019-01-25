@@ -37,15 +37,15 @@ REVISION_TAG = $(shell git rev-parse --short HEAD)
 
 ALL: lint template build push
 
-test: test-yaml test-json test-composer
+lint: lint-yaml lint-json lint-composer
 
-test-yaml:
+lint-yaml:
 	find . -type f -name '*.yml' | xargs yamllint
 
-test-json:
+lint-json:
 	find . -type f -name '*.json' | xargs jq .
 
-test-composer:
+lint-composer:
 	find . -type f -name 'composer*.json' | xargs composer validate
 
 pull:
