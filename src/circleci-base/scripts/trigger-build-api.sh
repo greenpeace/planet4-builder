@@ -12,6 +12,7 @@ json=$(jq -n \
 	"branch": $VAL
 }')
 
+echo "Build: ${user}/${repo}@${branch}"
 
 curl \
   --header "Content-Type: application/json" \
