@@ -6,11 +6,12 @@ message="${1:-$(git log --format=%B -n 1)}"
 
 # Accepts the following formats:
 #  [ci promote v1.2.3]
+#  [ci release v1.2.3]
 #  [ci tag 1.2.30]
 #  [ci tag v1.22.3]
 #  [ci tag v1.2.3-testing]
 
-if grep -qE "\\[ci (promote|tag) v?[[:digit:]]+\\.[[:digit:]]+\\.[[:digit:]]+.*\\]" <<< "$message"
+if grep -qE "\\[ci (promote|tag|release) v?[[:digit:]]+\\.[[:digit:]]+\\.[[:digit:]]+.*\\]" <<< "$message"
 then
   # Detect version string
   regex="(v?[[:digit:]]+\\.[[:digit:]]+\\.[[:digit:]]+.*)]"
