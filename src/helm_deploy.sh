@@ -11,6 +11,7 @@ function install() {
   if helm upgrade --install --force --wait --timeout 300 "${HELM_RELEASE}" \
     --namespace "${HELM_NAMESPACE}" \
     --values secrets.yaml \
+    --version "${CHART_VERSION}" \
     --set dbDatabase="${WP_DB_NAME}" \
     --set environment="${APP_ENVIRONMENT}" \
     --set exim.image.tag="${INFRA_VERSION}" \
@@ -34,7 +35,7 @@ function install() {
     --set sqlproxy.cloudsql.instances[0].port="3306" \
     --set wp.siteUrl="${APP_HOSTNAME}/${APP_HOSTPATH}" \
     --set wp.stateless.bucket="${WP_STATELESS_BUCKET}" \
-    p4/wordpress 2>&1 | tee -a helm_output.txt
+  p4/wordpress 2>&1 | tee -a helm_output.txt
   then
     echo "SUCCESS: Deployed release $HELM_RELEASE"
     return 0
