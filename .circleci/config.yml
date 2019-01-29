@@ -50,6 +50,15 @@ jobs:
           command: |
             docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num)
       - run:
+          name: Test commit message tag promotion
+          command: |
+            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) git-new-version.sh "[ci tag v1.2.3-test]" >/tmp/test-results/git_new_version_detect_1.txt
+            grep "v1.2.3-test" /tmp/test-results/git_new_version_detect_1.txt
+            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) git-new-version.sh "[ci promote v1.2.3]" >/tmp/test-results/git_new_version_detect_2.txt
+            grep "v1.2.3" /tmp/test-results/git_new_version_detect_2.txt
+            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) git-new-version.sh "[ci release 10.20.30a]" >/tmp/test-results/git_new_version_detect_3.txt
+            grep "10.20.30a" /tmp/test-results/git_new_version_detect_3.txt
+      - run:
           name: Test Silver Searcher
           command: |
             docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) ag --version >/tmp/test-results/ag_version.txt
