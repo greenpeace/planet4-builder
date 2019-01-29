@@ -29,8 +29,19 @@ fi
 
 # Fallback to incrementing latest tag
 current_version=$(git-current-tag.sh)
-echo "Found existing tag: $current_version" >&2
+if [[ -z "$current_version" ]]
+then
+  echo "Previous version not detected" >&2
+else
+  echo "Found existing tag: $current_version" >&2
+fi
 
 tag=$(increment-version.sh "$current_version")
+if [[ -z "$tag" ]]
+then
+  echo "Error generating new version string: '$tag'" >&2
+  exit 1
+fi
+
 echo "$tag"
 echo "Promoting branch ${CIRCLE_BRANCH} to ${tag}" >&2
