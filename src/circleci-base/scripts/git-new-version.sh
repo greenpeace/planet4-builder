@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Detect promotion command in last commit message
-message=$(git log --format=%B -n 1)
+message="${1:-$(git log --format=%B -n 1)}"
 
 # Accepts the following formats:
 #  [ci promote v1.2.3]
