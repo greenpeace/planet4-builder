@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Detect promotion command in last commit message
+# Detect promotion string in first argument or most recent commit message
 message="${1:-$(git log --format=%B -n 1)}"
 
-# Accepts the following formats:
+# Accepts the following formats and variations thereof:
 #  [ci promote v1.2.3]
 #  [ci release v1.2.3]
 #  [ci tag 1.2.30]
