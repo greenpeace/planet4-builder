@@ -9,9 +9,8 @@ set -euo pipefail
 # Deletes previous release branch from origin
 # Pushes changes to origin
 #
-
-old_release=${1:-$(git-current-tag.sh)}
-new_release=${2:-$(increment-version.sh "$old_release")}
+old_release=$(git-current-tag.sh)
+new_release=$(git-new-version.sh)
 
 # Check for numeric value of new release version
 # Permits optional leading 'v' character
