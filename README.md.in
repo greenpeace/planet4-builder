@@ -5,6 +5,21 @@
 
 Performs builds and tests for the Planet 4 web application and associated infrastructure
 
+Supports automatic release versioning via CI commands on the develop branch.
+To use, push a commit to github which contains a comment such as below:
+
+```
+# Creates a new release branch 'release/v1.2.3'
+git commit -m "[ci tag v1.2.3]"
+
+# Creates a new release branch 'release/v1.2.3-rc1'
+git commit -m "[ci promote v1.2.3-rc1]"
+```
+
+The commands `ci promote`, `ci tag` and `ci release` are synonymous and interchangeable.
+
+---
+
 The base image builds upon the `${IMAGE_FROM}` image and adds:
 -   [ag](https://github.com/ggreer/the_silver_searcher)
 -   [bats](https://github.com/sstephenson/bats) latest
