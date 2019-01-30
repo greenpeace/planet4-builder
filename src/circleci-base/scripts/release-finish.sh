@@ -3,7 +3,7 @@ set -xo pipefail
 
 if [[ -z "$1" ]]
 then
-  new_version=$(git-new-release.sh)
+  new_version=${CIRCLE_BRANCH#release/}
 else
   new_version=$1
 fi
@@ -18,7 +18,7 @@ git checkout master
 git reset --hard origin/master
 
 # Merge release into master, with strategy Xtheirs
-git merge -Xtheirs --no-edit --no-ff --log -m "$commit_message" "release/${new_version}" | tee "${TMPDIR:-/tmp}/git.log"
+git merge -Xtheirs --no-edit --no-ff --log -m "$commit_message" "${CIRCLE_BRANCH}" | tee "${TMPDIR:-/tmp}/git.log"
 
 status=$?
 count=0
