@@ -6,6 +6,9 @@ MAINTAINER        ?= Raymond Walker <raymond.walker@greenpeace.org>
 # https://github.com/greenpeace/planet4-docker
 INFRA_VERSION     ?= latest
 
+# Wordpress Helm chart version
+CHART_VERSION 		?= 0.4.0
+
 # Use current folder name as prefix for built containers,
 # eg planet4-gpi-app planet4-gpi-openresty
 CONTAINER_PREFIX  ?= planet4-test
@@ -255,6 +258,7 @@ deploy-helm:
 	APP_HOSTNAME="$(APP_HOSTNAME)" \
 	APP_HOSTPATH="$(APP_HOSTPATH)" \
 	BUILD_TAG="$(BUILD_TAG)" \
+	CHART_VERSION="$(CHART_VERSION)" \
 	CLOUDSQL_INSTANCE="$(CLOUDSQL_INSTANCE)" \
 	GCLOUD_REGION="$(GCLOUD_REGION)" \
 	GOOGLE_PROJECT_ID="$(GOOGLE_PROJECT_ID)" \
