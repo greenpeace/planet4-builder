@@ -28,6 +28,7 @@ function retry {
     echo "Retrying in $timeout seconds ..."
     sleep "$timeout"
     timeout=$(( timeout * 2 ))
+    echo "The exit code right now is  $exitCode"
   done
 
   [[ $exitCode -ne 0 ]] && >&2 echo "You've failed me for the last time! ($*)"
