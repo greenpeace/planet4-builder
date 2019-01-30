@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -eu
 
+# TO BE REMOVED. This piece of code is added to test a failing child script
+# In order to replicate on demand the https://github.com/greenpeace/planet4-builder/issues/14 issue
+# And test how we can make the whole CI job fail, if a called script returns anything except 0
+fail_on_demand.sh
+
 function usage() {
   echo "Usage: $(basename "$0")
 
