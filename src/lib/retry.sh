@@ -12,16 +12,20 @@ function retry {
   local max_attempts=${ATTEMPTS:-5}
   local timeout=${TIMEOUT:-1}
   local attempt=1
+  local exitCode=0
 
   while true; do
     "$@" && break || {
+      exitCode=$?
+      echo "the exitcode is $exitCode"
       if [[ $n -lt $max_attempts ]]; then
         ((n++))
-        echo "Command failed. Attempt $n/$max:"
+        echo "Command failed. Attempt $n/$max_attempts. Retrying after $timeout seconds."
         sleep $timeout;
         timeout=$(( timeout * 2 ))
       else
-        fail "The command has failed after $n attempts."
+        echo "The command has failed after $n attempts."
+        return $exitCode
       fi
     }
   done
