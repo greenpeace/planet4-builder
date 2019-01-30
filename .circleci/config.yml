@@ -124,12 +124,10 @@ jobs:
       - run:
           name: Start release
           command: |
-            current_version=$(git-current-tag.sh)
-            echo "Found existing tag: $current_version"
-            new_version=$(increment-version.sh $current_version)
+            new_version="$(git-new-version.sh)"
             echo "Promoting branch ${CIRCLE_BRANCH} to ${new_version}"
-            release-start.sh $new_version
-            release-finish.sh $new_version
+            release-start.sh "$new_version"
+            release-finish.sh "$new_version"
       - deploy:
           name: Commit updated build numbers
           command: |
