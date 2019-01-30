@@ -9,9 +9,8 @@ set -euo pipefail
 # Deletes previous release branch from origin
 # Pushes changes to origin
 #
-
-old_release=${1:-$(git-current-tag.sh)}
-new_release=${2:-$(increment-version.sh "$old_release")}
+old_release=$(git-current-tag.sh)
+new_release=$(git-new-version.sh)
 
 # Check for numeric value of new release version
 # Permits optional leading 'v' character
@@ -88,13 +87,13 @@ else
   # Push the new release branch
   git push -u origin "release/$new_release"
 
-  echo "---3.2.3 Check if old release branch still exists"
-  gitlsremote=$(git ls-remote | grep release | grep -v "release/$new_release")
-  if [[ $gitlsremote =~ release/$old_release ]]
-  then
-    # Delete the old release branch
-    echo "---3.2.4 Delete stale release branch: release/$old_release"
-    git push origin --delete "release/$old_release"
-  fi
+  # Tidy up old releases
+  for release in $(git ls-remote --heads origin | grep release/ | cut -f2)
+  do
+    [[ $release =~ release/$new_release ]] || {
+      echo "Deleting stale branch: release/$release"
+      git push origin --delete "${release}"
+    }
+  done
 
 fi
