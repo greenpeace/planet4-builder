@@ -8,32 +8,23 @@ set -euo pipefail
 #
 # Successive backoffs double the timeout.
 function retry {
+  local n=1
   local max_attempts=${ATTEMPTS:-5}
   local timeout=${TIMEOUT:-1}
   local attempt=1
-  local exitCode=0
 
-  while (( attempt <= max_attempts ))
-  do
-    if "$@"
-    then
-      return 0
-    fi
-    exitCode=$?
-
-    >&2 echo "Attempt #$attempt/$max_attempts failed."
-    attempt=$(( attempt + 1 ))
-    (( attempt > max_attempts )) && break
-
-    echo "Retrying in $timeout seconds ..."
-    sleep "$timeout"
-    timeout=$(( timeout * 2 ))
-    echo "The exit code right now is  $exitCode"
+  while true; do
+    "$@" && break || {
+      if [[ $n -lt $max_attempts ]]; then
+        ((n++))
+        echo "Command failed. Attempt $n/$max:"
+        sleep $timeout;
+        timeout=$(( timeout * 2 ))
+      else
+        fail "The command has failed after $n attempts."
+      fi
+    }
   done
-
-  [[ $exitCode -ne 0 ]] && >&2 echo "You've failed me for the last time! ($*)"
-
-  return $exitCode
 }
 
 export retry
