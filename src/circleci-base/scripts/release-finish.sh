@@ -47,4 +47,10 @@ git push origin master
 
 git push origin --tags
 
+# Tidy up old releases
+for release in $(git ls-remote --heads origin | grep release/ | cut -f2)
+do
+  git push origin --delete "${release}"
+done
+
 exit 0
