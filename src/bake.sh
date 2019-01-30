@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+set -o errexit
 
 # TO BE REMOVED. This piece of code is added to test a failing child script
 # In order to replicate on demand the https://github.com/greenpeace/planet4-builder/issues/14 issue
