@@ -28,7 +28,7 @@ The base image builds upon the `${IMAGE_FROM}` image and adds:
 -   [helm](https://github.com/kubernetes/helm/releases) ${HELM_VERSION}
 -   [junit-merge](https://www.npmjs.com/package/junit-merge)
 -   [nodejs](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions)
--   [shellcheck](https://github.com/koalaman/shellcheck)
+-   [shellcheck](https://github.com/koalaman/shellcheck) ${SHELLCHECK_VERSION}
 -   [tap-xunit](https://github.com/aghassemi/tap-xunit)
 -   [terraform](https://www.terraform.io/downloads.html) ${TERRAFORM_VERSION}
 -   [terragrunt](https://github.com/gruntwork-io/terragrunt/releases) ${TERRAGRUNT_VERSION}
