@@ -8,7 +8,6 @@ set -euo pipefail
 #
 # Successive backoffs double the timeout.
 function retry {
-  local n=1
   local max_attempts=${ATTEMPTS:-5}
   local timeout=${TIMEOUT:-1}
   local attempt=1
