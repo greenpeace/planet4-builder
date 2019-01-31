@@ -20,7 +20,7 @@ COPY ./scripts /home/${CIRCLECI_USER}/scripts
 RUN git clone https://github.com/sstephenson/bats.git && \
     ./bats/install.sh /usr/local && \
     rm -fr /home/${CIRCLECI_USER}/bats && \
-    curl -sS https://github.com/hadolint/hadolint/releases/download/v${HADOLINT_VERSION}/hadolint-Linux-x86_64 -o /usr/local/bin/hadolint && \
+    curl -sSL https://github.com/hadolint/hadolint/releases/download/v${HADOLINT_VERSION}/hadolint-Linux-x86_64 -o /usr/local/bin/hadolint && \
     chmod 755 /usr/local/bin/hadolint && \
     curl -sS "https://shellcheck.storage.googleapis.com/shellcheck-v${SHELLCHECK_VERSION}.linux.x86_64.tar.xz" -o /tmp/shellcheck.tar.xz && \
     tar xf /tmp/shellcheck.tar.xz -C /tmp/ && \
@@ -28,7 +28,7 @@ RUN git clone https://github.com/sstephenson/bats.git && \
     curl -sS "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" > /tmp/terraform.zip && \
     unzip /tmp/terraform.zip -d /usr/local/bin && \
     chmod 0755 /usr/local/bin/terraform && \
-    curl -sSO "https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_amd64" && \
+    curl -sSLO "https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_amd64" && \
     chmod 0755 terragrunt_linux_amd64 && \
     mv terragrunt_linux_amd64 /usr/local/bin/terragrunt && \
     chmod 0755 /home/${CIRCLECI_USER}/scripts/* && \
