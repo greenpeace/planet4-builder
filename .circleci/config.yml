@@ -67,7 +67,7 @@ jobs:
           name: Test hadolint
           command: |
             docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) hadolint --version >/tmp/test-results/hadolint_version.txt
-            grep -E "Haskell Dockerfile Linter\s[0-9.]{1,}" /tmp/test-results/hadolint_version.txt
+            grep -E "Haskell Dockerfile Linter\sv[0-9.]{1,}" /tmp/test-results/hadolint_version.txt
       - run:
           name: Test yamllint
           command: |
