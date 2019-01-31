@@ -1,13 +1,15 @@
 # Planet 4 CircleCI build image
 # Branch: master
-# Commit: 589484b19f3dfca5ed70662090a2593c20235bd0
-# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/1251
+# Commit: 49229aa11781ce04e168b8926c25de814d0bd0dd
+# Build:  https://circleci.com/gh/greenpeace/planet4-circleci/1271
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
 # ------------------------------------------------------------------------
 
 FROM circleci/php:7.0-node
+
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 LABEL maintainer="Raymond Walker <raymond.walker@greenpeace.org>" \
       description="Planet 4 CircleCI build image: \
@@ -27,18 +29,22 @@ COPY ./scripts /home/circleci/scripts
 RUN git clone https://github.com/sstephenson/bats.git && \
     ./bats/install.sh /usr/local && \
     rm -fr /home/circleci/bats && \
+    curl -sSL https://github.com/hadolint/hadolint/releases/download/v1.16.0/hadolint-Linux-x86_64 -o /usr/local/bin/hadolint && \
+    chmod 755 /usr/local/bin/hadolint && \
+    curl -sS "https://shellcheck.storage.googleapis.com/shellcheck-v0.6.0.linux.x86_64.tar.xz" -o /tmp/shellcheck.tar.xz && \
+    tar xf /tmp/shellcheck.tar.xz -C /tmp/ && \
+    mv /tmp/shellcheck-v0.6.0/shellcheck /usr/local/bin && \
     curl -sS "https://releases.hashicorp.com/terraform/0.11.10/terraform_0.11.10_linux_amd64.zip" > /tmp/terraform.zip && \
     unzip /tmp/terraform.zip -d /usr/local/bin && \
     chmod 0755 /usr/local/bin/terraform && \
-    curl -sSO https://github.com/gruntwork-io/terragrunt/releases/download/v0.17.2/terragrunt_linux_amd64 && \
+    curl -sSLO "https://github.com/gruntwork-io/terragrunt/releases/download/v0.17.2/terragrunt_linux_amd64" && \
     chmod 0755 terragrunt_linux_amd64 && \
     mv terragrunt_linux_amd64 /usr/local/bin/terragrunt && \
     chmod 0755 /home/circleci/scripts/* && \
     export "DESIRED_VERSION=v2.12.3" && \
     curl -sS https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get | bash - && \
-    wget --no-check-certificate -q https://raw.githubusercontent.com/petervanderdoes/gitflow-avh/develop/contrib/gitflow-installer.sh && \
-    bash gitflow-installer.sh install version 1.11.0 && \
-    rm -fr git-flow gitflow-installer.sh && \
+    curl -sS https://raw.githubusercontent.com/petervanderdoes/gitflow-avh/develop/contrib/gitflow-installer.sh | bash -s install version 1.11.0 && \
+    rm -fr git-flow && \
     curl -s https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 > /usr/local/bin/cloud_sql_proxy && \
     chmod 0755 /usr/local/bin/cloud_sql_proxy && \
     apt-get install -y --no-install-recommends \
@@ -48,7 +54,6 @@ RUN git clone https://github.com/sstephenson/bats.git && \
       python-pip \
       python-pkg-resources \
       python-setuptools \
-      shellcheck \
       silversearcher-ag \
       vim \
       wget \
