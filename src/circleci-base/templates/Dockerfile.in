@@ -1,5 +1,7 @@
 FROM ${IMAGE_FROM}
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
 LABEL maintainer="${MAINTAINER}" \
       description="${APPLICATION_NAME}: \
 ${APPLICATION_DESCRIPTION}"
