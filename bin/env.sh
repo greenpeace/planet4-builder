@@ -30,7 +30,7 @@ fi
 . "${DEFAULT_CONFIG_FILE}"
 
 # Read custom config file
-if [ ! -z "${CONFIG_FILE}" ]; then
+if [ -n "${CONFIG_FILE}" ]; then
   if [ ! -f "${CONFIG_FILE}" ]; then
     _fatal "ERROR: Custom config file not found: ${CONFIG_FILE}"
   fi
