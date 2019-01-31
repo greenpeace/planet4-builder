@@ -2,7 +2,7 @@
 set -eo pipefail
 
 # Builds the planet4-circleci:base containers
-# Optionally builds locally or on Google's cloud builder service 
+# Optionally builds locally or on Google's cloud builder service
 
 # UTILITY
 function usage {
@@ -71,30 +71,27 @@ BUILD_DIR="$( cd -P "$( dirname "$source" )/.." && pwd )"
 # shellcheck source=/dev/null
 . "${BUILD_DIR}/bin/env.sh"
 
-# Rewrite only the variables we want to change
-# shellcheck disable=SC2016
-ENVVARS=(
-  '${APPLICATION_DESCRIPTION}' \
-  '${APPLICATION_NAME}' \
-  '${BRANCH_NAME}' \
-  '${CIRCLECI_USER}' \
-  '${DOCKER_COMPOSE_VERSION}' \
-  '${DOCKERIZE_VERSION}' \
-  '${GETTEXT_VERSION}' \
-  '${GIT_FLOW_VERSION}' \
-  '${GOOGLE_SDK_VERSION}' \
-  '${HELM_VERSION}' \
-  '${IMAGE_FROM}' \
-  '${IMAGE_MAINTAINER}' \
-  '${MAINTAINER}' \
-  '${JUNIT_MERGE_VERSION}' \
-  '${NODEJS_VERSION}' \
-  '${SHELLCHECK_VERSION}' \
-  '${TAP_XUNIT_VERSION}' \
-  '${TERRAFORM_VERSION}' \
-  '${TERRAGRUNT_VERSION}' \
-)
 
+# Reads key-value file as functionargument, extracts and wraps key with ${..} for use in envsubst
+function get_var_array() {
+  set -eu
+  local file
+  file="$1"
+  declare -a var_array
+  while IFS=$'\n' read -r line
+  do
+    var_array+=("$line")
+  done < <(grep '=' "${file}" | awk -F '=' '{if ($0!="" && $0 !~ /^\s*#/) print $1}' | sed -e "s/^/\"\${/" | sed -e "s/$/}\" \\\\/" | tr -s '}')
+
+  echo "${var_array[@]}"
+}
+
+# Rewrite only the variables we want to change
+declare -a ENVVARS
+while IFS=$'\n' read -r line
+do
+  ENVVARS+=("$line")
+done < <(get_var_array "config.default")
 
 ENVVARS_STRING="$(printf "%s:" "${ENVVARS[@]}")"
 ENVVARS_STRING="${ENVVARS_STRING%:}"
