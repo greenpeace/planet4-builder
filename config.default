@@ -37,6 +37,10 @@ BASE_IMAGE="php"
 BASE_NAMESPACE="circleci"
 BASE_TAG="7.0-node"
 
+# Vars left intentionally blank to inform get_var_array to rewrite these vars
+BRANCH_NAME=
+IMAGE_FROM=
+
 # Vendor application versions
 # https://github.com/petervanderdoes/gitflow-avh/releases
 GIT_FLOW_VERSION='stable'

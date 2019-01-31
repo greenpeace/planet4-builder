@@ -44,5 +44,5 @@ fi
 
 # Envsubst and cloudbuild.yaml variable consolidation
 
-BRANCH_NAME="${CIRCLE_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}"
-IMAGE_FROM="${BASE_NAMESPACE}/${BASE_IMAGE}:${BASE_TAG}"
+[ -z "${BRANCH_NAME}" ] && BRANCH_NAME="${CIRCLE_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}"
+[ -z "${IMAGE_FROM}" ] && IMAGE_FROM="${BASE_NAMESPACE}/${BASE_IMAGE}:${BASE_TAG}"
