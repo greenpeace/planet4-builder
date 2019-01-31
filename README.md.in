@@ -25,7 +25,8 @@ The base image builds upon the `${IMAGE_FROM}` image and adds:
 -   [bats](https://github.com/sstephenson/bats) latest
 -   [gcloud](https://cloud.google.com/sdk/docs/#install_the_latest_cloud_tools_version_cloudsdk_current_version) ${GOOGLE_SDK_VERSION}
 -   [git-flow](https://github.com/petervanderdoes/gitflow-avh) ${GIT_FLOW_VERSION}
--   [helm](https://github.com/kubernetes/helm/releases) ${HELM_VERSION}
+-   [hadolint](https://github.com/hadolint/hadolint) ${HADOLINT_VERSION}
+-   [helm](https://github.com/kubernetes/helm) ${HELM_VERSION}
 -   [junit-merge](https://www.npmjs.com/package/junit-merge)
 -   [nodejs](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions)
 -   [shellcheck](https://github.com/koalaman/shellcheck) ${SHELLCHECK_VERSION}

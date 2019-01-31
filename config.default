@@ -46,6 +46,8 @@ IMAGE_FROM=
 GIT_FLOW_VERSION='1.11.0'
 # https://cloud.google.com/sdk/docs/quickstart-linux
 GOOGLE_SDK_VERSION='231.0.0'
+# https://github.com/hadolint/hadolint/releases
+HADOLINT_VERSION='1.16.0'
 # https://github.com/kubernetes/helm/releases
 HELM_VERSION='2.12.3'
 # https://shellcheck.storage.googleapis.com/index.html
