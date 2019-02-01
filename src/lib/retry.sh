@@ -11,17 +11,18 @@ function retry {
   local max_attempts=${ATTEMPTS:-5}
   local timeout=${TIMEOUT:-1}
   local attempt=1
-  local exitCode=0
+  local exitCode
 
   while (( attempt <= max_attempts ))
   do
-    if "$@"
-    then
-      return 0
-    fi
+    set +e
+    "$@"
     exitCode=$?
+    set -e
 
-    >&2 echo "Attempt #$attempt/$max_attempts failed."
+    [ $exitCode -eq 0 ] && return 0
+
+    >&2 printf "Attempt #%d/%d failed. " "$attempt" "$max_attempts"
     attempt=$(( attempt + 1 ))
     (( attempt > max_attempts )) && break
 
@@ -30,7 +31,7 @@ function retry {
     timeout=$(( timeout * 2 ))
   done
 
-  [[ $exitCode -ne 0 ]] && >&2 echo "You've failed me for the last time! ($*)"
+  >&2 echo "You've failed me for the last time! ($*)"
 
   return $exitCode
 }
