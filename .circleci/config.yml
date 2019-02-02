@@ -12,7 +12,8 @@ jobs:
   build-push:
     <<: *defaults
     steps:
-      - setup_remote_docker
+      - setup_remote_docker:
+          docker_layer_caching: true
       - checkout
       - run: make build
       - run: activate-gcloud-account.sh
