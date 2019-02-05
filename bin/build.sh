@@ -115,9 +115,10 @@ trap finish EXIT
 # Build container
 [[ "$BUILD" = 'true' ]] && {
   time docker build "src/circleci-base" \
-    --tag "${NAMESPACE}/${GOOGLE_PROJECT_ID}/circleci-base:${BUILD_BRANCH}" \
     --tag "${NAMESPACE}/${GOOGLE_PROJECT_ID}/circleci-base:${BUILD_NUM}" \
     --tag "${NAMESPACE}/${GOOGLE_PROJECT_ID}/circleci-base:${BUILD_TAG}"
+
+  [[ -n "${BUILD_BRANCH}" ]] && docker tag "${NAMESPACE}/${GOOGLE_PROJECT_ID}/circleci-base:${BUILD_NUM}" "${NAMESPACE}/${GOOGLE_PROJECT_ID}/circleci-base:${BUILD_BRANCH}"
 }
 
 if [[ "$BUILD" != "true" ]] && [[ "${TEMPLATE}" != "true" ]]
