@@ -1,8 +1,3 @@
-#!/usr/bin/env sh
-# shellcheck disable=SC2034
-set -a
-
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 #  DO NOT MAKE EDITS IN THIS FILE
 
@@ -19,23 +14,20 @@ set -a
 
 # Any values defined in a custom configuration file will overwrite the defaults
 
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-CIRCLECI_USER="circleci"
+CIRCLECI_USER=circleci
 
 # Application environment
-APPLICATION_NAME="Planet 4 CircleCI build image"
 APPLICATION_DESCRIPTION="Base image for performing CI/CD operations in CircleCI"
-GOOGLE_PROJECT_ID="planet-4-151612"
+GOOGLE_PROJECT_ID=planet-4-151612
 MAINTAINER="Raymond Walker <raymond.walker@greenpeace.org>"
 
 # Container registry
-NAMESPACE="gcr.io"
+NAMESPACE=gcr.io
 
 # Upstream image
-BASE_IMAGE="php"
-BASE_NAMESPACE="circleci"
-BASE_TAG="7.0-node"
+BASE_IMAGE=php
+BASE_NAMESPACE=circleci
+BASE_TAG=7.0-node
 
 # Vars left intentionally blank to inform get_var_array to rewrite these vars
 BRANCH_NAME=
@@ -43,16 +35,16 @@ IMAGE_FROM=
 
 # Vendor application versions
 # https://github.com/petervanderdoes/gitflow-avh/releases
-GIT_FLOW_VERSION='1.11.0'
+GIT_FLOW_VERSION=1.11.0
 # https://cloud.google.com/sdk/docs/quickstart-linux
-GOOGLE_SDK_VERSION='231.0.0'
+GOOGLE_SDK_VERSION=232.0.0
 # https://github.com/hadolint/hadolint/releases
-HADOLINT_VERSION='1.16.0'
+HADOLINT_VERSION=1.16.0
 # https://github.com/kubernetes/helm/releases
-HELM_VERSION='2.12.3'
+HELM_VERSION=2.12.3
 # https://shellcheck.storage.googleapis.com/index.html
-SHELLCHECK_VERSION='0.6.0'
-# https://www.terraform.io/downloads.html
-TERRAFORM_VERSION='0.11.10'
-# https://github.com/gruntwork-io/terragrunt/releases
-TERRAGRUNT_VERSION='0.17.2'
+SHELLCHECK_VERSION=0.6.0
+# # https://www.terraform.io/downloads.html
+# TERRAFORM_VERSION=0.11.10
+# # https://github.com/gruntwork-io/terragrunt/releases
+# TERRAGRUNT_VERSION=0.17.2

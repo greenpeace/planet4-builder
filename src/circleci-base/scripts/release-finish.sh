@@ -41,6 +41,8 @@ do
   fi
 done
 
+set -e
+
 git tag -m "$commit_message" -a "$new_version"
 
 git push origin master
