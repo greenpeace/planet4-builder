@@ -3,7 +3,7 @@ defaults: &defaults
   environment:
     GOOGLE_PROJECT_ID: planet-4-151612
   docker:
-    - image: gcr.io/planet-4-151612/circleci-base:develop
+    - image: gcr.io/planet-4-151612/circleci-base:latest
   working_directory: /home/circleci/app
 
 version: 2
@@ -12,7 +12,8 @@ jobs:
   build-push:
     <<: *defaults
     steps:
-      - setup_remote_docker
+      - setup_remote_docker:
+          docker_layer_caching: true
       - checkout
       - run: make build
       - run: activate-gcloud-account.sh
