@@ -9,7 +9,7 @@ then
   exit 0
 fi
 
-if [[ -z "${CIRCLE_BRANCH}" ]] && [[ "${CIRCLE_TAG}" ]]
+if [[ -z "${CIRCLE_BRANCH}" ]] && [[ -n "${CIRCLE_TAG}" ]]
 then
   # Find the branch associated with this commit
   # Why is this so hard, CircleCI?
