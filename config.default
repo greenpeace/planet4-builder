@@ -8,6 +8,10 @@
 # =============================================================================
 
 # Vendor application versions
+
+# https://www.npmjs.com/package/bats
+BATS_VERSION=1.1.0
+
 # https://github.com/petervanderdoes/gitflow-avh/releases
 GIT_FLOW_VERSION=1.11.0
 
@@ -20,14 +24,17 @@ HADOLINT_VERSION=1.16.0
 # https://github.com/kubernetes/helm/releases
 HELM_VERSION=2.12.3
 
+# https://www.npmjs.com/package/junit-merge
+JUNIT_MERGE_VERSION=2.0.0
+
 # https://shellcheck.storage.googleapis.com/index.html
 SHELLCHECK_VERSION=0.6.0
 
-# # https://www.terraform.io/downloads.html
-# TERRAFORM_VERSION=0.11.10
+# https://www.npmjs.com/package/tap-xunit
+TAP_XUNIT_VERSION=2.3.0
 
-# # https://github.com/gruntwork-io/terragrunt/releases
-# TERRAGRUNT_VERSION=0.17.2
+# https://pypi.org/project/yamllint/#history
+YAMLLINT_VERSION=1.14.0
 
 # =============================================================================
 
