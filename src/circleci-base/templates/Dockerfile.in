@@ -27,7 +27,7 @@ RUN apt-get install -y --no-install-recommends \
 RUN pip install yamllint
 
 RUN npm install -g \
-      bats-core \
+      bats \
       junit-merge \
       tap-xunit
 
