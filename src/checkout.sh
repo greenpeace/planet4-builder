@@ -59,4 +59,7 @@ fi
 
 git checkout "$MERGE_REF"
 
+# Copy common post-deploy scripts
+cp /home/circleci/source/tasks/post-deploy/* /home/circleci/merge/post_deploy_scripts
+
 ls -al

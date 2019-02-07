@@ -9,23 +9,7 @@ php=$(kubectl get pods --namespace "${HELM_NAMESPACE}" \
 
 for file in $(kubectl -n "${HELM_NAMESPACE}" exec "$php" -- ls ./post_deploy_scripts); do
     echo ""
-    echo "Running the local script : $(basename "$file")"
+    echo "Running the script : $(basename "$file")"
     echo ""
     kubectl -n "${HELM_NAMESPACE}" exec "$php" -- bash "post_deploy_scripts/$file"
-done
-
-echo "Now check the common post deploy scripts and run them as well"
-
-mkdir source
-pushd source
-git clone https://github.com/greenpeace/planet4-base-fork .
-popd
-
-for file in source/tasks/post-deploy/*; do
-    echo ""
-    echo "Running the common script : $(basename "$file")"
-    echo ""
-    HELM_NAMESPACE=${HELM_NAMESPACE} \
-	  HELM_RELEASE=${HELM_RELEASE} \
-	  ./run_bash_script_in_php_pod.sh "$file"
 done
