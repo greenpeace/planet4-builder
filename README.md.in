@@ -28,7 +28,6 @@ The base image builds upon the `${IMAGE_FROM}` image and adds:
 -   [hadolint](https://github.com/hadolint/hadolint) ${HADOLINT_VERSION}
 -   [helm](https://github.com/kubernetes/helm) ${HELM_VERSION}
 -   [junit-merge](https://www.npmjs.com/package/junit-merge) ${JUNIT_MERGE_VERSION}
--   [nodejs](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions)
 -   [shellcheck](https://github.com/koalaman/shellcheck) ${SHELLCHECK_VERSION}
 -   [tap-xunit](https://github.com/aghassemi/tap-xunit) ${TAP_XUNIT_VERSION}
 -   [yamllint](https://pypi.org/project/yamllint) ${YAMLLINT_VERSION}
