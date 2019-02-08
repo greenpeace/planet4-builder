@@ -27,7 +27,7 @@ jobs:
       - run: activate-gcloud-account.sh
       - run: gcloud auth configure-docker
       - run: make build
-      - run: make test
+      - run: MAKEFLAGS=-j make test
       - run: make -j push
       - run:
           name: Notify failure
