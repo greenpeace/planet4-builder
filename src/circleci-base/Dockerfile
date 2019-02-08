@@ -1,8 +1,8 @@
-# gcr.io/planet-4-151612/circleci-base:develop
+# gcr.io/planet-4-151612/circleci-base:v0.7.1
 # Base image for performing CI/CD operations in CircleCI
-# Branch: develop
-# Commit: 6c125194fc25e86ef53544c4dfa272ca2e305d6c
-# Build:  build-1335
+# Branch: v0.7.1
+# Commit: 8b9111ed25fcde613e6f5d0236809f97c0cacd24
+# Build:  build-1347
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
