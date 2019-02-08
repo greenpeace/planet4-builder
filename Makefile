@@ -63,7 +63,7 @@ export BUILD_TAG
 
 .DEFAULT_GOAL := build
 
-.PHONY: all clean lint lint-sh lint-yaml lint-docker  pull build test
+.PHONY: all clean lint lint-sh lint-yaml lint-docker src pull build test
 
 all: clean pull build test
 
@@ -85,6 +85,7 @@ lint-docker: $(SRC)/$(IMAGE)/Dockerfile
 pull:
 		docker pull $(IMAGE_FROM)
 
+src: $(SRC)/$(IMAGE)/%
 $(SRC)/$(IMAGE)/%:
 		./bin/build.sh -t
 
