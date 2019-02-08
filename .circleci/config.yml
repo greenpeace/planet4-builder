@@ -133,13 +133,6 @@ workflows:
           filters:
             branches:
               only: develop
-      - artifacts:
-          context: org-global
-          requires:
-            - hold-promote
-          filters:
-            branches:
-              only: develop
       - promote:
           context: org-global
           requires:
@@ -147,7 +140,13 @@ workflows:
           filters:
             branches:
               only: develop
-
+      - artifacts:
+          context: org-global
+          requires:
+            - promote
+          filters:
+            branches:
+              only: develop
   tag:
     jobs:
       - build:
