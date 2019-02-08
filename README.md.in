@@ -1,7 +1,7 @@
 
 # Planet 4 CircleCI build containers
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/4c9d5b08e9b046cbba9cdcbc9ba8eaf9)](https://www.codacy.com/app/rawalker/planet4-circleci) [![CircleCI](https://circleci.com/gh/greenpeace/planet4-circleci/tree/develop.svg?style=shield)](https://circleci.com/gh/greenpeace/planet4-circleci)
+[![CircleCI](https://circleci.com/gh/greenpeace/planet4-circleci/tree/develop.svg?style=shield)](https://circleci.com/gh/greenpeace/planet4-circleci)
 
 Performs builds and tests for the Planet 4 web application and associated infrastructure
 
@@ -22,15 +22,16 @@ The commands `ci promote`, `ci tag` and `ci release` are synonymous and intercha
 
 The base image builds upon the `${IMAGE_FROM}` image and adds:
 -   [ag](https://github.com/ggreer/the_silver_searcher)
--   [bats](https://github.com/sstephenson/bats) latest
+-   [bats](https://www.npmjs.com/package/bats) ${BATS_VERSION}
 -   [gcloud](https://cloud.google.com/sdk/docs/#install_the_latest_cloud_tools_version_cloudsdk_current_version) ${GOOGLE_SDK_VERSION}
 -   [git-flow](https://github.com/petervanderdoes/gitflow-avh) ${GIT_FLOW_VERSION}
 -   [hadolint](https://github.com/hadolint/hadolint) ${HADOLINT_VERSION}
 -   [helm](https://github.com/kubernetes/helm) ${HELM_VERSION}
--   [junit-merge](https://www.npmjs.com/package/junit-merge)
+-   [junit-merge](https://www.npmjs.com/package/junit-merge) ${JUNIT_MERGE_VERSION}
 -   [nodejs](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions)
 -   [shellcheck](https://github.com/koalaman/shellcheck) ${SHELLCHECK_VERSION}
--   [tap-xunit](https://github.com/aghassemi/tap-xunit)
+-   [tap-xunit](https://github.com/aghassemi/tap-xunit) ${TAP_XUNIT_VERSION}
+-   [yamllint](https://pypi.org/project/yamllint) ${YAMLLINT_VERSION}
 
 Upstream images are [CircleCI build images](https://github.com/circleci/circleci-images/)
 

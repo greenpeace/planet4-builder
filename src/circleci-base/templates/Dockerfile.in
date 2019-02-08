@@ -24,20 +24,18 @@ RUN apt-get install -y --no-install-recommends \
     rm -rf /tmp/* && \
     rm -rf /var/lib/apt/lists/*
 
-RUN pip install yamllint
+RUN pip install yamllint==${YAMLLINT_VERSION}
 
 RUN npm install -g \
-      junit-merge \
-      tap-xunit
+      bats@${BATS_VERSION} \
+      junit-merge@${JUNIT_MERGE_VERSION} \
+      tap-xunit@${TAP_XUNIT_VERSION}
 
 WORKDIR /home/${CIRCLECI_USER}
 
 COPY --chown=${CIRCLECI_USER}:${CIRCLECI_USER} .curlrc /home/${CIRCLECI_USER}
 
 RUN mkdir -p scripts && \
-    git clone https://github.com/sstephenson/bats.git && \
-    mv bats/libexec/bats scripts/ && \
-    rm -fr bats && \
     echo "Git Flow v${GIT_FLOW_VERSION} ..." && \
     curl https://raw.githubusercontent.com/petervanderdoes/gitflow-avh/develop/contrib/gitflow-installer.sh | bash -s install version ${GIT_FLOW_VERSION} && \
     rm -fr git-flow && \

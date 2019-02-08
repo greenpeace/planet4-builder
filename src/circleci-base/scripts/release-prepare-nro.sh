@@ -76,14 +76,7 @@ then
   echo "-- 3.1   No changes to merge. Triggering $repo@release/$new_release via API"
   trigger-build-api.sh "$repo" "release/$new_release"
 else
-  echo "-- 3.2   Local changes have been merged, pushing changes to remote"
-
-  echo "-- 3.2.1 Remove all the build trigger notifications from the latest commit message"
-  # Remove all the build trigger notifications from the latest commit message
-  message=$(git show --format=%B | grep -v ":robot: Build trigger")
-  git commit --amend -m "$message"
-
-  echo "---3.2.2 Push the new release branch release/$new_release"
+  echo "---3.2.1 Changes have been merged, push release/$new_release to origin ..."
   # Push the new release branch
   git push -u origin "release/$new_release"
 

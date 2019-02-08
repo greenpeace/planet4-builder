@@ -1,18 +1,42 @@
+# =============================================================================
 
-#  DO NOT MAKE EDITS IN THIS FILE
-
-# Changing any of the follow values is NOT RECOMMENDED
-# The below are defaults which are only used if custom values are not set
-#
-
-# How to customise the build configuration:
-# -----------------------------------------
 # Create a custom file and set values are described above, and pass it to the
 # build binary as a parameter, like so:
 
 # $ ./build.sh -c config.custom
 
-# Any values defined in a custom configuration file will overwrite the defaults
+# =============================================================================
+
+# Vendor application versions
+
+# https://www.npmjs.com/package/bats
+BATS_VERSION=1.1.0
+
+# https://github.com/petervanderdoes/gitflow-avh/releases
+GIT_FLOW_VERSION=1.11.0
+
+# https://cloud.google.com/sdk/docs/quickstart-linux
+GOOGLE_SDK_VERSION=232.0.0
+
+# https://github.com/hadolint/hadolint/releases
+HADOLINT_VERSION=1.16.0
+
+# https://github.com/kubernetes/helm/releases
+HELM_VERSION=2.12.3
+
+# https://www.npmjs.com/package/junit-merge
+JUNIT_MERGE_VERSION=2.0.0
+
+# https://shellcheck.storage.googleapis.com/index.html
+SHELLCHECK_VERSION=0.6.0
+
+# https://www.npmjs.com/package/tap-xunit
+TAP_XUNIT_VERSION=2.3.0
+
+# https://pypi.org/project/yamllint/#history
+YAMLLINT_VERSION=1.14.0
+
+# =============================================================================
 
 CIRCLECI_USER=circleci
 
@@ -32,19 +56,3 @@ BASE_TAG=7.0-node
 # Vars left intentionally blank to inform get_var_array to rewrite these vars
 BRANCH_NAME=
 IMAGE_FROM=
-
-# Vendor application versions
-# https://github.com/petervanderdoes/gitflow-avh/releases
-GIT_FLOW_VERSION=1.11.0
-# https://cloud.google.com/sdk/docs/quickstart-linux
-GOOGLE_SDK_VERSION=232.0.0
-# https://github.com/hadolint/hadolint/releases
-HADOLINT_VERSION=1.16.0
-# https://github.com/kubernetes/helm/releases
-HELM_VERSION=2.12.3
-# https://shellcheck.storage.googleapis.com/index.html
-SHELLCHECK_VERSION=0.6.0
-# # https://www.terraform.io/downloads.html
-# TERRAFORM_VERSION=0.11.10
-# # https://github.com/gruntwork-io/terragrunt/releases
-# TERRAGRUNT_VERSION=0.17.2

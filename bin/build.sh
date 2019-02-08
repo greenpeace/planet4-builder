@@ -101,12 +101,12 @@ trap finish EXIT
 
   _build "Rewriting Dockerfile from template ..."
   echo "${DOCKER_BUILD_STRING}
-  $(cat "src/circleci-base/Dockerfile.tmp")" > "src/circleci-base/Dockerfile"
+$(cat "src/circleci-base/Dockerfile.tmp")" > "src/circleci-base/Dockerfile"
   rm "src/circleci-base/Dockerfile.tmp"
 
   _build "Rewriting README.md from template ..."
   echo "$(cat "README.md.tmp")
-  Build: ${CIRCLE_BUILD_URL:-"(local)"}" > "README.md"
+Build: ${CIRCLE_BUILD_URL:-"(local)"}" > "README.md"
   rm "README.md.tmp"
 
   # -----------------------------------------------------------------------------
