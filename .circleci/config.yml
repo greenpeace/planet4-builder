@@ -58,7 +58,6 @@ jobs:
       - deploy:
           name: Start release
           command: |
-            make src
             new_version="$(git-new-version.sh)"
             release-start.sh "$new_version"
             release-finish.sh "$new_version"
