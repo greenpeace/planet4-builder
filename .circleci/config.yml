@@ -62,7 +62,6 @@ jobs:
             new_version="$(git-new-version.sh)"
             release-start.sh "$new_version"
             release-finish.sh "$new_version"
-            update-build-numbers.sh -f README.md src/circleci-base/Dockerfile
 
   deploy:
     <<: *defaults
@@ -85,14 +84,14 @@ jobs:
             TYPE="Tag: gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest" notify-job-success.sh
             docker push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
 
-  update-tag:
+  artifacts:
     <<: *defaults
     steps:
       - checkout
       - attach_workspace:
           at: /tmp/workspace
       - deploy:
-          name: Update build numbers
+          name: Update build artifacts
           command: |
             make src
             update-build-numbers.sh -f README.md src/circleci-base/Dockerfile
@@ -134,6 +133,13 @@ workflows:
           filters:
             branches:
               only: develop
+      - artifacts:
+          context: org-global
+          requires:
+            - hold-promote
+          filters:
+            branches:
+              only: develop
       - promote:
           context: org-global
           requires:
@@ -150,7 +156,7 @@ workflows:
           <<: *tag_common
           requires:
             - build
-      - update-tag:
+      - artifacts:
           <<: *tag_common
           requires:
             - build
