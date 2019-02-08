@@ -61,16 +61,23 @@ jobs:
             new_version="$(git-new-version.sh)"
             release-start.sh "$new_version"
             release-finish.sh "$new_version"
+            git checkout ${CIRCLE_BRANCH}
             make src
             update-build-numbers.sh -f README.md src/circleci-base/Dockerfile
 
   deploy:
     <<: *defaults
     steps:
+      - checkout
       - attach_workspace:
           at: /tmp/workspace
       - setup_remote_docker:
           docker_layer_caching: true
+      - run:
+          background: true
+          command: |
+            make src
+            update-build-numbers.sh -f README.md src/circleci-base/Dockerfile
       - run:
           name: Configure
           command: |
@@ -84,8 +91,6 @@ jobs:
             docker tag gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
             TYPE="Tag: gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest" notify-job-success.sh
             docker push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
-            make src
-            update-build-numbers.sh -f README.md src/circleci-base/Dockerfile
             trigger-build-api.sh planet4-builder develop
 
 workflow_common:
