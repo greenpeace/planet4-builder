@@ -1,5 +1,7 @@
 SHELL := /bin/bash
 
+SRC := src
+
 # Read default configuration
 include config.default
 export $(shell sed 's/=.*//' config.default)
@@ -15,6 +17,12 @@ ifeq ($(strip $(IMAGE_FROM)),)
 IMAGE_FROM=$(BASE_NAMESPACE)/$(BASE_IMAGE):$(BASE_TAG)
 export IMAGE_FROM
 endif
+
+BUILD_IMAGE_NAMESPACE ?= gcr.io
+BUILD_IMAGE_PROJECT ?= planet-4-151612
+BUILD_IMAGE_NAME ?= circleci-base
+
+BUILD_IMAGE ?= $(BUILD_IMAGE_NAMESPACE)/$(BUILD_IMAGE_PROJECT)/$(BUILD_IMAGE_NAME)
 
 # ---
 
@@ -42,6 +50,11 @@ else
 PUSH_LATEST := true
 endif
 
+export BUILD_IMAGE
+export BUILD_IMAGE_NAME
+export BUILD_IMAGE_PROJECT
+export BUILD_IMAGE_NAMESPACE
+
 export BUILD_NUM
 export BUILD_BRANCH
 export BUILD_TAG
@@ -50,14 +63,13 @@ export BUILD_TAG
 
 .DEFAULT_GOAL := build
 
-.PHONY: clean lint lint-sh lint-yaml lint-docker rewrite template pull build
+.PHONY: all clean lint lint-sh lint-yaml lint-docker  pull build test
+
+all: clean pull build test
 
 clean:
-
-
-template: rewrite
-rewrite:
-		./bin/build.sh -t
+		@rm -f README.md $(SRC)/circleci-base/Dockerfile
+		@$(MAKE) -C test clean
 
 lint: lint-yaml lint-sh lint-docker
 
@@ -67,25 +79,33 @@ lint-yaml:
 lint-sh:
 		find . -type f -name '*.sh' | xargs shellcheck -x
 
-lint-docker: rewrite
+lint-docker: $(SRC)/$(IMAGE)/Dockerfile
 		find . -type f -name 'Dockerfile' | xargs hadolint
 
 pull:
 		docker pull $(IMAGE_FROM)
 
+$(SRC)/$(IMAGE)/%:
+		./bin/build.sh -t
+
 build: lint
 		./bin/build.sh -b
+
+test:
+		@$(MAKE) -j1 -C $@ clean
+		@$(MAKE) -k -C $@
+		$(MAKE) -C $@ status
 
 push: push-tag push-latest
 
 push-tag:
-		docker push gcr.io/planet-4-151612/circleci-base:$(BUILD_TAG)
-		docker push gcr.io/planet-4-151612/circleci-base:$(BUILD_NUM)
+		docker push $(BUILD_IMAGE):$(BUILD_TAG)
+		docker push $(BUILD_IMAGE):$(BUILD_NUM)
 
 push-latest:
 		@if [[ "$(PUSH_LATEST)" = "true" ]]; then { \
-			docker tag gcr.io/planet-4-151612/circleci-base:$(BUILD_NUM) gcr.io/planet-4-151612/circleci-base:latest; \
-			docker push gcr.io/planet-4-151612/circleci-base:latest; \
+			docker tag $(BUILD_IMAGE):$(BUILD_NUM) $(BUILD_IMAGE):latest; \
+			docker push $(BUILD_IMAGE):latest; \
 		}	else { \
 			echo "Not tagged.. skipping latest"; \
 		} fi

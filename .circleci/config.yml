@@ -27,94 +27,20 @@ jobs:
       - run: activate-gcloud-account.sh
       - run: gcloud auth configure-docker
       - run: make build
-      - run: make -j2 push
+      - run: make test
+      - run: make -j push
       - run:
           name: Notify failure
           when: on_fail
           command: notify-job-failure.sh
+      - store_test_results:
+          path: /home/circleci/app/test/logs
+      - store_artifacts:
+          path: /home/circleci/app/test/logs
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
             - var
-
-  test:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-          at: /tmp/workspace
-      - setup_remote_docker:
-          docker_layer_caching: true
-      - run:
-          name: Setup test results
-          command: |
-            mkdir -p /tmp/test-results
-      - run:
-          name: Pull new image
-          command: |
-            docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num)
-      - run:
-          name: Test commit message tag promotion
-          command: |
-            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) git-new-version.sh "[ci tag v1.2.3-test]" >/tmp/test-results/git_new_version_detect_1.txt
-            grep "v1.2.3-test" /tmp/test-results/git_new_version_detect_1.txt
-            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) git-new-version.sh "[ci promote v1.2.3]" >/tmp/test-results/git_new_version_detect_2.txt
-            grep "v1.2.3" /tmp/test-results/git_new_version_detect_2.txt
-            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) git-new-version.sh "[ci release 10.20.30a]" >/tmp/test-results/git_new_version_detect_3.txt
-            grep "10.20.30a" /tmp/test-results/git_new_version_detect_3.txt
-      - run:
-          name: Test Silver Searcher
-          command: |
-            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) ag --version >/tmp/test-results/ag_version.txt
-            grep -E "ag version\s[0-9.]{1,}" /tmp/test-results/ag_version.txt
-      - run:
-          name: Test hadolint
-          command: |
-            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) hadolint --version >/tmp/test-results/hadolint_version.txt
-            grep -E "Haskell Dockerfile Linter\sv[0-9.]{1,}" /tmp/test-results/hadolint_version.txt
-      - run:
-          name: Test yamllint
-          command: |
-            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) yamllint --version 2>/tmp/test-results/yamllint_version.txt
-            grep -E "yamllint\s[0-9.]{1,}" /tmp/test-results/yamllint_version.txt
-      - run:
-          name: Test PHP
-          command: |
-            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) php -v > /tmp/test-results/php_version.txt
-            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) php -r "phpinfo();" > /tmp/test-results/php_info.txt
-            grep -E "PHP\s[0-9.]{1,}" /tmp/test-results/php_version.txt
-      - run:
-          name: Test Composer
-          command: |
-            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) composer --version > /tmp/test-results/composer_version.txt
-            grep -E 'Composer version [0-9.]{1,}' /tmp/test-results/composer_version.txt
-      - run:
-          name: Test gcloud
-          command: |
-            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) gcloud -v > /tmp/test-results/gcloud_version.txt
-            grep -E 'Google Cloud SDK [0-9.]{1,}' /tmp/test-results/gcloud_version.txt
-            grep -E 'kubectl [0-9.]{1,}' /tmp/test-results/gcloud_version.txt
-            gcloud config set project ${GOOGLE_PROJECT_ID}
-            grep $GOOGLE_PROJECT_ID <<< $(gcloud config list)
-      - run:
-          name: Test cloud_sql_proxy
-          command: |
-            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) cloud_sql_proxy --version > /tmp/test-results/cloud_sql_proxy.txt
-            grep -E 'Cloud SQL Proxy: version [0-9.]{1,}' /tmp/test-results/cloud_sql_proxy.txt
-      - run:
-          name: Test mysqldump
-          command: |
-            docker run --rm gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-$(cat /tmp/workspace/var/circle-build-num) mysqldump --version > /tmp/test-results/mysqldump.txt
-            grep -E 'mysqldump  Ver [0-9.]{1,}' /tmp/test-results/mysqldump.txt
-      - run:
-          name: Notify failure
-          when: on_fail
-          command: TYPE="Tests" notify-job-failure.sh
-      - run:
-          name: Notify success
-          command: TYPE="Tests" notify-job-success.sh
-      - checkout
-      - store_test_results:
-          path: /tmp/test-results
 
   notify-promote:
     <<: *defaults
@@ -196,24 +122,17 @@ workflows:
           filters:
             branches:
               ignore: master
-      - test:
-          context: org-global
-          requires:
-            - build
-          filters:
-            branches:
-              ignore: master
       - hold-promote:
           type: approval
           requires:
-            - test
+            - build
           filters:
             branches:
               only: develop
       - notify-promote:
           context: org-global
           requires:
-            - test
+            - build
           filters:
             branches:
               only: develop
@@ -229,18 +148,14 @@ workflows:
     jobs:
       - build:
           <<: *tag_common
-      - test:
-          <<: *tag_common
-          requires:
-            - build
       - deploy:
           <<: *tag_common
           requires:
-            - test
+            - build
       - update-tag:
           <<: *tag_common
           requires:
-            - test
+            - build
       - trigger:
           <<: *tag_common
           requires:
