@@ -1,3 +1,5 @@
+SHELL := /bin/bash
+
 # File suffixes
 BATS := bats
 TAP := tap
@@ -32,7 +34,7 @@ XML_FILES := $(patsubst %.$(BATS), $(LOGS)/%/results.$(XML), $(TEST_FILES))
 
 .PHONY: all clean tap xml
 
-all: clean $(TAP_FILES) $(XML_DIRS) $(XML_FILES) status
+all: clean $(XML_DIRS) $(TAP_FILES) $(XML_FILES) status
 
 clean:
 ifndef LOGS
