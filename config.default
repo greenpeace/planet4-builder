@@ -16,7 +16,7 @@ BATS_VERSION=1.1.0
 GIT_FLOW_VERSION=1.11.0
 
 # https://cloud.google.com/sdk/docs/quickstart-linux
-GOOGLE_SDK_VERSION=232.0.0
+GOOGLE_SDK_VERSION=233.0.0
 
 # https://github.com/hadolint/hadolint/releases
 HADOLINT_VERSION=1.16.0
@@ -36,6 +36,9 @@ TAP_XUNIT_VERSION=2.3.0
 # https://pypi.org/project/yamllint/#history
 YAMLLINT_VERSION=1.14.0
 
+# https://pypi.org/project/yq/#history
+YQ_VERSION=2.7.2
+
 # =============================================================================
 
 CIRCLECI_USER=circleci
@@ -53,6 +56,6 @@ BASE_IMAGE=php
 BASE_NAMESPACE=circleci
 BASE_TAG=7.0-node
 
-# Vars left intentionally blank to inform get_var_array to rewrite these vars
+# Vars left intentionally blank to inform get_var_array to rewrite these
 BRANCH_NAME=
 IMAGE_FROM=

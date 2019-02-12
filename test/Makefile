@@ -1,12 +1,29 @@
+SHELL := /bin/bash
+
+# File suffixes
 BATS := bats
 TAP := tap
 XML := xml
+OUT := out
 
+# Output directory
 LOGS := logs
 
+# Used in .env.bash
+export LOGS
+export OUT
+
+# BATS test files
 TEST_FILES := $(wildcard *.$(BATS))
+
+# TAP output
 TAP_FILES := $(patsubst %.$(BATS), $(LOGS)/%.$(TAP), $(TEST_FILES))
-XML_FILES := $(patsubst %.$(BATS), $(LOGS)/%.$(XML), $(TEST_FILES))
+
+# XUNIT output
+XML_DIRS := $(patsubst %.$(BATS), $(LOGS)/%/, $(TEST_FILES))
+XML_FILES := $(patsubst %.$(BATS), $(LOGS)/%/results.$(XML), $(TEST_FILES))
+
+# Uncomment to enable automatic parralelisation of N available cores
 
 # NPROCS = $(shell grep -c 'processor' /proc/cpuinfo 2>/dev/null)
 # ifeq ($(strip $(NPROCS)),)
@@ -15,22 +32,32 @@ XML_FILES := $(patsubst %.$(BATS), $(LOGS)/%.$(XML), $(TEST_FILES))
 #
 # MAKEFLAGS += -j$(NPROCS)
 
-.PHONY: all clean
+.PHONY: all clean tap xml
 
-all: $(LOGS) $(TAP_FILES) $(XML_FILES)
+all: clean $(XML_DIRS) $(TAP_FILES) $(XML_FILES) status
 
 clean:
-		@rm -f $(LOGS)/*.$(TAP) $(LOGS)/*.$(XML)
+ifndef LOGS
+$(error LOGS is not set. Cowardly refusing to rm -fr an empty string)
+endif
+		@rm -fr $(LOGS)/
 
 status:
 		@! ag 'not ok' $(LOGS)/
 		@echo 'ok'
 
+tap: $(LOGS)/%.$(TAP)
+
+xml: $(LOGS)/%/results.$(XML)
+
 $(LOGS):
 		mkdir -p $(LOGS)
 
-$(LOGS)/%.$(TAP): %.$(BATS)
-		-@bats --tap $^ | tee $@
+$(LOGS)/%/: $(LOGS)
+		mkdir -p $@
 
-$(LOGS)/%.$(XML): $(LOGS)/%.$(TAP)
+$(LOGS)/%.$(TAP): %.$(BATS)
+		-@OUT=$(OUT) bats --tap $^ | tee $@
+
+$(LOGS)/%/results.$(XML): $(LOGS)/%.$(TAP)
 		@tap-xunit --package="circleci.base.$(shell echo $@ | cut -d/ -f2 | cut -d. -f1 )" < $^ > $@

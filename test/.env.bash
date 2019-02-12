@@ -43,8 +43,15 @@ function fatal {
 }
 
 function run_docker_binary() {
+  set -euo pipefail
   image="$1"
   shift
   args=("$@")
-  docker run --rm -ti "${image}" "${args[@]}"
+  cmd=$(echo "${args[0]}")
+  suffix=${OUT:-out}
+  logdir=${LOGS:-${BATS_TEST_DIRNAME}/logs}
+  [ ! -d "$logdir" ] && mkdir -p "${logdir}"
+  outfile="${logdir}/${cmd}.${suffix}"
+  echo " --- ${args[*]} --- $(date)" >> "$outfile"
+  docker run --rm -ti "${image}" "${args[@]}" | tee -a "$outfile"
 }
