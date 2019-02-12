@@ -1,4 +1,4 @@
-FROM gcr.io/planet-4-151612/circleci-base:build-1364
+FROM gcr.io/planet-4-151612/circleci-base:latest
 
 LABEL authors="Raymond Walker <raymond.walker@greenpeace.org>"
 
