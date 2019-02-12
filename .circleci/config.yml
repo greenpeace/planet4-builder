@@ -28,7 +28,7 @@ jobs:
       - run: gcloud auth configure-docker
       - run: make clean
       - run: make build
-      - run: make -kj test
+      - run: make -k test
       - run: make -j push
       - run:
           name: Notify failure
