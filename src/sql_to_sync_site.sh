@@ -37,8 +37,12 @@ mkdir -p content
 sleep 2
 
 export BUCKET_DESTINATION="gs://${CONTAINER_PREFIX}-source"
-export FILE_TO_IMPORT=${WP_DB_NAME_PREFIX}_master-${SQL_TAG}.sql
-export WP_DB_TO_IMPORT_TO=${WP_DB_NAME_PREFIX}_${SITE_ENV}
+export MASTER_DB=$(yq -r .job_environments.production_environment.WP_DB_NAME /tmp/workspace/src/.circleci/config.yml)
+export FILE_TO_IMPORT=${MASTER_DB}-${SQL_TAG}.sql
+export WP_DB_TO_IMPORT_TO=$(yq -r .job_environments.${SITE_ENV}_environment.WP_DB_NAME /tmp/workspace/src/.circleci/config.yml)
+echo ""
+echo "Exporting from $MASTER_DB the file $FILE_TO_IMPORT and importing it to $WP_DB_TO_IMPORT_TO"
+echo ""
 
 echo ""
 echo "Copying the file from the bucket"
