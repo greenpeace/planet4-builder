@@ -1,8 +1,8 @@
 # gcr.io/planet-4-151612/circleci-base:develop
 # Base image for performing CI/CD operations in CircleCI
 # Branch: develop
-# Commit: 98170b3ed0d6d92097e39e03208aa5de60c6e3b9
-# Build:  build-1358
+# Commit: 4ff947329a72216d5cf3f543d9323389d55fcc26
+# Build:  build-1373
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
@@ -34,7 +34,9 @@ RUN apt-get install -y --no-install-recommends \
     rm -rf /tmp/* && \
     rm -rf /var/lib/apt/lists/*
 
-RUN pip install yamllint==1.14.0
+RUN pip install \
+      yamllint==1.14.0 \
+      yq==2.7.2
 
 RUN npm install -g \
       bats@1.1.0 \
@@ -64,7 +66,7 @@ RUN echo "Hadolint v1.16.0 ..." && \
     curl -sS https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get | bash - && \
     rm -rf /tmp/*
 
-RUN curl -sS "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-232.0.0-linux-x86_64.tar.gz" | tar xz && \
+RUN curl -sS "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-233.0.0-linux-x86_64.tar.gz" | tar xz && \
     CLOUDSDK_CORE_DISABLE_PROMPTS=1 ./google-cloud-sdk/install.sh \
         --usage-reporting false \
         --bash-completion false \
