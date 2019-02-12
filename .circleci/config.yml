@@ -3,7 +3,7 @@ defaults: &defaults
   environment:
     GOOGLE_PROJECT_ID: planet-4-151612
   docker:
-    - image: gcr.io/planet-4-151612/circleci-base:test-installing-yq
+    - image: gcr.io/planet-4-151612/circleci-base:latest
   working_directory: /home/circleci/app
 
 version: 2
