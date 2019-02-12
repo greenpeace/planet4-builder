@@ -98,8 +98,12 @@ if [[ $APP_HOSTPATH == "<nil>" ]]
 then
    OLD_PATH=$(yq -r .job_environments.production_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)
    NEW_PATH=$(yq -r .job_environments.${SITE_ENV}_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)
-   echo ""
-   echo "We are in a pathless environment. We will replace $OLD_PATH with $NEW_PATH"
-   echo ""
-   $kc exec $POD -- wp search-replace $OLD_PATH $NEW_PATH --precise --skip-columns=guid
+else
+   OLD_PATH=$(yq -r .job_environments.production_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)/$APP_HOSTPATH
+   NEW_PATH=$(yq -r .job_environments.${SITE_ENV}_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)/$APP_HOSTPATH
 fi
+
+echo ""
+echo "Domain and path replacement. We will replace $OLD_PATH with $NEW_PATH"
+echo ""
+$kc exec $POD -- wp search-replace $OLD_PATH $NEW_PATH --precise --skip-columns=guid
