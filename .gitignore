@@ -1,4 +1,4 @@
+# Ignore all generated files
 README.md
 src/circleci-base/Dockerfile
-test/**.tap
-test/**.xml
+test/logs/
