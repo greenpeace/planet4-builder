@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-SRC := src
+# ---
 
 # Read default configuration
 include config.default
@@ -12,16 +12,18 @@ include config.custom
 export $(shell sed 's/=.*//' config.custom)
 endif
 
+# ---
+
 # Parent image
 ifeq ($(strip $(IMAGE_FROM)),)
-IMAGE_FROM=$(BASE_NAMESPACE)/$(BASE_IMAGE):$(BASE_TAG)
-export IMAGE_FROM
+IMAGE_FROM := $(BASE_NAMESPACE)/$(BASE_IMAGE):$(BASE_TAG)
 endif
 
 BUILD_IMAGE_NAMESPACE ?= gcr.io
 BUILD_IMAGE_PROJECT ?= planet-4-151612
 BUILD_IMAGE_NAME ?= circleci-base
 
+# Image to build
 BUILD_IMAGE ?= $(BUILD_IMAGE_NAMESPACE)/$(BUILD_IMAGE_PROJECT)/$(BUILD_IMAGE_NAME)
 
 # ---
@@ -50,6 +52,8 @@ else
 PUSH_LATEST := true
 endif
 
+export IMAGE_FROM
+
 export BUILD_IMAGE
 export BUILD_IMAGE_NAME
 export BUILD_IMAGE_PROJECT
@@ -59,9 +63,23 @@ export BUILD_NUM
 export BUILD_BRANCH
 export BUILD_TAG
 
+# ---
+
+# Check necessary commands exist
+
+HADOLINT := $(shell command -v hadolint 2> /dev/null)
+
+SHELLCHECK := $(shell command -v shellcheck 2> /dev/null)
+
+YAMLLINT := $(shell command -v yamllint 2> /dev/null)
+
+SRC := src
+
+# ---
+
 # ============================================================================
 
-.DEFAULT_GOAL := build
+.DEFAULT_GOAL := all
 
 .PHONY: all clean lint lint-sh lint-yaml lint-docker src pull build test
 
@@ -74,13 +92,22 @@ clean:
 lint: lint-yaml lint-sh lint-docker
 
 lint-yaml:
-		yamllint -d "{extends: default, rules: {line-length: {max: 80, level: warning}}}" .circleci/config.yml
+ifndef YAMLLINT
+$(error "yamllint is not installed: https://github.com/adrienverge/yamllint")
+endif
+		$(YAMLLINT) -d "{extends: default, rules: {line-length: {max: 80, level: warning}}}" .circleci/config.yml
 
 lint-sh:
-		find . -type f -name '*.sh' | xargs shellcheck -x
+ifndef SHELLCHECK
+$(error "shellcheck is not installed: https://github.com/koalaman/shellcheck")
+endif
+		find . -type f -name '*.sh' | xargs $(SHELLCHECK) -x
 
 lint-docker: $(SRC)/$(IMAGE)/Dockerfile
-		find . -type f -name 'Dockerfile' | xargs hadolint
+ifndef HADOLINT
+$(error "hadolint is not installed: https://github.com/hadolint/hadolint")
+endif
+		find . -type f -name 'Dockerfile' | xargs $(HADOLINT)
 
 pull:
 		docker pull $(IMAGE_FROM)
