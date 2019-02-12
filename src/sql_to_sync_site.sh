@@ -96,8 +96,8 @@ echo "Check if we are in an pathless environment"
 echo ""
 if [[ $APP_HOSTPATH == "<nil>" ]]
 then
-   OLD_PATH=$(yq read /tmp/workspace/src/.circleci/ job_environments.production_environment.APP_HOSTNAME)
-   NEW_PATH=$(yq read /tmp/workspace/src/.circleci/ job_environments.${SITE_ENV}_environment.APP_HOSTNAME)
+   OLD_PATH=$(yq read /tmp/workspace/src/.circleci/config.yml job_environments.production_environment.APP_HOSTNAME)
+   NEW_PATH=$(yq read /tmp/workspace/src/.circleci/config.yml job_environments.${SITE_ENV}_environment.APP_HOSTNAME)
    echo ""
    echo "We are in a pathless environment. We will replace $OLD_PATH with $NEW_PATH"
    echo ""
