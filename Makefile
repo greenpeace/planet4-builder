@@ -37,7 +37,10 @@ REVISION_TAG = $(shell git rev-parse --short HEAD)
 
 ALL: lint template build push
 
-lint: lint-yaml lint-json lint-composer
+lint: lint-sh lint-yaml lint-json lint-composer
+
+lint-sh:
+	find . -type f -name '*.sh' | xargs shellcheck
 
 lint-yaml:
 	find . -type f -name '*.yml' | xargs yamllint
