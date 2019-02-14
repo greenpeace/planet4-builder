@@ -18,6 +18,16 @@ echo ""
 echo "We will try to get connected to: ${CLOUDSQL_INSTANCE}"
 echo ""
 
+echo ""
+echo "Creating the credential file for mysql"
+echo ""
+cat <<EOF > mysql.cnf
+[client]
+user = ${WP_DB_USERNAME_DC}
+password = ${WP_DB_PASSWORD_DC}
+host = 127.0.0.1
+EOF
+
 trap finish EXIT
 cloud_sql_proxy \
   -instances="${CLOUDSQL_INSTANCE}=tcp:3306" &
@@ -36,10 +46,10 @@ mkdir -p content
 
 sleep 2
 
-export BUCKET_DESTINATION="gs://${CONTAINER_PREFIX}-source"
-export MASTER_DB=$(yq -r .job_environments.production_environment.WP_DB_NAME /tmp/workspace/src/.circleci/config.yml)
-export FILE_TO_IMPORT=${MASTER_DB}-${SQL_TAG}.sql
-export WP_DB_TO_IMPORT_TO=$(yq -r .job_environments.${SITE_ENV}_environment.WP_DB_NAME /tmp/workspace/src/.circleci/config.yml)
+BUCKET_DESTINATION="gs://${CONTAINER_PREFIX}-source"
+MASTER_DB=$(yq -r .job_environments.production_environment.WP_DB_NAME /tmp/workspace/src/.circleci/config.yml)
+FILE_TO_IMPORT=${MASTER_DB}-${SQL_TAG}.sql
+WP_DB_TO_IMPORT_TO=$(yq -r .job_environments."${SITE_ENV}"_environment.WP_DB_NAME /tmp/workspace/src/.circleci/config.yml)
 echo ""
 echo "Exporting from $MASTER_DB the file $FILE_TO_IMPORT and importing it to $WP_DB_TO_IMPORT_TO"
 echo ""
@@ -75,7 +85,7 @@ echo "Actually replacing the contents of the release stateless with the producti
 echo "Source bucket: $SOURCE_BUCKET"
 echo "Target bucket: $WP_STATELESS_BUCKET"
 echo ""
-gsutil rsync -d -r "gs://${SOURCE_BUCKET}" "gs://${WP_STATELESS_BUCKET}"
+gsutil rsync -d -r gs://"${SOURCE_BUCKET}" gs://"${WP_STATELESS_BUCKET}"
 
 echo ""
 echo "Set kubectl command to use the namespace"
@@ -101,31 +111,13 @@ echo ""
 if [[ $APP_HOSTPATH == "<nil>" ]]
 then
    OLD_PATH=$(yq -r .job_environments.production_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)
-   NEW_PATH=$(yq -r .job_environments.${SITE_ENV}_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)
+   NEW_PATH=$(yq -r .job_environments."${SITE_ENV}"_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)
 else
    OLD_PATH=$(yq -r .job_environments.production_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)/$APP_HOSTPATH
-   NEW_PATH=$(yq -r .job_environments.${SITE_ENV}_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)/$APP_HOSTPATH
+   NEW_PATH=$(yq -r .job_environments."${SITE_ENV}"_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)/$APP_HOSTPATH
 fi
 
 echo ""
 echo "Domain and path replacement. We will replace $OLD_PATH with $NEW_PATH"
 echo ""
-$kc exec $POD -- wp search-replace $OLD_PATH $NEW_PATH --precise --skip-columns=guid
-
-
-echo ""
-echo "Check if we are in an pathless environment"
-echo ""
-if [[ $APP_HOSTPATH == "<nil>" ]]
-then
-   OLD_PATH=$(yq -r .job_environments.production_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)
-   NEW_PATH=$(yq -r .job_environments.${SITE_ENV}_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)
-else
-   OLD_PATH=$(yq -r .job_environments.production_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)/$APP_HOSTPATH
-   NEW_PATH=$(yq -r .job_environments.${SITE_ENV}_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)/$APP_HOSTPATH
-fi
-
-echo ""
-echo "Domain and path replacement. We will replace $OLD_PATH with $NEW_PATH"
-echo ""
-$kc exec $POD -- wp search-replace $OLD_PATH $NEW_PATH --precise --skip-columns=guid
+$kc exec "$POD" -- wp search-replace "$OLD_PATH" "$NEW_PATH" --precise --skip-columns=guid
