@@ -44,7 +44,7 @@ clean:
 lint: lint-sh lint-yaml lint-json lint-composer lint-docker
 
 lint-sh:
-	find . -type -f name '*.sh' | xargs shellcheck
+	find . -type f -name '*.sh' | xargs shellcheck
 
 lint-yaml:
 	find . -type f -name '*.yml' | xargs yamllint
