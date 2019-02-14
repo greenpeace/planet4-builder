@@ -121,3 +121,8 @@ echo ""
 echo "Domain and path replacement. We will replace $OLD_PATH with $NEW_PATH"
 echo ""
 $kc exec "$POD" -- wp search-replace "$OLD_PATH" "$NEW_PATH" --precise --skip-columns=guid
+
+echo ""
+echo "Flushing cache"
+echo ""
+$kc exec "$POD" -- wp cache flush
