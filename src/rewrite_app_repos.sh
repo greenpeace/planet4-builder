@@ -8,7 +8,7 @@ files=(
   "${HOME}/merge/composer-local.json"
 )
 
-if [ ! -z "${MASTER_THEME_BRANCH}" ]
+if [ -n "${MASTER_THEME_BRANCH}" ]
 then
   echo "Replacing master theme with branch ${MASTER_THEME_BRANCH}"
 

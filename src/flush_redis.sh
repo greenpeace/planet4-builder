@@ -12,7 +12,7 @@ do # resolve $source until the file is no longer a symlink
 done
 FLUSH_REDIS_DIR="$( cd -P "$( dirname "$source" )" && pwd )"
 
-# shellcheck disable=SC1091
+# shellcheck disable=SC1090
 . "${FLUSH_REDIS_DIR}/lib/retry.sh"
 
 function flush() {
