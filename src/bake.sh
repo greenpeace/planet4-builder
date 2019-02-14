@@ -111,7 +111,7 @@ rm -f source/public/index.html
 
 # Tagged releases are production, remove the robots.txt
 # FIXME Find a better way to handle robots.txt
-if [[ ! -z "${CIRCLE_TAG:-}" ]]
+if [[ -n "${CIRCLE_TAG:-}" ]]
 then
   rm -f source/public/robots.txt
 fi

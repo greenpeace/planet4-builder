@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -eu
+set -euo pipefail
 
 function finish {
   # Stop background jobs
@@ -8,7 +8,6 @@ function finish {
 
 WP_DB_USERNAME_DC=$(echo "${WP_DB_USERNAME}" | base64 -d)
 WP_DB_PASSWORD_DC=$(echo "${WP_DB_PASSWORD}" | base64 -d)
-WP_STATELESS_KEY_DC=$(echo "${WP_STATELESS_KEY}" | base64 -d)
 BUCKET_DESTINATION=gs://${CONTAINER_PREFIX}-source
 export GOOGLE_APPLICATION_CREDENTIALS="/tmp/workspace/src/key.json"
 export SQL_TAG=$CIRCLE_TAG
@@ -32,7 +31,7 @@ mysqldump -v \
   -u "$WP_DB_USERNAME_DC" \
   -p"$WP_DB_PASSWORD_DC" \
   -h 127.0.0.1 \
-  ${WP_DB_NAME} > "content/${WP_DB_NAME}-${SQL_TAG}.sql"
+  "${WP_DB_NAME}" > "content/${WP_DB_NAME}-${SQL_TAG}.sql"
 
 echo ""
 echo "gzip ..."
