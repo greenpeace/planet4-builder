@@ -2,6 +2,7 @@ SHELL := /bin/bash
 
 # Version of gcr.io/planet-4-151612/circleci-base to use
 BASE_IMAGE_VERSION ?= latest
+export BASE_IMAGE_VERSION
 
 BUILD_NAMESPACE ?= gcr.io
 GOOGLE_PROJECT_ID ?= planet-4-151612
@@ -35,9 +36,12 @@ endif
 
 REVISION_TAG = $(shell git rev-parse --short HEAD)
 
-ALL: lint template build push
+ALL: clean lint build push
 
-lint: lint-sh lint-yaml lint-json lint-composer
+clean:
+	rm -f src/Dockerfile
+
+lint: lint-sh lint-yaml lint-json lint-composer lint-docker
 
 lint-sh:
 	find . -type f -name '*.sh' | xargs shellcheck
@@ -51,15 +55,16 @@ lint-json:
 lint-composer:
 	find . -type f -name 'composer*.json' | xargs composer validate
 
+lint-docker: src/Dockerfile
+	hadolint src/Dockerfile
+
 pull:
-	BASE_IMAGE_VERSION=$(BASE_IMAGE_VERSION) \
 	docker pull gcr.io/planet-4-151612/circleci-base:$(BASE_IMAGE_VERSION)
 
-template:
-	BASE_IMAGE_VERSION=$(BASE_IMAGE_VERSION) \
-	envsubst < src/templates/Dockerfile.in > src/Dockerfile
+src/Dockerfile:
+	envsubst < src/templates/Dockerfile.in > $@
 
-build: lint pull template
+build: lint pull
 	docker build \
 		--tag=$(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:$(BUILD_TAG) \
 		--tag=$(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:$(BUILD_NUM) \
