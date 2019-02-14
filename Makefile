@@ -41,7 +41,10 @@ ALL: clean lint build push
 clean:
 	rm -f src/Dockerfile
 
-lint: lint-yaml lint-json lint-composer lint-docker
+lint: lint-sh lint-yaml lint-json lint-composer lint-docker
+
+lint-sh:
+	find . -type -f name '*.sh' | xargs shellcheck
 
 lint-yaml:
 	find . -type f -name '*.yml' | xargs yamllint
