@@ -1,19 +1,22 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+workspace=/tmp/workspace/src
 
-echo "Check the post deploy scripts and run them as well"
-echo "Check if merged source is persisted from previous job"
-if [ -d /tmp/workspace/src/tasks/post-deploy ]; then
+[ -d "$workspace/tasks/post-deploy" ] || {
+  echo "No post-deploy task folder found in $workspace"
+  ls -al "$workspace"
+  exit 0
+}
 
-    cp -f /tmp/workspace/src/post_deploy_scripts/* /tmp/workspace/src/tasks/post-deploy
+find "$workspace" -type f
 
-    for file in /tmp/workspace/src/tasks/post-deploy/*; do
-        echo ""
-        echo "Running the script : $(basename "$file")"
-        echo ""
-        HELM_NAMESPACE=${HELM_NAMESPACE} \
-          HELM_RELEASE=${HELM_RELEASE} \
-          ./run_bash_script_in_php_pod.sh "$file"
-    done
-fi
+cp -f "$workspace/post_deploy_scripts/*" "$workspace/tasks/post-deploy"
+
+for file in "$workspace"/tasks/post-deploy/*
+do
+    echo ""
+    echo "Running the script : $(basename "$file")"
+    echo ""
+    ./run_bash_script_in_php_pod.sh "$file"
+done
