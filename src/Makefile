@@ -176,11 +176,12 @@ copy:
 	# Copy merge files to build container context, overwriting as required
 	[[ -d merge ]] && rsync --exclude '.git' -a merge/ build/source
 
-persist:
-	rsync a --delete build/source /tmp/workspace/src
-
 bake:
 	source ./lib/retry.sh && retry ./bake.sh | tee source/bake.log
+
+persist:
+	# Copy the source data in the persistence workspace
+	rsync -a --exclude 'cache' build/source/* /tmp/workspace/src
 
 build: rewrite build-app build-openresty
 
