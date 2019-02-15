@@ -13,12 +13,6 @@ generated files for use elsewhere.
 # Create composer cache directory if not exist
 mkdir -p source/cache
 
-# Copy source files to build container context
-[[ -d source ]] && rsync --exclude '.git' -a source/ build/source
-
-# Copy merge files to build container context, overwriting as required
-[[ -d merge ]] && rsync --exclude '.git' -a merge/ build/source
-
 # ----------------------------------------------------------------------------
 
 docker-compose -p build down -v --remove-orphans
