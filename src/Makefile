@@ -1,5 +1,7 @@
 SHELL := /bin/bash
 
+.EXPORT_ALL_VARIABLES:
+
 ################################################################################
 MAINTAINER        ?= Raymond Walker <raymond.walker@greenpeace.org>
 
@@ -150,24 +152,12 @@ clean:
 	docker-compose -p build down -v
 
 checkout:
-	GIT_SOURCE=$(GIT_SOURCE) \
-	GIT_REF=$(GIT_REF) \
-	MERGE_SOURCE=$(MERGE_SOURCE) \
-	MERGE_REF=$(MERGE_REF) \
 	./checkout.sh
 
 rewrite-app-repos:
-	MASTER_THEME_BRANCH=$(MASTER_THEME_BRANCH) \
-    ./rewrite_app_repos.sh
+  ./rewrite_app_repos.sh
 
 rewrite:
-	GIT_REF=$(GIT_REF) \
-	GIT_SOURCE=$(GIT_SOURCE) \
-	GOOGLE_PROJECT_ID=$(GOOGLE_PROJECT_ID) \
-	INFRA_VERSION=$(INFRA_VERSION) \
-	MAINTAINER="$(MAINTAINER)" \
-	MERGE_REF=$(MERGE_REF) \
-	MERGE_SOURCE=$(MERGE_SOURCE) \
 	./rewrite_dockerfiles.sh
 
 bake:
@@ -187,12 +177,6 @@ build-app:
 	popd
 
 build-openresty:
-	INFRA_VERSION=$(INFRA_VERSION) \
-	GIT_REF=$(GIT_REF) \
-	MAINTAINER="$(MAINTAINER)" \
-	GIT_SOURCE=$(GIT_SOURCE) \
-	GIT_REF=$(GIT_REF) \
-	GOOGLE_PROJECT_ID=$(GOOGLE_PROJECT_ID) \
 	./rewrite_dockerfiles.sh
 	mkdir -p openresty/source/public
 	rsync -a --delete source/public/ openresty/source/public
@@ -245,56 +229,23 @@ deploy-helm:
 
 	# Ensure Helm release is in a usable state
 	# See: https://github.com/kubernetes/helm/issues/4004
-	HELM_RELEASE=$(HELM_RELEASE) \
 	./helm_prepare.sh
 
-	APP_HOSTPATH="$(APP_HOSTPATH)" \
-	APP_ENVIRONMENT="$(APP_ENVIRONMENT)" \
-	HELM_RELEASE="$(HELM_RELEASE)" \
 	./backup_db.sh
 
 	# Upgrade or install deployment to cluster
-	APP_ENVIRONMENT="$(APP_ENVIRONMENT)" \
-	APP_HOSTNAME="$(APP_HOSTNAME)" \
-	APP_HOSTPATH="$(APP_HOSTPATH)" \
-	BUILD_TAG="$(BUILD_TAG)" \
-	CHART_VERSION="$(CHART_VERSION)" \
-	CLOUDSQL_INSTANCE="$(CLOUDSQL_INSTANCE)" \
-	GCLOUD_REGION="$(GCLOUD_REGION)" \
-	GOOGLE_PROJECT_ID="$(GOOGLE_PROJECT_ID)" \
-	HELM_NAMESPACE="$(HELM_NAMESPACE)" \
-	HELM_RELEASE="$(HELM_RELEASE)" \
-	INFRA_VERSION="$(INFRA_VERSION)" \
-	NEWRELIC_APPNAME="$(NEWRELIC_APPNAME)" \
-	OPENRESTY_IMAGE="$(OPENRESTY_IMAGE)" \
-	OPENRESTY_MAX_REPLICA_COUNT="$(OPENRESTY_MAX_REPLICA_COUNT)" \
-	OPENRESTY_MIN_REPLICA_COUNT="$(OPENRESTY_MIN_REPLICA_COUNT)" \
-	PAGESPEED_ENABLED="$(PAGESPEED_ENABLED)" \
-	PHP_IMAGE="$(PHP_IMAGE)" \
-	PHP_MAX_REPLICA_COUNT="$(PHP_MAX_REPLICA_COUNT)" \
-	PHP_MIN_REPLICA_COUNT="$(PHP_MIN_REPLICA_COUNT)" \
-	PULL_POLICY="$(PULL_POLICY)" \
-	WP_STATELESS_BUCKET="$(WP_STATELESS_BUCKET)" \
 	./helm_deploy.sh
 
 	rm -f secrets.yaml
 
-	HELM_RELEASE=$(HELM_RELEASE) \
 	./helm_confirm.sh
 
-	HELM_NAMESPACE=$(HELM_NAMESPACE) \
-	HELM_RELEASE=$(HELM_RELEASE) \
 	./activate_plugins.sh
 
-	HELM_NAMESPACE=$(HELM_NAMESPACE) \
-	HELM_RELEASE=$(HELM_RELEASE) \
 	./flush_redis.sh
 
-	HELM_RELEASE=$(HELM_RELEASE) \
 	./newrelic_deployment.sh
 
-	HELM_NAMESPACE=$(HELM_NAMESPACE) \
-	HELM_RELEASE=$(HELM_RELEASE) \
 	./configure_redis.sh
 
     # We don't need this at this time, as all users we need are in all environments.
@@ -304,6 +255,4 @@ deploy-helm:
 	# HELM_RELEASE=$(HELM_RELEASE) \
 	# ./run_bash_script_in_php_pod.sh modify_users.sh "$(shell base64 -w 0 users.json)"
 
-	HELM_NAMESPACE=$(HELM_NAMESPACE) \
-	HELM_RELEASE=$(HELM_RELEASE) \
 	./run_post_deploy_scripts.sh
