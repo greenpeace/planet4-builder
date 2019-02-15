@@ -71,7 +71,6 @@ docker ps
 php_container=$(docker-compose -p build ps -q php-fpm)
 
 echo "Copying build artifacts..."
-docker cp "$php_container:/app/source/bake.log" source
 docker cp "$php_container:/app/source/cache" source
 docker cp "$php_container:/app/source/public" source
 
