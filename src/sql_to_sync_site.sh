@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -eu
+set -euo pipefail
 
 function finish {
   # Stop background jobs
@@ -8,7 +8,6 @@ function finish {
 
 WP_DB_USERNAME_DC=$(echo "${WP_DB_USERNAME}" | base64 -d)
 WP_DB_PASSWORD_DC=$(echo "${WP_DB_PASSWORD}" | base64 -d)
-WP_STATELESS_KEY_DC=$(echo "${WP_STATELESS_KEY}" | base64 -d)
 SITE_ENV=$1
 CLOUDSQL_INSTANCE=${GOOGLE_PROJECT_ID}:us-central1:${CLOUDSQL_INSTANCE}
 export GOOGLE_APPLICATION_CREDENTIALS="/tmp/workspace/src/key.json"
@@ -20,26 +19,43 @@ echo "We will try to get connected to: ${CLOUDSQL_INSTANCE}"
 echo ""
 
 echo ""
-echo "Creating the credential files for mysql"
+echo "Creating the credential file for mysql"
 echo ""
-printf "[client]\n user = ${WP_DB_USERNAME_DC}\n password = ${WP_DB_PASSWORD_DC}\n host = 127.0.0.1" > mysql.cnf
-
+cat <<EOF > mysql.cnf
+[client]
+user = ${WP_DB_USERNAME_DC}
+password = ${WP_DB_PASSWORD_DC}
+host = 127.0.0.1
+EOF
 
 trap finish EXIT
-
 cloud_sql_proxy \
   -instances="${CLOUDSQL_INSTANCE}=tcp:3306" &
+
+echo ""
+echo "Creating the credential file for mysql"
+echo ""
+cat <<EOF > mysql.cnf
+[client]
+user = ${WP_DB_USERNAME_DC}
+password = ${WP_DB_PASSWORD_DC}
+host = 127.0.0.1
+EOF
 
 mkdir -p content
 
 sleep 2
 
-export BUCKET_DESTINATION="gs://${CONTAINER_PREFIX}-source"
-export FILE_TO_IMPORT=${WP_DB_NAME_PREFIX}_master-${SQL_TAG}.sql
-export WP_DB_TO_IMPORT_TO=${WP_DB_NAME_PREFIX}_${SITE_ENV}
+BUCKET_DESTINATION="gs://${CONTAINER_PREFIX}-source"
+MASTER_DB=$(yq -r .job_environments.production_environment.WP_DB_NAME /tmp/workspace/src/.circleci/config.yml)
+FILE_TO_IMPORT=${MASTER_DB}-${SQL_TAG}.sql
+WP_DB_TO_IMPORT_TO=$(yq -r .job_environments."${SITE_ENV}"_environment.WP_DB_NAME /tmp/workspace/src/.circleci/config.yml)
+echo ""
+echo "Exporting from $MASTER_DB the file $FILE_TO_IMPORT and importing it to $WP_DB_TO_IMPORT_TO"
+echo ""
 
 echo ""
-echo "Copying the file from the container"
+echo "Copying the file from the bucket"
 echo ""
 gsutil cp "${BUCKET_DESTINATION}/${FILE_TO_IMPORT}.gz" "content/${FILE_TO_IMPORT}.gz"
 
@@ -56,8 +72,7 @@ mysql --defaults-extra-file="mysql.cnf" "${WP_DB_TO_IMPORT_TO}" < "content/${FIL
 echo ""
 echo "Get connected to gcloud"
 echo ""
-gcloud container clusters get-credentials ${GCLOUD_CLUSTER} --zone ${GCLOUD_ZONE} --project ${GOOGLE_PROJECT_ID}
-
+gcloud container clusters get-credentials "${GCLOUD_CLUSTER}" --zone "${GCLOUD_ZONE}" --project "${GOOGLE_PROJECT_ID}"
 
 echo ""
 echo "flushing the redis database"
@@ -70,8 +85,7 @@ echo "Actually replacing the contents of the release stateless with the producti
 echo "Source bucket: $SOURCE_BUCKET"
 echo "Target bucket: $WP_STATELESS_BUCKET"
 echo ""
-gsutil rsync -d -r gs://${SOURCE_BUCKET} gs://${WP_STATELESS_BUCKET}
-
+gsutil rsync -d -r gs://"${SOURCE_BUCKET}" gs://"${WP_STATELESS_BUCKET}"
 
 echo ""
 echo "Set kubectl command to use the namespace"
@@ -80,7 +94,7 @@ kc="kubectl -n ${HELM_NAMESPACE}"
 echo ""
 echo "Find the first php pod in the release ${HELM_RELEASE}"
 echo ""
-POD=$($kc get pods -l component=php | grep ${HELM_RELEASE} | head -n1 | cut -d' ' -f1)
+POD=$($kc get pods -l component=php | grep "${HELM_RELEASE}" | head -n1 | cut -d' ' -f1)
 echo "Pod:        $POD"
 
 OLD_PATH="https://storage.googleapis.com/${CONTAINER_PREFIX}-stateless/"
@@ -88,4 +102,27 @@ NEW_PATH="https://storage.googleapis.com/${CONTAINER_PREFIX}-stateless-${SITE_EN
 echo ""
 echo "Replacing the path $OLD_PATH with $NEW_PATH for the images themselves"
 echo ""
-$kc exec $POD -- wp search-replace $OLD_PATH $NEW_PATH --precise --skip-columns=guid
+$kc exec "$POD" -- wp search-replace "$OLD_PATH" "$NEW_PATH" --precise --skip-columns=guid
+
+
+echo ""
+echo "Check if we are in an pathless environment"
+echo ""
+if [[ $APP_HOSTPATH == "<nil>" ]]
+then
+   OLD_PATH=$(yq -r .job_environments.production_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)
+   NEW_PATH=$(yq -r .job_environments."${SITE_ENV}"_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)
+else
+   OLD_PATH=$(yq -r .job_environments.production_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)/$APP_HOSTPATH
+   NEW_PATH=$(yq -r .job_environments."${SITE_ENV}"_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)/$APP_HOSTPATH
+fi
+
+echo ""
+echo "Domain and path replacement. We will replace $OLD_PATH with $NEW_PATH"
+echo ""
+$kc exec "$POD" -- wp search-replace "$OLD_PATH" "$NEW_PATH" --precise --skip-columns=guid
+
+echo ""
+echo "Flushing cache"
+echo ""
+$kc exec "$POD" -- wp cache flush

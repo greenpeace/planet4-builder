@@ -15,7 +15,7 @@ jobs:
       - setup_remote_docker:
           docker_layer_caching: true
       - checkout
-      - run: make build
+      - run: make clean build
       - run: activate-gcloud-account.sh
       - run: gcloud auth configure-docker
       - run: make -j2 push
@@ -39,14 +39,17 @@ jobs:
           name: Release
           command: |
             current_version=$(git-current-tag.sh)
-            echo "Found existing tag: $current_version"
-
             new_version=$(increment-version.sh $current_version)
             echo "Promoting branch ${CIRCLE_BRANCH} to ${new_version}"
 
             release-start.sh $new_version
             release-finish.sh $new_version
-
+      - run:
+          name: Commit
+          command: |
+            git checkout ${CIRCLE_BRANCH}
+            make clean build
+            update-build-numbers.sh -f src/Dockerfile
 
 workflows:
   version: 2
