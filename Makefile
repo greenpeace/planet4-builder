@@ -64,7 +64,8 @@ pull:
 src/Dockerfile:
 	envsubst < src/templates/Dockerfile.in > $@
 
-build: lint pull
+build:
+	$(MAKE) -j lint pull
 	docker build \
 		--tag=$(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:$(BUILD_TAG) \
 		--tag=$(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:$(BUILD_NUM) \
