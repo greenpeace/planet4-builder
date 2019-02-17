@@ -56,7 +56,7 @@ lint-composer:
 	find . -type f -name 'composer*.json' | xargs composer validate
 
 lint-docker: src/Dockerfile
-	hadolint src/Dockerfile
+	docker run --rm -i hadolint/hadolint < src/Dockerfile
 
 pull:
 	docker pull gcr.io/planet-4-151612/circleci-base:$(BASE_IMAGE_VERSION)
