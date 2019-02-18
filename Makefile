@@ -38,10 +38,15 @@ REVISION_TAG = $(shell git rev-parse --short HEAD)
 
 ALL: clean lint build push
 
+init:
+	chmod 755 .githooks/*
+	find .git/hooks -type l -exec rm {} \;
+	find .githooks -type f -exec ln -sf ../../{} .git/hooks/ \;
+
 clean:
 	rm -f src/Dockerfile
 
-lint: lint-sh lint-yaml lint-json lint-composer lint-docker
+lint: init lint-sh lint-yaml lint-json lint-composer lint-docker
 
 lint-sh:
 	find . -type f -name '*.sh' | xargs shellcheck
