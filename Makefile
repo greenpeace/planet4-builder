@@ -54,7 +54,6 @@ YAMLLINT := $(shell command -v yamllint 2> /dev/null)
 ALL: clean build push
 
 init:
-	chmod 755 .githooks/*
 	find .git/hooks -type l -exec rm {} \;
 	find .githooks -type f -exec ln -sf ../../{} .git/hooks/ \;
 
