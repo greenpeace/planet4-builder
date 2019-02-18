@@ -36,7 +36,15 @@ endif
 
 REVISION_TAG = $(shell git rev-parse --short HEAD)
 
-ALL: clean lint build push
+# ============================================================================
+
+# Check necessary commands exist
+
+CIRCLECI := $(shell command -v circleci 2> /dev/null)
+
+# ============================================================================
+
+ALL: clean build push
 
 init:
 	chmod 755 .githooks/*
@@ -46,7 +54,7 @@ init:
 clean:
 	rm -f src/Dockerfile
 
-lint: init lint-sh lint-yaml lint-json lint-composer lint-docker
+lint: init lint-sh lint-yaml lint-json lint-composer lint-docker lint-ci
 
 lint-sh:
 	find . -type f -name '*.sh' | xargs shellcheck
@@ -62,6 +70,12 @@ lint-composer:
 
 lint-docker: src/Dockerfile
 	docker run --rm -i hadolint/hadolint < src/Dockerfile
+
+lint-ci:
+ifndef CIRCLECI
+$(error "circleci is not installed: https://circleci.com/docs/2.0/local-cli/#installation")
+endif
+	circleci config validate
 
 pull:
 	docker pull gcr.io/planet-4-151612/circleci-base:$(BASE_IMAGE_VERSION)
