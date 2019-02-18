@@ -56,6 +56,7 @@ ALL: clean build push
 init:
 	find .git/hooks -type l -exec rm {} \;
 	find .githooks -type f -exec ln -sf ../../{} .git/hooks/ \;
+	@chmod 755 .githooks/*
 
 clean:
 	rm -f src/Dockerfile
