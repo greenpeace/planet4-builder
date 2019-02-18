@@ -54,9 +54,9 @@ YAMLLINT := $(shell command -v yamllint 2> /dev/null)
 ALL: clean build push
 
 init:
-	find .git/hooks -type l -exec rm {} \;
-	find .githooks -type f -exec ln -sf ../../{} .git/hooks/ \;
 	@chmod 755 .githooks/*
+	@find .git/hooks -type l -exec rm {} \;
+	@find .githooks -type f -exec ln -sf ../../{} .git/hooks/ \;
 
 clean:
 	rm -f src/Dockerfile
@@ -67,37 +67,37 @@ lint-sh:
 ifndef SHELLCHECK
 $(error "shellcheck is not installed: https://github.com/koalaman/shellcheck")
 endif
-	find . -type f -name '*.sh' | xargs shellcheck
+	@find . -type f -name '*.sh' | xargs shellcheck
 
 lint-yaml:
 ifndef YAMLLINT
 $(error "yamllint is not installed: https://github.com/adrienverge/yamllint")
 endif
-	find . -type f -name '*.yml' | xargs yamllint
+	@find . -type f -name '*.yml' | xargs yamllint
 
 lint-json:
 ifndef JQ
 $(error "jq is not installed: https://stedolan.github.io/jq/download/")
 endif
-	find . -type f -name '*.json' | xargs jq .
+	@find . -type f -name '*.json' | xargs jq type | grep -q '"object"'
 
 lint-composer:
 ifndef COMPOSER
 $(error "composer is not installed: https://getcomposer.org/doc/00-intro.md#installation-linux-unix-macos")
 endif
-	find . -type f -name 'composer*.json' | xargs composer validate
+	@find . -type f -name 'composer*.json' | xargs composer validate >/dev/null
 
 lint-docker: src/Dockerfile
 ifndef DOCKER
 $(error "docker is not installed: https://docs.docker.com/install/")
 endif
-	docker run --rm -i hadolint/hadolint < src/Dockerfile
+	@docker run --rm -i hadolint/hadolint < src/Dockerfile >/dev/null
 
 lint-ci:
 ifndef CIRCLECI
 $(error "circleci is not installed: https://circleci.com/docs/2.0/local-cli/#installation")
 endif
-	circleci config validate
+	@circleci config validate >/dev/null
 
 pull:
 	docker pull gcr.io/planet-4-151612/circleci-base:$(BASE_IMAGE_VERSION)

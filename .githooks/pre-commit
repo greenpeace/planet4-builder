@@ -8,7 +8,7 @@
 # To enable this hook, rename this file to "pre-commit".
 
 # Workaround to make Docker happy on WSL
-docker ps || export DOCKER_HOST=tcp://localhost:2375
+docker ps >/dev/null || export DOCKER_HOST=tcp://localhost:2375
 
 if git rev-parse --verify HEAD >/dev/null 2>&1
 then
