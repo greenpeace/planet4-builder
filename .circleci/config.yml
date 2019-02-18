@@ -30,7 +30,7 @@ jobs:
           root: /tmp/workspace
           paths:
             - var
-            
+
   notify-promote:
     <<: *defaults
     steps:
