@@ -6,7 +6,8 @@ SHELL := /bin/bash
 MAINTAINER        ?= Raymond Walker <raymond.walker@greenpeace.org>
 
 # https://github.com/greenpeace/planet4-docker
-INFRA_VERSION     ?= latest
+PARENT_IMAGE			?= gcr.io/planet-4-151612/wordpress
+PARENT_VERSION    ?= latest
 
 # Wordpress Helm chart version
 CHART_VERSION 		?= 0.4.0
@@ -137,14 +138,13 @@ dev: clean rewrite checkout bake build
 
 test:
 	set -eu
-	@echo "Building $(CONTAINER_PREFIX) containers..."
+	@echo "Building $(CONTAINER_PREFIX):$(BUILD_TAG) containers..."
+	@echo "PARENT_IMAGE:      $(PARENT_IMAGE)"
 	@echo "APP_HOSTNAME:      $(APP_HOSTNAME)"
 	@echo "APP_HOSTPATH:      $(APP_HOSTPATH)"
 	@echo "NEWRELIC_APPNAME:  $(NEWRELIC_APPNAME)"
-	@echo "INFRA_VERSION:     $(INFRA_VERSION)"
-	@echo "BUILD_TAG:         $(BUILD_TAG)"
-	@echo "MERGE_REF:         $(MERGE_REF)"
 	@echo "GIT_REF:           $(GIT_REF)"
+	@echo "MERGE_REF:         $(MERGE_REF)"
 	@echo ""
 
 clean:

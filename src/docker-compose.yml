@@ -3,7 +3,7 @@ version: '3.2'
 services:
   app:
     container_name: build_proxy
-    image: gcr.io/planet-4-151612/openresty:${INFRA_VERSION:-develop}
+    image: gcr.io/planet-4-151612/openresty:${PARENT_VERSION:-develop}
     volumes:
       - type: volume
         source: data
