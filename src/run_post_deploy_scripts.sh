@@ -9,9 +9,6 @@ workspace=/tmp/workspace/src
   exit 0
 }
 
-cp -f "$workspace/post_deploy_scripts/*" "$workspace/tasks/post-deploy"
-rm -rf "$workspace/post_deploy_scripts"
-
 for file in "$workspace"/tasks/post-deploy/*
 do
     echo ""
