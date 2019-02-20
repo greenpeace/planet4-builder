@@ -48,9 +48,15 @@ jobs:
             current_version=$(git-current-tag.sh)
             new_version=$(increment-version.sh $current_version)
             echo "Promoting branch ${CIRCLE_BRANCH} to ${new_version}"
-
             release-start.sh $new_version
             release-finish.sh $new_version
+
+  commit:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - checkout
       - setup_remote_docker:
           docker_layer_caching: true
       - run:
@@ -90,6 +96,13 @@ workflows:
           filters:
             branches:
               only: develop
+      - commit:
+          context: org-global
+          requires:
+            - promote
+          filters:
+            branches:
+              only: develop
 
   tag:
     jobs:
@@ -100,3 +113,12 @@ workflows:
               ignore: /.*/
             tags:
               only: /^v.*/
+      - commit:
+          context: org-global
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
+          requires:
+            - build-push
