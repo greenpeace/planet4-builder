@@ -14,7 +14,7 @@ function install() {
     --version "${CHART_VERSION}" \
     --set dbDatabase="${WP_DB_NAME}" \
     --set environment="${APP_ENVIRONMENT}" \
-    --set exim.image.tag="${INFRA_VERSION}" \
+    --set exim.image.tag="${PARENT_VERSION}" \
     --set hostname="${APP_HOSTNAME}" \
     --set hostpath="${APP_HOSTPATH}" \
     --set newrelic.appname="${NEWRELIC_APPNAME}" \
