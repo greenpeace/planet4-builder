@@ -6,7 +6,7 @@ export SOURCE_PATH=/app/source
 # Specify which Dockerfile|README.md variables we want to change
 # shellcheck disable=SC2016
 # envvars=(
-#   '${INFRA_VERSION}' \
+#   '${PARENT_VERSION}' \
 #   '${GIT_REF}' \
 #   '${GIT_SOURCE}' \
 #   '${GOOGLE_PROJECT_ID}' \
