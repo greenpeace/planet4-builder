@@ -132,7 +132,7 @@ SOURCE_BUCKET_PATH  ?= $(BUILD_TAG)
 
 .PHONY: clean test rewrite checkout bake build build-app build-openresty pull push save
 
-all: test rewrite checkout rewrite-app-repos bake build push save
+all: test rewrite checkout rewrite-app-repos copy bake persist build push save
 
 dev: clean rewrite checkout bake build
 
@@ -160,8 +160,18 @@ rewrite-app-repos:
 rewrite:
 	./rewrite_dockerfiles.sh
 
+copy:
+	# Copy source files to build container context
+	[[ -d source ]] && rsync --exclude '.git' -a source/ build/source
+	# Copy merge files to build container context, overwriting as required
+	[[ -d merge ]] && rsync --exclude '.git' -a merge/ build/source
+
 bake:
 	source ./lib/retry.sh && retry ./bake.sh | tee source/bake.log
+
+persist:
+	# Copy the source data in the persistence workspace
+	rsync -a --exclude 'cache' build/source/* /tmp/workspace/src
 
 build: rewrite build-app build-openresty
 
