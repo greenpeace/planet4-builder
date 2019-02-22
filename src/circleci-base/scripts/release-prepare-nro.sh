@@ -33,6 +33,8 @@ then
   merged=true
 else
   echo "-- 1.1   Release branch release/$new_release already exists"
+  # clean untracked files remaining from the end of the deploy phase (which were added for the post deploy scripts)
+  git clean -f -d
   # Release branch already exists
   git checkout "release/$new_release"
 
