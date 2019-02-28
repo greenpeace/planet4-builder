@@ -34,7 +34,7 @@ XML_FILES := $(patsubst %.$(BATS), $(LOGS)/%/results.$(XML), $(TEST_FILES))
 
 .PHONY: all clean tap xml
 
-all: clean $(XML_DIRS) $(TAP_FILES) $(XML_FILES) status
+all: clean $(LOGS) $(XML_DIRS) $(TAP_FILES) $(XML_FILES) status
 
 clean:
 ifndef LOGS
@@ -51,10 +51,7 @@ tap: $(LOGS)/%.$(TAP)
 xml: $(LOGS)/%/results.$(XML)
 
 $(LOGS):
-		mkdir -p $(LOGS)
-
-$(LOGS)/%/: $(LOGS)
-		mkdir -p $@
+		mkdir -p $(XML_DIRS)
 
 $(LOGS)/%.$(TAP): %.$(BATS)
 		-@OUT=$(OUT) bats --tap $^ | tee $@

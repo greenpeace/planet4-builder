@@ -68,46 +68,54 @@ export BUILD_TAG
 # Check necessary commands exist
 
 HADOLINT := $(shell command -v hadolint 2> /dev/null)
-
 SHELLCHECK := $(shell command -v shellcheck 2> /dev/null)
-
 YAMLLINT := $(shell command -v yamllint 2> /dev/null)
 
-SRC := src
-
 # ---
+
+SRC := src
 
 # ============================================================================
 
 .DEFAULT_GOAL := all
 
-.PHONY: all clean lint lint-sh lint-yaml lint-docker src pull build test
+.PHONY: all init clean lint lint-sh lint-yaml lint-docker src pull build test
 
 all: clean pull build test
+
+init: .git/hooks/pre-commit
+	git update-index --assume-unchanged README.md
+	git update-index --assume-unchanged $(SRC)/$(IMAGE)/Dockerfile
+
+.git/hooks/pre-commit:
+	@chmod 755 .githooks/*
+	@find .git/hooks -type l -exec rm {} \;
+	@find .githooks -type f -exec ln -sf ../../{} .git/hooks/ \;
 
 clean:
 		@rm -f README.md $(SRC)/circleci-base/Dockerfile
 		@$(MAKE) -C test clean
 
-lint: lint-yaml lint-sh lint-docker
+lint: init lint-yaml lint-sh lint-docker
 
 lint-yaml:
 ifndef YAMLLINT
 $(error "yamllint is not installed: https://github.com/adrienverge/yamllint")
 endif
-		$(YAMLLINT) -d "{extends: default, rules: {line-length: {max: 80, level: warning}}}" .circleci/config.yml
+		@$(YAMLLINT) -d "{extends: default, rules: {line-length: disable}}" .circleci/config.yml
 
 lint-sh:
 ifndef SHELLCHECK
 $(error "shellcheck is not installed: https://github.com/koalaman/shellcheck")
 endif
-		find . -type f -name '*.sh' | xargs $(SHELLCHECK) -x
+		@find . -type f -name '*.sh' | xargs $(SHELLCHECK) -x
+		@find src/circleci-base/bin/* -type f | xargs $(SHELLCHECK) -x
 
 lint-docker: $(SRC)/$(IMAGE)/Dockerfile
 ifndef HADOLINT
 $(error "hadolint is not installed: https://github.com/hadolint/hadolint")
 endif
-		find . -type f -name 'Dockerfile' | xargs $(HADOLINT)
+		@find . -type f -name 'Dockerfile' | xargs $(HADOLINT)
 
 pull:
 		docker pull $(IMAGE_FROM)

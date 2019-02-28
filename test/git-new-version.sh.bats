@@ -43,21 +43,28 @@ load .env
   >&2 printf '%s' "$output"
 }
 
-@test "[ERROR] $(basename "${BATS_SOURCE//.bats/}") [ci error 1.2.3]" {
+@test "$(basename "${BATS_SOURCE//.bats/}") [ci error 1.2.3]" {
   ci="ci error 1.2.3"
   run run_docker_binary "$BATS_IMAGE" "$(basename "${BATS_SOURCE//.bats/}")" "[$ci]"
-  [ $status -eq 1 ]
-}
-
-@test "[ERROR] $(basename "${BATS_SOURCE//.bats/}") [ci error blahblah]" {
-  ci="ci error blahblah"
-  run run_docker_binary "$BATS_IMAGE" "$(basename "${BATS_SOURCE//.bats/}")" "[$ci]"
-  [ $status -eq 1 ]
+  [ $status -eq 0 ]
+  v=v0.0.1
+  printf '%s' "$output" | grep -Eq "$v"
   >&2 printf '%s' "$output"
 }
 
-@test "[ERROR] $(basename "${BATS_SOURCE//.bats/}") [ci tag blahblah]" {
+@test "$(basename "${BATS_SOURCE//.bats/}") [ci error blahblah]" {
+  ci="ci error blahblah"
+  run run_docker_binary "$BATS_IMAGE" "$(basename "${BATS_SOURCE//.bats/}")" "[$ci]"
+  [ $status -eq 0 ]
+  v=v0.0.1
+  printf '%s' "$output" | grep -Eq "$v"
+  >&2 printf '%s' "$output"
+}
+
+@test "$(basename "${BATS_SOURCE//.bats/}") [ci tag blahblah]" {
   ci="ci tag blahblah"
   run run_docker_binary "$BATS_IMAGE" "$(basename "${BATS_SOURCE//.bats/}")" "[$ci]"
-  [ $status -eq 1 ]
+  v=v0.0.1
+  printf '%s' "$output" | grep -Eq "$v"
+  >&2 printf '%s' "$output"
 }

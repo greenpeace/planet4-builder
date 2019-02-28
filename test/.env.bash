@@ -52,6 +52,8 @@ function run_docker_binary() {
   logdir=${LOGS:-${BATS_TEST_DIRNAME}/logs}
   [ ! -d "$logdir" ] && mkdir -p "${logdir}"
   outfile="${logdir}/${cmd}.${suffix}"
-  echo " --- ${args[*]} --- $(date)" >> "$outfile"
-  docker run --rm -ti "${image}" "${args[@]}" | tee -a "$outfile"
+  echo "--- $(date)" >> "$outfile"
+  echo "$ ${args[*]}" >> "$outfile"
+  docker run --rm -ti "${image}" bash -c "eval ${args[*]}" | tee -a "$outfile"
+  echo >> "$outfile"
 }
