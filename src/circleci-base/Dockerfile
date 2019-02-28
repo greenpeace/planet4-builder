@@ -1,8 +1,8 @@
-# gcr.io/planet-4-151612/circleci-base:v0.7.6
+# gcr.io/planet-4-151612/circleci-base:v0.7.7
 # Base image for performing CI/CD operations in CircleCI
-# Branch: develop
-# Commit: a31741ef84b3a03ed124bcce8d48e19b0c9a255c
-# Build:  build-1388
+# Branch: v0.7.7
+# Commit: 1fd30863e421e1eb71f131c8729aef0e23314f8a
+# Build:  build-1398
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
@@ -37,6 +37,9 @@ RUN apt-get install -y --no-install-recommends \
 RUN pip install \
       yamllint==1.14.0 \
       yq==2.7.2
+RUN git config --global alias.unstaged 'diff --name-only' && \
+    git config --global alias.staged 'diff --name-only --cached'
+
 
 RUN npm install -g \
       bats@1.1.0 \
@@ -73,5 +76,7 @@ RUN curl -sS "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-
         --path-update false && \
     gcloud --quiet components update kubectl cloud_sql_proxy && \
     rm -fr /tmp/*
+
+COPY --chown=circleci:circleci ./bin /home/circleci/bin
 
 COPY --chown=circleci:circleci ./scripts /home/circleci/scripts
