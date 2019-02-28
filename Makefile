@@ -68,28 +68,35 @@ export BUILD_TAG
 # Check necessary commands exist
 
 HADOLINT := $(shell command -v hadolint 2> /dev/null)
-
 SHELLCHECK := $(shell command -v shellcheck 2> /dev/null)
-
 YAMLLINT := $(shell command -v yamllint 2> /dev/null)
 
-SRC := src
-
 # ---
+
+SRC := src
 
 # ============================================================================
 
 .DEFAULT_GOAL := all
 
-.PHONY: all clean lint lint-sh lint-yaml lint-docker src pull build test
+.PHONY: all init clean lint lint-sh lint-yaml lint-docker src pull build test
 
 all: clean pull build test
+
+init: .git/hooks/pre-commit
+	git update-index --assume-unchanged README.md
+	git update-index --assume-unchanged $(SRC)/$(IMAGE)/Dockerfile
+
+.git/hooks/pre-commit:
+	@chmod 755 .githooks/*
+	@find .git/hooks -type l -exec rm {} \;
+	@find .githooks -type f -exec ln -sf ../../{} .git/hooks/ \;
 
 clean:
 		@rm -f README.md $(SRC)/circleci-base/Dockerfile
 		@$(MAKE) -C test clean
 
-lint: lint-yaml lint-sh lint-docker
+lint: init lint-yaml lint-sh lint-docker
 
 lint-yaml:
 ifndef YAMLLINT
