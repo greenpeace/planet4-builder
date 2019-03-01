@@ -8,25 +8,39 @@ files=(
   "${HOME}/merge/composer-local.json"
 )
 
-if [ -n "${MASTER_THEME_BRANCH}" ]
-then
-  echo "Replacing master theme with branch ${MASTER_THEME_BRANCH}"
+branches=(
+  "MASTER_THEME_BRANCH"
+  "PLUGIN_BLOCKS_BRANCH"
+  "PLUGIN_ENGAGINGNETWORKS_BRANCH"
+)
 
-  for f in "${files[@]}"
-  do
-    if [ -e "$f" ]
-    then
-      echo " - $f"
-      sed -i "s|\"greenpeace\\/planet4-master-theme\" : \".*\",|\"greenpeace\\/planet4-master-theme\" : \"${MASTER_THEME_BRANCH}\",|g" "${f}"
-    fi
-  done
+echo "rewrite_app_repos"
 
-  echo "And now, delete any cached version of this package"
-  rm -rf "${HOME}/source/cache/files/greenpeace/planet4-master-theme"
+for branch in "${branches[@]}"
+do
+  reponame=$( echo "${branch%_*}" | tr '[:upper:]' '[:lower:]' | sed 's/_/-/g')
 
-else
-  echo "Nothing to replace for the master theme"
-fi
+  if [ -n "${!branch}" ] ; then
+
+    echo "Replacing ${reponame} with branch ${!branch}"
+
+    for f in "${files[@]}"
+    do
+      if [ -e "$f" ]
+      then
+        echo " - $f"
+        sed -i "s|\"greenpeace\\/planet4-${reponame}\" : \".*\",|\"greenpeace\\/planet4-${reponame}\" : \"${!branch}\",|g" "${f}"
+      fi
+    done
+
+    echo "And now, delete any cached version of this package"
+    rm -rf "${HOME}/source/cache/files/greenpeace/planet4-master-theme"
+
+  else
+    echo "Nothing to replace for the ${reponame}"
+  fi
+done
 
 echo "DEBUG: We will echo where master theme is defined as what: "
 grep -r -H '"greenpeace/planet4-master-theme" :' ./*
+
