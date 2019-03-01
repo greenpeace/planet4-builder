@@ -92,7 +92,8 @@ jobs:
             docker tag gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
             TYPE="Tag: gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest" notify-job-success.sh
             docker push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
-            trigger-build-api.sh planet4-builder develop
+      - trigger:
+          command: trigger-build-api.sh planet4-builder develop
 
 workflow_common:
   tag_common: &tag_common
@@ -141,7 +142,3 @@ workflows:
           <<: *tag_common
           requires:
             - build
-      - trigger:
-          <<: *tag_common
-          requires:
-            - deploy
