@@ -18,13 +18,9 @@ echo "rewrite_app_repos"
 
 for branch in "${branches[@]}"
 do
-
   reponame=$( echo "${branch%_*}" | tr '[:upper:]' '[:lower:]' | sed 's/_/-/g')
 
   if [ -n "${!branch}" ] ; then
-    echo "debug.."
-    echo "${branch}"
-    echo "${!branch}"
 
     echo "Replacing ${reponame} with branch ${!branch}"
 
