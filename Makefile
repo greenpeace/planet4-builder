@@ -1,5 +1,6 @@
 SHELL := /bin/bash
 
+IMAGE := circleci-base
 # ---
 
 # Read default configuration
@@ -67,7 +68,7 @@ export BUILD_TAG
 
 # Check necessary commands exist
 
-HADOLINT := $(shell command -v hadolint 2> /dev/null)
+DOCKER := $(shell command -v docker 2> /dev/null)
 SHELLCHECK := $(shell command -v shellcheck 2> /dev/null)
 YAMLLINT := $(shell command -v yamllint 2> /dev/null)
 
@@ -112,15 +113,15 @@ endif
 		@find src/circleci-base/bin/* -type f | xargs $(SHELLCHECK) -x
 
 lint-docker: $(SRC)/$(IMAGE)/Dockerfile
-ifndef HADOLINT
-$(error "hadolint is not installed: https://github.com/hadolint/hadolint")
+ifndef DOCKER
+$(error "docker is not installed: https://docs.docker.com/install/")
 endif
-		@find . -type f -name 'Dockerfile' | xargs $(HADOLINT)
+		@docker run --rm -i hadolint/hadolint < $(SRC)/$(IMAGE)/Dockerfile >/dev/null
 
 pull:
 		docker pull $(IMAGE_FROM)
 
-src: $(SRC)/$(IMAGE)/%
+src: $(SRC)/$(IMAGE)/Dockerfile README.md
 $(SRC)/$(IMAGE)/%:
 		./bin/build.sh -t
 
