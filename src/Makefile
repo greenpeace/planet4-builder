@@ -130,11 +130,13 @@ SOURCE_BUCKET_PATH  ?= $(BUILD_TAG)
 ################################################################################
 
 
-.PHONY: clean test rewrite checkout bake build build-app build-openresty pull push save
+.PHONY: clean test rewrite checkout bake build build-app build-openresty pull push
 
-all: test rewrite checkout rewrite-app-repos copy bake persist build push save
+all: test rewrite checkout rewrite-app-repos copy bake persist build push
 
-dev: clean rewrite checkout bake build
+dev: clean rewrite checkout rewrite-app-repos copy bake build
+
+ci: rewrite checkout rewrite-app-repos copy bake build
 
 test:
 	set -eu
