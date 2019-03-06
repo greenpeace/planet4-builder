@@ -19,6 +19,8 @@ docker-compose -p build down -v --remove-orphans
 
 # ----------------------------------------------------------------------------
 
+docker pull "${PARENT_IMAGE}:${PARENT_VERSION}"
+
 # Build the container and start
 echo "Building containers..."
 docker-compose -p build build

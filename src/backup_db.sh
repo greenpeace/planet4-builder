@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+[ "${APP_ENVIRONMENT}" = "develop" ] && {
+  echo "Development environment: skipping database backup"
+  exit 0
+}
+
 release=${HELM_RELEASE:-$1}
 
 tag=${CIRCLE_TAG:-${CIRCLE_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}}
 tag=$(echo "$tag" |  tr -c '[[:alnum:]]._-' '-' | sed 's/-$//')
-
 
 echo
 echo "Backup release database:"
