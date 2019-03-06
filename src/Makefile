@@ -181,6 +181,7 @@ build-app:
 	mkdir -p app/source/public
 	rsync -a --delete source/public/ app/source/public
 	source ./lib/retry.sh && \
+	retry docker pull ${PARENT_IMAGE}:${PARENT_VERSION} && \
 	pushd app && \
 	retry docker build \
 	-t $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_PREFIX)-app:$(BUILD_TAG) \
@@ -193,6 +194,7 @@ build-openresty:
 	mkdir -p openresty/source/public
 	rsync -a --delete source/public/ openresty/source/public
 	source ./lib/retry.sh && \
+	retry docker pull gcr.io/planet-4-151612/openresty:${PARENT_VERSION} && \
 	pushd openresty && \
 	retry docker build \
 	-t $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_PREFIX)-openresty:$(BUILD_TAG) \
