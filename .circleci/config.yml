@@ -23,10 +23,9 @@ jobs:
             # Store current build number for future jobs
             mkdir -p /tmp/workspace/var
             echo "${CIRCLE_BUILD_NUM}" > /tmp/workspace/var/circle-build-num
-      - run: make lint
+      - run: make clean lint
       - run: activate-gcloud-account.sh
       - run: gcloud auth configure-docker
-      - run: make clean
       - run: make build
       - run: make -k test
       - run: make -j push
@@ -92,7 +91,7 @@ jobs:
             docker tag gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
             TYPE="Tag: gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest" notify-job-success.sh
             docker push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
-      - trigger:
+      - run:
           command: trigger-build-api.sh planet4-builder develop
 
 workflow_common:
