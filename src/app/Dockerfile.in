@@ -2,7 +2,7 @@ FROM p4-build:latest
 
 LABEL authors="${MAINTAINER}"
 
-ENV APP_ENV="production"
+ENV APP_ENV="${APP_ENVIRONMENT}"
 
 COPY --chown=app:app . /app/
 
