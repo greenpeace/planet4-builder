@@ -58,7 +58,9 @@ jobs:
           name: Commit
           command: |
             git checkout ${CIRCLE_BRANCH}
-            make clean build
+            make clean
+            make -j lint
+            make src/Dockerfile
             update-build-numbers.sh -f src/Dockerfile
 
 workflows:
