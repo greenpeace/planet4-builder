@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-[ "${APP_ENVIRONMENT}" = "develop" ] && {
-  echo "Development environment: skipping database backup"
+[[ ${APP_ENVIRONMENT} =~ production ]] || {
+  echo "Non-prod environment: skipping database backup"
   exit 0
 }
 

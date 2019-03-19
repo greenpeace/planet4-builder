@@ -22,6 +22,7 @@ jobs:
           mkdir -p /tmp/workspace/var
           echo "${CIRCLE_BUILD_NUM}" > /tmp/workspace/var/circle-build-num
       - run: make -j2 push
+      - run: TYPE="@rawalker Promotion" notify-job-hold.sh
       - run:
           name: Notify failure
           when: on_fail
@@ -30,12 +31,6 @@ jobs:
           root: /tmp/workspace
           paths:
             - var
-
-  notify-promote:
-    <<: *defaults
-    steps:
-      - run: TYPE="@rawalker Promotion" notify-job-hold.sh
-
   promote:
     <<: *defaults
     steps:
@@ -54,8 +49,6 @@ jobs:
   commit:
     <<: *defaults
     steps:
-      - attach_workspace:
-          at: /tmp/workspace
       - checkout
       - setup_remote_docker:
           docker_layer_caching: true
@@ -63,7 +56,9 @@ jobs:
           name: Commit
           command: |
             git checkout ${CIRCLE_BRANCH}
-            make clean build
+            make clean
+            make -j lint
+            make src/Dockerfile
             update-build-numbers.sh -f src/Dockerfile
 
 workflows:
@@ -75,15 +70,8 @@ workflows:
           filters:
             branches:
               ignore: master
-      - hold-promote:
+      - hold:
           type: approval
-          requires:
-            - build-push
-          filters:
-            branches:
-              only: develop
-      - notify-promote:
-          context: org-global
           requires:
             - build-push
           filters:
@@ -92,7 +80,7 @@ workflows:
       - promote:
           context: org-global
           requires:
-            - hold-promote
+            - hold
           filters:
             branches:
               only: develop
