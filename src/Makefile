@@ -241,17 +241,20 @@ endif
 	--project $(GOOGLE_PROJECT_ID)
 
 	# Create Helm deploy secrets file from environment
+	# FIXME: generate this in ramfs
 	envsubst < secrets.yaml.in > secrets.yaml
 
 	# Ensure Helm release is in a usable state
 	# See: https://github.com/kubernetes/helm/issues/4004
 	./helm_prepare.sh
 
+	# Backup database
 	./backup_db.sh
 
 	# Upgrade or install deployment to cluster
 	./helm_deploy.sh
 
+	# Remove secrets file
 	rm -f secrets.yaml
 
 	./helm_confirm.sh
