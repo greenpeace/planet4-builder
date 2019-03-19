@@ -229,6 +229,9 @@ update-meta:
 	# gsutil -m setmeta -r -h "Cache-Control:public, max-age=2678400" gs://$(WP_STATELESS_BUCKET) > /dev/null
 
 deploy-helm:
+ifndef NEWRELIC_REST_API_KEY
+	$(error NEWRELIC_REST_API_KEY is not set)
+endif
 	# Update Helm repositories
 	helm repo update
 
