@@ -49,6 +49,8 @@ jobs:
   commit:
     <<: *defaults
     steps:
+      - attach_workspace:
+          at: /tmp/workspace
       - checkout
       - setup_remote_docker:
           docker_layer_caching: true
