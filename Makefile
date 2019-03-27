@@ -56,7 +56,6 @@ YAMLLINT := $(shell command -v yamllint 2> /dev/null)
 
 ALL: clean build push
 
-
 init: .git/hooks/pre-commit
 	git update-index --assume-unchanged src/Dockerfile
 

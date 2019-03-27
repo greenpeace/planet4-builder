@@ -10,7 +10,7 @@ PARENT_IMAGE			?= gcr.io/planet-4-151612/wordpress
 PARENT_VERSION    ?= latest
 
 # Wordpress Helm chart version
-CHART_VERSION 		?= 0.6.2
+CHART_VERSION 		?= 0.6.3
 
 # Use current folder name as prefix for built containers,
 # eg planet4-gpi-app planet4-gpi-openresty
@@ -37,7 +37,6 @@ MERGE_REF         ?= $(CIRCLE_TAG)
 
 # If the current commit does not have a tag, use the branch
 ifeq ($(strip $(MERGE_REF)),)
-# Default to git tag on current commit
 MERGE_REF         := $(CIRCLE_BRANCH)
 endif
 
