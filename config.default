@@ -16,13 +16,13 @@ BATS_VERSION=1.1.0
 GIT_FLOW_VERSION=1.11.0
 
 # https://cloud.google.com/sdk/docs/quickstart-linux
-GOOGLE_SDK_VERSION=233.0.0
+GOOGLE_SDK_VERSION=240.0.0
 
 # https://github.com/hadolint/hadolint/releases
-HADOLINT_VERSION=1.16.0
+HADOLINT_VERSION=1.16.2
 
 # https://github.com/kubernetes/helm/releases
-HELM_VERSION=2.12.3
+HELM_VERSION=2.13.1
 
 # https://www.npmjs.com/package/junit-merge
 JUNIT_MERGE_VERSION=2.0.0
@@ -34,7 +34,7 @@ SHELLCHECK_VERSION=0.6.0
 TAP_XUNIT_VERSION=2.3.0
 
 # https://pypi.org/project/yamllint/#history
-YAMLLINT_VERSION=1.14.0
+YAMLLINT_VERSION=1.15.0
 
 # https://pypi.org/project/yq/#history
 YQ_VERSION=2.7.2
