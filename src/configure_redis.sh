@@ -12,7 +12,7 @@ main() {
   pod=$(kubectl get pods --namespace "${HELM_NAMESPACE}" \
     --sort-by=.metadata.creationTimestamp \
     --field-selector=status.phase=Running \
-    -l "app=wordpress-php,release=${HELM_RELEASE}" \
+    -l "release=${HELM_RELEASE},component=php" \
     -o jsonpath="{.items[-1:].metadata.name}")
 
   if [[ -z "$pod" ]]
