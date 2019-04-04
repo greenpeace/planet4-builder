@@ -10,7 +10,7 @@ PARENT_IMAGE			?= gcr.io/planet-4-151612/wordpress
 PARENT_VERSION    ?= latest
 
 # Wordpress Helm chart version
-CHART_VERSION 		?= 0.6.4
+CHART_VERSION 		?= 0.7.0
 
 # Use current folder name as prefix for built containers,
 # eg planet4-gpi-app planet4-gpi-openresty
@@ -88,8 +88,12 @@ GCLOUD_ZONE         ?= us-central1-a
 
 PAGESPEED_ENABLED   ?= false
 
-MIN_REPLICA_COUNT ?= 1
-MAX_REPLICA_COUNT ?= 5
+ifeq ($(strip $(APP_ENVIRONMENT)),development)
+MIN_REPLICA_COUNT 	?= 1
+else
+MIN_REPLICA_COUNT 	?= 2
+endif
+MAX_REPLICA_COUNT 	?= 5
 
 PHP_MIN_REPLICA_COUNT ?= $(MIN_REPLICA_COUNT)
 PHP_MAX_REPLICA_COUNT ?= $(MAX_REPLICA_COUNT)

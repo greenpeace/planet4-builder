@@ -43,7 +43,7 @@ kc="kubectl -n $namespace"
 php=$(kubectl get pods --namespace "${namespace}" \
   --sort-by=.metadata.creationTimestamp \
   --field-selector=status.phase=Running \
-  -l "app=wordpress-php,release=${release}" \
+  -l "release=${release},component=php" \
   -o jsonpath="{.items[-1:].metadata.name}")
 
 if [[ -z "$php" ]]
