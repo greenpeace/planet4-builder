@@ -40,8 +40,7 @@ jobs:
       - run:
           name: Release
           command: |
-            current_version=$(git-current-tag.sh)
-            new_version=$(increment-version.sh $current_version)
+            new_version=$(git-new-version.sh)
             echo "Promoting branch ${CIRCLE_BRANCH} to ${new_version}"
             release-start.sh $new_version
             release-finish.sh $new_version
