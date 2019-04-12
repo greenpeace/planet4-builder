@@ -60,6 +60,7 @@ jobs:
             make clean
             make -j lint
             make src/Dockerfile
+            git update-index --no-assume-unchanged src/Dockerfile
             update-build-numbers.sh -f src/Dockerfile
 
 workflows:
