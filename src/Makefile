@@ -10,7 +10,7 @@ PARENT_IMAGE			?= gcr.io/planet-4-151612/wordpress
 PARENT_VERSION    ?= latest
 
 # Wordpress Helm chart version
-CHART_VERSION 		?= 0.7.7
+CHART_VERSION 		?= 0.7.8
 
 # Use current folder name as prefix for built containers,
 # eg planet4-gpi-app planet4-gpi-openresty
@@ -100,6 +100,13 @@ PHP_MAX_REPLICA_COUNT ?= $(MAX_REPLICA_COUNT)
 
 OPENRESTY_MIN_REPLICA_COUNT ?= $(MIN_REPLICA_COUNT)
 OPENRESTY_MAX_REPLICA_COUNT ?= $(MAX_REPLICA_COUNT)
+
+PHP_PROCESS_MANAGER_MAX_CHILDREN ?= 20
+PHP_PROCESS_MANAGER_MAX_REQUESTS ?= 1000
+PHP_PROCESS_MANAGER_MAX_SPARE_SERVERS ?= 5
+PHP_PROCESS_MANAGER_MIN_SPARE_SERVERS ?= 4
+PHP_PROCESS_MANAGER_START_SERVERS ?= 5
+PHP_PROCESS_MANAGER ?= dynamic
 
 # Secrets
 # Values are expected to be stored in Circle build environment
@@ -242,10 +249,6 @@ endif
 	gcloud container clusters get-credentials $(GCLOUD_CLUSTER) \
 	--zone $(GCLOUD_ZONE) \
 	--project $(GOOGLE_PROJECT_ID)
-
-	# Create Helm deploy secrets file from environment
-	# FIXME: generate this in ramfs
-	envsubst < secrets.yaml.in > secrets.yaml
 
 	# Ensure Helm release is in a usable state
 	# See: https://github.com/kubernetes/helm/issues/4004

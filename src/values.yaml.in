@@ -1,0 +1,41 @@
+hostname: '${APP_HOSTNAME}'
+hostpath: '${APP_HOSTPATH}'
+dbDatabase: '${WP_DB_NAME}'
+environment: '${APP_ENVIRONMENT}'
+exim:
+  image:
+    tag: '${PARENT_VERSION}'
+newrelic:
+  appname: '${NEWRELIC_APPNAME}'
+openresty:
+  image:
+    repository: '${OPENRESTY_IMAGE}'
+    tag: '${BUILD_TAG}'
+  minReplicaCount: '${OPENRESTY_MIN_REPLICA_COUNT}'
+  maxReplicaCount: '${OPENRESTY_MAX_REPLICA_COUNT}'
+pagespeed:
+  enabled: '${PAGESPEED_ENABLED}'
+php:
+  image:
+    repository: '${PHP_IMAGE}'
+    tag: '${BUILD_TAG}'
+  minReplicaCount: '${PHP_MIN_REPLICA_COUNT}'
+  maxReplicaCount: '${PHP_MAX_REPLICA_COUNT}'
+  process:
+    manager: '${PHP_PROCESS_MANAGER}'
+    maxChildren: '${PHP_PROCESS_MANAGER_MAX_CHILDREN}'
+    start: '${PHP_PROCESS_MANAGER_START_SERVERS}'
+    minSpare: '${PHP_PROCESS_MANAGER_MIN_SPARE_SERVERS}'
+    maxSpare: '${PHP_PROCESS_MANAGER_MAX_SPARE_SERVERS}'
+    maxRequests: '${PHP_PROCESS_MANAGER_MAX_REQUESTS}'
+sqlproxy:
+  cloudsql:
+    instances:
+    - instance: '${CLOUDSQL_INSTANCE}'
+      project: '${GOOGLE_PROJECT_ID}'
+      region: '${GCLOUD_REGION}'
+      port: '3306'
+wp:
+  siteUrl: '${APP_HOSTNAME}/${APP_HOSTPATH}'
+  stateless:
+    bucket: '${WP_STATELESS_BUCKET}'
