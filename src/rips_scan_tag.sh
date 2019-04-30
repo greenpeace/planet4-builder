@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
-TAG_NAME="$(curl -s https://api.github.com/repos/greenpeace/${RIPS_SCAN_REPO}/tags | jq -r '.[0].name')"
-TAG_COMMIT="$(curl -s https://api.github.com/repos/greenpeace/${RIPS_SCAN_REPO}/tags | jq -r '.[0].commit.sha')"
+# Default organisation is 'greenpeace'
+ORG=${1:-greenpeace}
 
-APPLICATION_ID=${RIPS_APPLICATION_ID}
+# Default repository is current repo
+REPO=${2:-$CIRCLE_PROJECT_REPONAME}
 
-echo "Downloading zip archive for tag: ${TAG_NAME}"
-
-wget https://github.com/greenpeace/planet4-master-theme/archive/${TAG_COMMIT}.zip
+ZIPBALL_URL=$(curl -s "https://api.github.com/repos/${ORG}/${REPO}/tags" | jq -r '.[0].zipball_url')
+wget "${ZIPBALL_URL}" -O "${REPO}.zip"
 
 wget https://github.com/rips/rips-cli/releases/download/1.2.1/rips-cli.phar -O ./rips-cli
 chmod 755 ./rips-cli
 
-./rips-cli rips:scan:start -a ${RIPS_APPLICATION_ID} -p ./${TAG_COMMIT}.zip
+./rips-cli rips:scan:start -a ${RIPS_APPLICATION_ID} -p ./${REPO}.zip
