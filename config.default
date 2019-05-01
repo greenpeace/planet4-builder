@@ -54,7 +54,7 @@ NAMESPACE=gcr.io
 # Upstream image
 BASE_IMAGE=php
 BASE_NAMESPACE=circleci
-BASE_TAG=7.0-node
+BASE_TAG=7.3-node
 
 # Vars left intentionally blank to inform get_var_array to rewrite these
 BRANCH_NAME=
