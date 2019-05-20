@@ -10,7 +10,7 @@ PARENT_IMAGE			?= gcr.io/planet-4-151612/wordpress
 PARENT_VERSION    ?= latest
 
 # Wordpress Helm chart version
-CHART_VERSION 		?= 0.7.14
+CHART_VERSION 		?= 0.8.0
 
 # Use current folder name as prefix for built containers,
 # eg planet4-gpi-app planet4-gpi-openresty
@@ -19,6 +19,20 @@ CONTAINER_PREFIX  ?= planet4-test
 ################################################################################
 
 # Configure composer source and merge repository data
+
+# Define APP_ENVIRONMENT because we need it in order to know what GIT_REF to use
+APP_ENVIRONMENT     ?= production
+
+# The branch to checkout of GIT_SOURCE, eg:
+# Use local branch name if not set
+
+ifeq ($(strip $(APP_ENVIRONMENT)),staging)
+GIT_REF 		  ?= release
+else ifeq ($(strip $(APP_ENVIRONMENT)),development)
+GIT_REF           ?= develop
+else
+GIT_REF           ?= master
+endif
 
 # Base composer project repository
 # FIXME change this to greenpeace/planet4-base once things are settled
@@ -65,7 +79,7 @@ ifeq ($(APP_HOSTPATH),<nil>)
 # So if APP_HOSTPATH is set, but blank, clean this value
 APP_HOSTPATH :=
 endif
-APP_ENVIRONMENT     ?= production
+# APP_ENVIRONMENT     ?= production
 BUILD_NAMESPACE     ?= gcr.io
 GOOGLE_PROJECT_ID   ?= planet-4-151612
 NEWRELIC_APPNAME    ?= Greenpeace Planet4 Wordpress Test

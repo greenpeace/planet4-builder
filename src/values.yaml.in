@@ -2,9 +2,6 @@ hostname: '${APP_HOSTNAME}'
 hostpath: '${APP_HOSTPATH}'
 dbDatabase: '${WP_DB_NAME}'
 environment: '${APP_ENVIRONMENT}'
-exim:
-  image:
-    tag: '${PARENT_VERSION}'
 newrelic:
   appname: '${NEWRELIC_APPNAME}'
 openresty:
