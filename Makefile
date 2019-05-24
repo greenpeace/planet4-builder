@@ -116,7 +116,7 @@ lint-docker: $(SRC)/$(IMAGE)/Dockerfile
 ifndef DOCKER
 $(error "docker is not installed: https://docs.docker.com/install/")
 endif
-		@docker run --rm -i hadolint/hadolint < $(SRC)/$(IMAGE)/Dockerfile >/dev/null
+		@docker run --rm -i hadolint/hadolint < $(SRC)/$(IMAGE)/Dockerfile
 
 pull:
 		docker pull $(IMAGE_FROM)
