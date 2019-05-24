@@ -13,12 +13,10 @@ then
   # Detect promotion string in first argument or most recent commit message
   message="$*"
   debug "Parsing argument for command: '$message'"
-
 else
   message="$(git log --format=%B -n 1)"
   debug "Using last git commit message: '$message'"
 fi
-
 
 [ -n "${message}" ] && {
   # Accepts the following formats and variations thereof:
@@ -27,14 +25,15 @@ fi
   #  [ci tag 1.2.30]
   #  [ci tag v1.22.3]
   #  [ci tag v1.2.3-testing]
-  if grep -qE "\\[ci (promote|tag|release) v?[[:digit:]]+\\.[[:digit:]]+\\.[[:digit:]]+.*\\]" <<< "$message"
+  if grep -qE '\[ci (promote|tag|release) v?[[:digit:]]+\.[[:digit:]]+.*\]' <<< "$message"
   then
     # Detect version string
-    regex="(v?[[:digit:]]+\\.[[:digit:]]+\\.[[:digit:]]+.*)]"
-
+    regex='\[ci (promote|tag|release) (v?[[:digit:]]+\.[[:digit:]]+.*)\]'
+    debug "Checking message: $message"
+    debug "Against regex: $regex"
     if [[ $message =~ $regex ]]
     then
-      tag="${BASH_REMATCH[1]}"
+      tag="${BASH_REMATCH[2]}"
       echo "$tag"
       debug "Version string found: ${tag}"
       exit 0
