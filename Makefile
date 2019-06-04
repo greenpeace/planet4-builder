@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 # Version of gcr.io/planet-4-151612/circleci-base to use
-BASE_IMAGE_VERSION ?= build-1448
+BASE_IMAGE_VERSION ?= latest
 export BASE_IMAGE_VERSION
 
 BUILD_NAMESPACE ?= gcr.io

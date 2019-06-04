@@ -9,7 +9,7 @@ then
   do
     repo=${i//:*}
     ver=${i//*:}
-    release_branch=$(latest_release_branch.sh "$repo")
+    release_branch=$(./latest_release_branch.sh "$repo")
     if [ -n "$release_branch" ]
     then
       echo "The repo is $repo"
