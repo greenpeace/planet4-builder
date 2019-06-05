@@ -2,6 +2,11 @@
 set -euo pipefail
 file="${1:-${HOME}/source/composer.json}"
 
+[ -e "$file" ] || {
+  >&2 echo "File not found: $file"
+  exit 1
+}
+
 if [ "$APP_ENVIRONMENT" == "staging" ]
 then
   echo "The APP_ENVIRONMENT is $APP_ENVIRONMENT so we will pin greenpeace repos to their release branches"
