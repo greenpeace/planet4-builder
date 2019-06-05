@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-file="${HOME}/source/composer.json"
+file="${1:-${HOME}/source/composer.json}"
 
 if [ "$APP_ENVIRONMENT" == "staging" ]
 then
