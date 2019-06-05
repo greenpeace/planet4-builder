@@ -182,6 +182,7 @@ checkout:
 
 rewrite-app-repos:
 	./rewrite_app_repos.sh
+	./use_release_branches.sh
 
 rewrite:
 	./rewrite_dockerfiles.sh
