@@ -101,20 +101,20 @@ lint: init lint-yaml lint-sh lint-docker
 
 lint-yaml:
 ifndef YAMLLINT
-$(error "yamllint is not installed: https://github.com/adrienverge/yamllint")
+	$(error "yamllint is not installed: https://github.com/adrienverge/yamllint")
 endif
 		@$(YAMLLINT) -d "{extends: default, rules: {line-length: disable}}" .circleci/config.yml
 
 lint-sh:
 ifndef SHELLCHECK
-$(error "shellcheck is not installed: https://github.com/koalaman/shellcheck")
+	$(error "shellcheck is not installed: https://github.com/koalaman/shellcheck")
 endif
 		@find . -type f -name '*.sh' | xargs $(SHELLCHECK) -x
 		@find src/circleci-base/bin/* -type f | xargs $(SHELLCHECK) -x
 
 lint-docker: $(SRC)/$(IMAGE)/Dockerfile
 ifndef DOCKER
-$(error "docker is not installed: https://docs.docker.com/install/")
+	$(error "docker is not installed: https://docs.docker.com/install/")
 endif
 		@docker run --rm -i hadolint/hadolint < $(SRC)/$(IMAGE)/Dockerfile
 
