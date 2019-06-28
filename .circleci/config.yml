@@ -21,6 +21,7 @@ jobs:
       - run: |
           mkdir -p /tmp/workspace/var
           echo "${CIRCLE_BUILD_NUM}" > /tmp/workspace/var/circle-build-num
+      - run: docker-login.sh
       - run: make -j2 push
       - run: TYPE="@rawalker Promotion" notify-job-hold.sh
       - run:
