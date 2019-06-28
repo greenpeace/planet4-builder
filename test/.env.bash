@@ -4,7 +4,7 @@ set -a
 
 VERSION_REGEX="v?[[:digit:]]+\\.[[:digit:]]+"
 
-[ -z "${BUILD_IMAGE+x}" ] && BUILD_IMAGE=gcr.io/planet-4-151612/circleci-base
+[ -z "${BUILD_IMAGE+x}" ] && BUILD_IMAGE=greenpeaceinternational/circleci-base
 [ -z "${BUILD_TAG+x}" ] && BUILD_TAG=build-$(uname -n | tr '[:upper:]' '[:lower:]' | sed 's/[^a-zA-Z0-9._-]/-/g')
 
 BATS_IMAGE="${BUILD_IMAGE}:${BUILD_TAG}"
