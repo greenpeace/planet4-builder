@@ -4,7 +4,7 @@ SHELL := /bin/bash
 BASE_IMAGE_VERSION ?= develop
 export BASE_IMAGE_VERSION
 
-BUILD_NAMESPACE ?= gcr.io
+BUILD_NAMESPACE ?= greenpeaceinternational
 GOOGLE_PROJECT_ID ?= planet-4-151612
 
 MAINTAINER_NAME ?= Raymond Walker
@@ -106,7 +106,7 @@ endif
 	@circleci config validate >/dev/null
 
 pull:
-	docker pull gcr.io/planet-4-151612/circleci-base:$(BASE_IMAGE_VERSION)
+	docker pull $(BUILD_NAMESPACE)/circleci-base:$(BASE_IMAGE_VERSION)
 
 src/Dockerfile:
 	envsubst < src/templates/Dockerfile.in > $@
