@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 # Version of gcr.io/planet-4-151612/circleci-base to use
-BASE_IMAGE_VERSION ?= latest
+BASE_IMAGE_VERSION ?= develop
 export BASE_IMAGE_VERSION
 
 BUILD_NAMESPACE ?= gcr.io
@@ -114,21 +114,21 @@ src/Dockerfile:
 build:
 	$(MAKE) -j lint pull
 	docker build \
-		--tag=$(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:$(BUILD_TAG) \
-		--tag=$(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:build-$(BUILD_NUM) \
-		--tag=$(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:$(REVISION_TAG) \
+		--tag=$(BUILD_NAMESPACE)/p4-builder:$(BUILD_TAG) \
+		--tag=$(BUILD_NAMESPACE)/p4-builder:build-$(BUILD_NUM) \
+		--tag=$(BUILD_NAMESPACE)/p4-builder:$(REVISION_TAG) \
 		src
 
 push: push-tag push-latest
 
 push-tag:
-	docker push $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:$(BUILD_TAG)
-	docker push $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:build-$(BUILD_NUM)
+	docker push $(BUILD_NAMESPACE)/p4-builder:$(BUILD_TAG)
+	docker push $(BUILD_NAMESPACE)/p4-builder:build-$(BUILD_NUM)
 
 push-latest:
 	if [[ "$(PUSH_LATEST)" = "true" ]]; then { \
-		docker tag $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:$(REVISION_TAG) $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:latest; \
-		docker push $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:latest; \
+		docker tag $(BUILD_NAMESPACE)/p4-builder:$(REVISION_TAG) $(BUILD_NAMESPACE)/p4-builder:latest; \
+		docker push $(BUILD_NAMESPACE)/p4-builder:latest; \
 	}	else { \
 		echo "Not tagged.. skipping latest"; \
 	} fi
