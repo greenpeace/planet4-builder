@@ -3,7 +3,7 @@ defaults: &defaults
   environment:
     GOOGLE_PROJECT_ID: planet-4-151612
   docker:
-    - image: greenpeaceinternational/circleci-base:develop
+    - image: greenpeaceinternational/circleci-base:latest
   working_directory: /home/circleci/app
 
 version: 2
