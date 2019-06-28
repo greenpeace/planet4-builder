@@ -88,7 +88,7 @@ trap finish EXIT
   envsubst "${ENVVARS_STRING}" < "src/circleci-base/templates/Dockerfile.in" > "src/circleci-base/Dockerfile.tmp"
   envsubst "${ENVVARS_STRING}" < "README.md.in" > "README.md.tmp"
 
-  DOCKER_BUILD_STRING="# gcr.io/planet-4-151612/circleci-base:${BUILD_TAG}
+  DOCKER_BUILD_STRING="# greenpeaceinternational/circleci-base:${BUILD_TAG}
 # $(echo "${APPLICATION_DESCRIPTION}" | tr -d '"')
 # Branch: ${CIRCLE_TAG:-${CIRCLE_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}}
 # Commit: ${CIRCLE_SHA1:-$(git rev-parse HEAD)}
