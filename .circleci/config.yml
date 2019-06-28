@@ -82,10 +82,10 @@ jobs:
           name: Tag :latest
           command: |
             export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
-            docker pull greenpeaceinternatinal/circleci-base:build-${CIRCLE_BUILD_NUM}
-            docker tag greenpeaceinternatinal/circleci-base:build-${CIRCLE_BUILD_NUM} greenpeaceinternatinal/circleci-base:latest
-            TYPE="Tag: greenpeaceinternatinal/circleci-base:latest" notify-job-success.sh
-            docker push greenpeaceinternatinal/circleci-base:latest
+            docker pull greenpeaceinternational/circleci-base:build-${CIRCLE_BUILD_NUM}
+            docker tag greenpeaceinternational/circleci-base:build-${CIRCLE_BUILD_NUM} greenpeaceinternational/circleci-base:latest
+            TYPE="Tag: greenpeaceinternational/circleci-base:latest" notify-job-success.sh
+            docker push greenpeaceinternational/circleci-base:latest
       - run:
           command: trigger-build-api.sh planet4-builder develop
 
