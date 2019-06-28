@@ -21,11 +21,11 @@ IMAGE_FROM := $(BASE_NAMESPACE)/$(BASE_IMAGE):$(BASE_TAG)
 endif
 
 BUILD_IMAGE_NAMESPACE ?= gcr.io
-BUILD_IMAGE_PROJECT ?= planet-4-151612
+BUILD_IMAGE_PROJECT ?= greenpeaceinternational
 BUILD_IMAGE_NAME ?= circleci-base
 
 # Image to build
-BUILD_IMAGE ?= $(BUILD_IMAGE_NAMESPACE)/$(BUILD_IMAGE_PROJECT)/$(BUILD_IMAGE_NAME)
+BUILD_IMAGE ?= $(BUILD_IMAGE_PROJECT)/$(BUILD_IMAGE_NAME)
 
 # ---
 
@@ -101,20 +101,20 @@ lint: init lint-yaml lint-sh lint-docker
 
 lint-yaml:
 ifndef YAMLLINT
-$(error "yamllint is not installed: https://github.com/adrienverge/yamllint")
+	$(error "yamllint is not installed: https://github.com/adrienverge/yamllint")
 endif
 		@$(YAMLLINT) -d "{extends: default, rules: {line-length: disable}}" .circleci/config.yml
 
 lint-sh:
 ifndef SHELLCHECK
-$(error "shellcheck is not installed: https://github.com/koalaman/shellcheck")
+	$(error "shellcheck is not installed: https://github.com/koalaman/shellcheck")
 endif
 		@find . -type f -name '*.sh' | xargs $(SHELLCHECK) -x
 		@find src/circleci-base/bin/* -type f | xargs $(SHELLCHECK) -x
 
 lint-docker: $(SRC)/$(IMAGE)/Dockerfile
 ifndef DOCKER
-$(error "docker is not installed: https://docs.docker.com/install/")
+	$(error "docker is not installed: https://docs.docker.com/install/")
 endif
 		@docker run --rm -i hadolint/hadolint < $(SRC)/$(IMAGE)/Dockerfile
 

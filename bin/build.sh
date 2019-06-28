@@ -88,7 +88,7 @@ trap finish EXIT
   envsubst "${ENVVARS_STRING}" < "src/circleci-base/templates/Dockerfile.in" > "src/circleci-base/Dockerfile.tmp"
   envsubst "${ENVVARS_STRING}" < "README.md.in" > "README.md.tmp"
 
-  DOCKER_BUILD_STRING="# gcr.io/planet-4-151612/circleci-base:${BUILD_TAG}
+  DOCKER_BUILD_STRING="# greenpeaceinternational/circleci-base:${BUILD_TAG}
 # $(echo "${APPLICATION_DESCRIPTION}" | tr -d '"')
 # Branch: ${CIRCLE_TAG:-${CIRCLE_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}}
 # Commit: ${CIRCLE_SHA1:-$(git rev-parse HEAD)}
@@ -115,10 +115,10 @@ Build: ${CIRCLE_BUILD_URL:-"(local)"}" > "README.md"
 # Build container
 [[ "$BUILD" = 'true' ]] && {
   time docker build "src/circleci-base" \
-    --tag "${NAMESPACE}/${GOOGLE_PROJECT_ID}/circleci-base:${BUILD_NUM}" \
-    --tag "${NAMESPACE}/${GOOGLE_PROJECT_ID}/circleci-base:${BUILD_TAG}"
+    --tag "greenpeaceinternational/circleci-base:${BUILD_NUM}" \
+    --tag "greenpeaceinternational/circleci-base:${BUILD_TAG}"
 
-  [[ -n "${BUILD_BRANCH}" ]] && docker tag "${NAMESPACE}/${GOOGLE_PROJECT_ID}/circleci-base:${BUILD_NUM}" "${NAMESPACE}/${GOOGLE_PROJECT_ID}/circleci-base:${BUILD_BRANCH}"
+  [[ -n "${BUILD_BRANCH}" ]] && docker tag "greenpeaceinternational/circleci-base:${BUILD_NUM}" "greenpeaceinternational/circleci-base:${BUILD_BRANCH}"
 }
 
 if [[ "$BUILD" != "true" ]] && [[ "${TEMPLATE}" != "true" ]]

@@ -24,8 +24,7 @@ jobs:
             mkdir -p /tmp/workspace/var
             echo "${CIRCLE_BUILD_NUM}" > /tmp/workspace/var/circle-build-num
       - run: make clean lint
-      - run: activate-gcloud-account.sh
-      - run: gcloud auth configure-docker
+      - run: docker-login.sh
       - run: make build
       - run: make -k test
       - run: make -j push
@@ -78,19 +77,15 @@ jobs:
           command: |
             make src
             update-build-numbers.sh -f README.md src/circleci-base/Dockerfile
-      - run:
-          name: Configure
-          command: |
-            activate-gcloud-account.sh
-            gcloud auth configure-docker
+      - run: docker-login.sh
       - deploy:
           name: Tag :latest
           command: |
             export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
-            docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
-            docker tag gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
-            TYPE="Tag: gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest" notify-job-success.sh
-            docker push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
+            docker pull greenpeaceinternational/circleci-base:build-${CIRCLE_BUILD_NUM}
+            docker tag greenpeaceinternational/circleci-base:build-${CIRCLE_BUILD_NUM} greenpeaceinternational/circleci-base:latest
+            TYPE="Tag: greenpeaceinternational/circleci-base:latest" notify-job-success.sh
+            docker push greenpeaceinternational/circleci-base:latest
       - run:
           command: trigger-build-api.sh planet4-builder develop
 
