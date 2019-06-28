@@ -78,19 +78,15 @@ jobs:
           command: |
             make src
             update-build-numbers.sh -f README.md src/circleci-base/Dockerfile
-      - run:
-          name: Configure
-          command: |
-            activate-gcloud-account.sh
-            gcloud auth configure-docker
+      - run: docker-login.sh
       - deploy:
           name: Tag :latest
           command: |
             export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
-            docker pull gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM}
-            docker tag gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:build-${CIRCLE_BUILD_NUM} gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
-            TYPE="Tag: gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest" notify-job-success.sh
-            docker push gcr.io/${GOOGLE_PROJECT_ID}/circleci-base:latest
+            docker pull greenpeaceinternatinal/circleci-base:build-${CIRCLE_BUILD_NUM}
+            docker tag greenpeaceinternatinal/circleci-base:build-${CIRCLE_BUILD_NUM} greenpeaceinternatinal/circleci-base:latest
+            TYPE="Tag: greenpeaceinternatinal/circleci-base:latest" notify-job-success.sh
+            docker push greenpeaceinternatinal/circleci-base:latest
       - run:
           command: trigger-build-api.sh planet4-builder develop
 
