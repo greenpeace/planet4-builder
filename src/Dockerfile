@@ -1,11 +1,11 @@
 # Planet 4 build container
 # https://github.com/greenpeace/planet4-builder
 #
-# Version: develop
-# Build:   https://circleci.com/gh/greenpeace/planet4-builder#706
+# Version: v1.2.20
+# Build:   https://circleci.com/gh/greenpeace/planet4-builder#719
 
 # hadolint ignore=DL3007
-FROM gcr.io/planet-4-151612/circleci-base:latest
+FROM greenpeaceinternational/circleci-base:latest
 
 LABEL authors="Raymond Walker <raymond.walker@greenpeace.org>"
 
