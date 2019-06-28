@@ -24,8 +24,7 @@ jobs:
             mkdir -p /tmp/workspace/var
             echo "${CIRCLE_BUILD_NUM}" > /tmp/workspace/var/circle-build-num
       - run: make clean lint
-      - run: activate-gcloud-account.sh
-      - run: gcloud auth configure-docker
+      - run: docker-login.sh
       - run: make build
       - run: make -k test
       - run: make -j push
