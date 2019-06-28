@@ -115,10 +115,10 @@ Build: ${CIRCLE_BUILD_URL:-"(local)"}" > "README.md"
 # Build container
 [[ "$BUILD" = 'true' ]] && {
   time docker build "src/circleci-base" \
-    --tag "${NAMESPACE}/${GOOGLE_PROJECT_ID}/circleci-base:${BUILD_NUM}" \
-    --tag "${NAMESPACE}/${GOOGLE_PROJECT_ID}/circleci-base:${BUILD_TAG}"
+    --tag "greenpeaceinternational/circleci-base:${BUILD_NUM}" \
+    --tag "greenpeaceinternational/circleci-base:${BUILD_TAG}"
 
-  [[ -n "${BUILD_BRANCH}" ]] && docker tag "${NAMESPACE}/${GOOGLE_PROJECT_ID}/circleci-base:${BUILD_NUM}" "${NAMESPACE}/${GOOGLE_PROJECT_ID}/circleci-base:${BUILD_BRANCH}"
+  [[ -n "${BUILD_BRANCH}" ]] && docker tag "greenpeaceinternational/circleci-base:${BUILD_NUM}" "greenpeaceinternational/circleci-base:${BUILD_BRANCH}"
 }
 
 if [[ "$BUILD" != "true" ]] && [[ "${TEMPLATE}" != "true" ]]
