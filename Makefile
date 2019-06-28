@@ -4,7 +4,7 @@ SHELL := /bin/bash
 BASE_IMAGE_VERSION ?= latest
 export BASE_IMAGE_VERSION
 
-BUILD_NAMESPACE ?= gcr.io
+BUILD_NAMESPACE ?= greenpeaceinternational
 GOOGLE_PROJECT_ID ?= planet-4-151612
 
 MAINTAINER_NAME ?= Raymond Walker
@@ -106,7 +106,7 @@ endif
 	@circleci config validate >/dev/null
 
 pull:
-	docker pull gcr.io/planet-4-151612/circleci-base:$(BASE_IMAGE_VERSION)
+	docker pull $(BUILD_NAMESPACE)/circleci-base:$(BASE_IMAGE_VERSION)
 
 src/Dockerfile:
 	envsubst < src/templates/Dockerfile.in > $@
@@ -114,21 +114,21 @@ src/Dockerfile:
 build:
 	$(MAKE) -j lint pull
 	docker build \
-		--tag=$(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:$(BUILD_TAG) \
-		--tag=$(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:build-$(BUILD_NUM) \
-		--tag=$(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:$(REVISION_TAG) \
+		--tag=$(BUILD_NAMESPACE)/p4-builder:$(BUILD_TAG) \
+		--tag=$(BUILD_NAMESPACE)/p4-builder:build-$(BUILD_NUM) \
+		--tag=$(BUILD_NAMESPACE)/p4-builder:$(REVISION_TAG) \
 		src
 
 push: push-tag push-latest
 
 push-tag:
-	docker push $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:$(BUILD_TAG)
-	docker push $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:build-$(BUILD_NUM)
+	docker push $(BUILD_NAMESPACE)/p4-builder:$(BUILD_TAG)
+	docker push $(BUILD_NAMESPACE)/p4-builder:build-$(BUILD_NUM)
 
 push-latest:
 	if [[ "$(PUSH_LATEST)" = "true" ]]; then { \
-		docker tag $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:$(REVISION_TAG) $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:latest; \
-		docker push $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/p4-builder:latest; \
+		docker tag $(BUILD_NAMESPACE)/p4-builder:$(REVISION_TAG) $(BUILD_NAMESPACE)/p4-builder:latest; \
+		docker push $(BUILD_NAMESPACE)/p4-builder:latest; \
 	}	else { \
 		echo "Not tagged.. skipping latest"; \
 	} fi
