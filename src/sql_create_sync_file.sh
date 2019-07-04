@@ -10,7 +10,14 @@ WP_DB_USERNAME_DC=$(echo "${WP_DB_USERNAME}" | base64 -d)
 WP_DB_PASSWORD_DC=$(echo "${WP_DB_PASSWORD}" | base64 -d)
 BUCKET_DESTINATION=gs://${CONTAINER_PREFIX}-source
 export GOOGLE_APPLICATION_CREDENTIALS="/tmp/workspace/src/key.json"
-export SQL_TAG=$CIRCLE_TAG
+
+if [ -z ${CIRCLE_TAG+x} ];
+then
+  SQL_TAG=$(date +%Y-%m-%d)
+else
+  SQL_TAG=${CIRCLE_TAG}
+fi
+export SQL_TAG
 
 echo ""
 echo "We will try to get connected to: ${GOOGLE_PROJECT_ID}:us-central1:${CLOUDSQL_INSTANCE}"
