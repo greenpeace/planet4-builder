@@ -2,7 +2,7 @@
 # https://github.com/greenpeace/planet4-builder
 #
 # Version: develop
-# Build:   https://circleci.com/gh/greenpeace/planet4-builder#716
+# Build:   https://circleci.com/gh/greenpeace/planet4-builder#723
 
 # hadolint ignore=DL3007
 FROM greenpeaceinternational/circleci-base:latest
