@@ -11,10 +11,11 @@ ENV CIRCLECI_USER=${CIRCLECI_USER} \
 USER root
 
 # hadolint ignore=DL3008
-RUN apt-get install -y --no-install-recommends \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
       gawk \
       gettext \
-      mysql-client \
+      default-mysql-client \
       python-pip \
       python-pkg-resources \
       python-setuptools \
