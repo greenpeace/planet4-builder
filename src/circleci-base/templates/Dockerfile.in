@@ -19,6 +19,7 @@ RUN apt-get update && \
       python-pip \
       python-pkg-resources \
       python-setuptools \
+      rsync \
       silversearcher-ag \
       vim \
       wget \
