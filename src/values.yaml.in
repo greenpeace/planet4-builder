@@ -32,8 +32,6 @@ sqlproxy:
       project: '${GOOGLE_PROJECT_ID}'
       region: '${GCLOUD_REGION}'
       port: '3306'
-recharge:
-  enabled: 'true'
 wp:
   siteUrl: '${APP_HOSTNAME}/${APP_HOSTPATH}'
   stateless:
