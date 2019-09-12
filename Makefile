@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-# Version of gcr.io/planet-4-151612/circleci-base to use
+# Version of parent container to use
 BASE_IMAGE_VERSION ?= latest
 export BASE_IMAGE_VERSION
 

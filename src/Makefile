@@ -27,11 +27,11 @@ APP_ENVIRONMENT     ?= production
 # Use local branch name if not set
 
 ifeq ($(strip $(APP_ENVIRONMENT)),staging)
-GIT_REF 		  ?= release
+GIT_REF ?= release
 else ifeq ($(strip $(APP_ENVIRONMENT)),development)
-GIT_REF           ?= develop
+GIT_REF ?= develop
 else
-GIT_REF           ?= master
+GIT_REF ?= master
 endif
 
 # Base composer project repository
