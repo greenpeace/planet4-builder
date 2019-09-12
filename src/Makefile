@@ -27,11 +27,11 @@ APP_ENVIRONMENT     ?= production
 # Use local branch name if not set
 
 ifeq ($(strip $(APP_ENVIRONMENT)),staging)
-GIT_REF 		  ?= release
+GIT_REF ?= release
 else ifeq ($(strip $(APP_ENVIRONMENT)),development)
-GIT_REF           ?= develop
+GIT_REF ?= develop
 else
-GIT_REF           ?= master
+GIT_REF ?= master
 endif
 
 # Base composer project repository
@@ -102,10 +102,12 @@ GCLOUD_ZONE         ?= us-central1-a
 
 PAGESPEED_ENABLED   ?= false
 
-ifeq ($(strip $(APP_ENVIRONMENT)),development)
-MIN_REPLICA_COUNT 	?= 1
-else
+INGRESS_CLASS				?= traefik
+
+ifeq ($(strip $(APP_ENVIRONMENT)),production)
 MIN_REPLICA_COUNT 	?= 2
+else
+MIN_REPLICA_COUNT 	?= 1
 endif
 MAX_REPLICA_COUNT 	?= 5
 
