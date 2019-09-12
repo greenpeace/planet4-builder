@@ -54,7 +54,7 @@ then
   echo "Bucket does not exist, attempting to create it"
   gsutil mb "${BUCKET_DESTINATION}/";
   echo "And now we will apply labels"
-  gsutil label ch -l "nro:${APP_HOSTPATH}" "${BUCKET_DESTINATION}"
+  gsutil label ch -l "nro:${APP_HOSTNAME}/${APP_HOSTPATH:-}" "${BUCKET_DESTINATION}"
   gsutil label ch -l "environment:${ENVIRONMENT}" "${BUCKET_DESTINATION}"
 fi
 
