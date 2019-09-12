@@ -10,6 +10,9 @@ openresty:
     tag: '${BUILD_TAG}'
   minReplicaCount: '${OPENRESTY_MIN_REPLICA_COUNT}'
   maxReplicaCount: '${OPENRESTY_MAX_REPLICA_COUNT}'
+ingress:
+  annotations:
+    kubernetes.io/ingress.class: '${INGRESS_CLASS}'
 pagespeed:
   enabled: '${PAGESPEED_ENABLED}'
 php:
