@@ -105,7 +105,10 @@ PAGESPEED_ENABLED   ?= false
 ifeq ($(strip $(APP_ENVIRONMENT)),development)
 MIN_REPLICA_COUNT 	?= 1
 else
+ifeq ($(strip $(APP_ENVIRONMENT)),production)
 MIN_REPLICA_COUNT 	?= 2
+else
+MIN_REPLICA_COUNT 	?= 1
 endif
 MAX_REPLICA_COUNT 	?= 5
 
