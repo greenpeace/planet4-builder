@@ -144,6 +144,8 @@ WP_DB_NAME          ?= $(WP_DB_USERNAME)_wordpress
 # WP_SECURE_AUTH_SALT := $(WP_SECURE_AUTH_SALT)
 # WP_STATELESS_KEY    := $(WP_STATELESS_KEY)
 
+FORCE_ACTIVATE_PLUGINS ?= true
+
 ################################################################################
 #
 # Google Cloud Storage Bucket configuration

@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -eu
 
+[[ $FORCE_ACTIVATE_PLUGINS == 'true ' ]] || exit 0
+
 # shellcheck disable=SC1091
 . lib/retry.sh
 
