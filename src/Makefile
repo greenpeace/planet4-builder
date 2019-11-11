@@ -10,7 +10,7 @@ PARENT_IMAGE			?= gcr.io/planet-4-151612/wordpress
 PARENT_VERSION    ?= latest
 
 # Wordpress Helm chart version
-CHART_VERSION 		?= 0.8.5
+CHART_VERSION 		?= 0.8.6
 
 # Use current folder name as prefix for built containers,
 # eg planet4-gpi-app planet4-gpi-openresty
@@ -170,6 +170,7 @@ test:
 	set -eu
 	@echo "Building $(CONTAINER_PREFIX):$(BUILD_TAG) containers..."
 	@echo "PARENT_IMAGE:      $(PARENT_IMAGE)"
+	@echo "PARENT_VERSION:    $(PARENT_VERSION)"
 	@echo "APP_HOSTNAME:      $(APP_HOSTNAME)"
 	@echo "APP_HOSTPATH:      $(APP_HOSTPATH)"
 	@echo "NEWRELIC_APPNAME:  $(NEWRELIC_APPNAME)"
@@ -210,6 +211,7 @@ build-app:
 	mkdir -p app/source/public
 	rsync -a --delete source/public/ app/source/public
 	source ./lib/retry.sh && \
+	retry docker pull $(PARENT_IMAGE):$(PARENT_VERSION) && \
 	pushd app && \
 	retry docker build \
 	-t $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_PREFIX)-app:$(BUILD_TAG) \
@@ -222,7 +224,7 @@ build-openresty:
 	mkdir -p openresty/source/public
 	rsync -a --delete source/public/ openresty/source/public
 	source ./lib/retry.sh && \
-	retry docker pull gcr.io/planet-4-151612/openresty:${PARENT_VERSION} && \
+	retry docker pull gcr.io/planet-4-151612/openresty:$(PARENT_VERSION) && \
 	pushd openresty && \
 	retry docker build \
 	-t $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_PREFIX)-openresty:$(BUILD_TAG) \
