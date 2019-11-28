@@ -186,8 +186,8 @@ checkout:
 	./checkout.sh
 
 rewrite-app-repos:
-	./rewrite_app_repos.sh
 	./use_release_branches.sh
+	./rewrite_app_repos.sh
 
 rewrite:
 	./rewrite_dockerfiles.sh
