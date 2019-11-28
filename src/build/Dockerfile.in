@@ -27,3 +27,8 @@ RUN \
     fi && \
     time composer -v update --lock --no-dev --no-ansi && \
     time composer -v install --no-dev --no-ansi --no-interaction
+
+RUN \
+    if [ -d ${SOURCE_PATH}/built-dev-assets/ ]; then \
+        rsync -av ${SOURCE_PATH}/built-dev-assets/ ${SOURCE_PATH}/ && rm -rf ${SOURCE_PATH}/built-dev-assets; \
+    fi
