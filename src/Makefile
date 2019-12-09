@@ -294,11 +294,4 @@ endif
 
 	./configure_redis.sh
 
-		# We don't need this at this time, as all users we need are in all environments.
-		# Commenting it out, so that we can save a few seconds out of each build
-		# Not deleting it, as we will probably need it again in the future.
-	# HELM_NAMESPACE=$(HELM_NAMESPACE) \
-	# HELM_RELEASE=$(HELM_RELEASE) \
-	# ./run_bash_script_in_php_pod.sh modify_users.sh "$(shell base64 -w 0 users.json)"
-
 	./run_post_deploy_scripts.sh
