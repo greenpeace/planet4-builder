@@ -48,6 +48,8 @@ echo ""
 echo "Generate the db dump"
 echo ""
 DB=$($kc exec "${POD}" -- wp db export --tables=wp_commentmeta,wp_comments,wp_postmeta,wp_posts,wp_termmeta,wp_terms,wp_term_relationships,wp_term_taxonomy --add-drop-table | cut -d' ' -f4 | sed -e "s/'\.//" -e "s/'//")
+$kc exec "${POD}" -- wp option get planet4_options --format=json > options.json
+FRONTPAGE=$($kc exec "${POD}" -- wp option get page_on_front)
 
 echo ""
 echo "Copy it locally"
@@ -75,12 +77,16 @@ echo ""
 echo "Copying the file inside the pod"
 echo ""
 $kc cp data.sql develop/"${POD}":data.sql
+$kc cp options.json develop/"${POD}":options.json
 
 echo ""
 echo "Importing the db file"
 echo ""
 $kc exec "${POD}" -- wp db import data.sql
-$kc exec "${POD}" -- rm data.sql
+$kc exec "${POD}" -- wp option delete planet4_options
+$kc exec "${POD}" -- wp option add planet4_options --format=json < options.json
+$kc exec "${POD}" -- wp option update page_on_front ${FRONTPAGE}
+$kc exec "${POD}" -- rm data.sql options.json
 
 echo ""
 echo "Flushing cache"
