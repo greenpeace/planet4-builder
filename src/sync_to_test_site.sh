@@ -77,16 +77,15 @@ echo ""
 echo "Copying the file inside the pod"
 echo ""
 $kc cp data.sql develop/"${POD}":data.sql
-$kc cp options.json develop/"${POD}":options.json
 
 echo ""
 echo "Importing the db file"
 echo ""
 $kc exec "${POD}" -- wp db import data.sql
 $kc exec "${POD}" -- wp option delete planet4_options
-$kc exec "${POD}" -- wp option add planet4_options --format=json < options.json
+$kc exec -i "${POD}" -- wp option add planet4_options --format=json < options.json
 $kc exec "${POD}" -- wp option update page_on_front "${FRONTPAGE}"
-$kc exec "${POD}" -- rm data.sql options.json
+$kc exec "${POD}" -- rm data.sql
 
 echo ""
 echo "Flushing cache"
