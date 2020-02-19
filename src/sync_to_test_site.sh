@@ -85,7 +85,7 @@ echo ""
 $kc exec "${POD}" -- wp db import data.sql
 $kc exec "${POD}" -- wp option delete planet4_options
 $kc exec "${POD}" -- wp option add planet4_options --format=json < options.json
-$kc exec "${POD}" -- wp option update page_on_front ${FRONTPAGE}
+$kc exec "${POD}" -- wp option update page_on_front "${FRONTPAGE}"
 $kc exec "${POD}" -- rm data.sql options.json
 
 echo ""
