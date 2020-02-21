@@ -88,6 +88,16 @@ $kc exec "${POD}" -- wp option update page_on_front "${FRONTPAGE}"
 $kc exec "${POD}" -- rm data.sql
 
 echo ""
+echo "Assign admin author to avoid orphan posts"
+echo ""
+$kc exec "${POD}" -- wp post list --post_type=post --field=ID --format=ids > posts.txt
+$kc exec "${POD}" -- wp post list --post_type=page --field=ID --format=ids > pages.txt
+$kc exec "${POD}" -- wp post list --post_type=campaign --field=ID --format=ids > campaigns.txt
+$kc exec "${POD}" -- bash -c "wp post update $(cat campaigns.txt) --post_author=1"
+$kc exec "${POD}" -- bash -c "wp post update $(cat pages.txt) --post_author=1"
+$kc exec "${POD}" -- bash -c "wp post update $(cat posts.txt) --post_author=1"
+
+echo ""
 echo "Flushing cache"
 echo ""
 $kc exec "${POD}" -- wp cache flush
