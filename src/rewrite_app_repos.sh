@@ -52,13 +52,11 @@ do
   do
     if [ -e "$f" ]; then
       json_path=".require.\"greenpeace/${reponame}\""
-      plugin_version=$(jq -r "${json_path}" < "${f}")
+      plugin_version=$(jq -r "${json_path} // empty" < "${f}")
       branch=${plugin_version#"$composer_dev_prefix"}
 
-      # if these are the same do nothing as plugin is not in file or it doesn't start with "dev-"
-      # master already includes built files
-      if [[ "${branch}" != "${plugin_version}" ]] && [ "${branch}" != master ]; then
-        # dev branches do not include the built assets, only master does. So we need to build them here.
+      if [ -n "$branch" ]; then
+        # Assets are not included in the repositories, so we need to build them here.
         # All built files are put together in built-dev-assets, which has the same directory structure as /app/source.
         # In the last step in the Dockerfile the contents of this directory are rsync'ed over the source.
         # This is not ideal, however there was no better alternative as packagist only works with files in a github repo.
