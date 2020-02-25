@@ -10,6 +10,11 @@ openresty:
     tag: '${BUILD_TAG}'
   minReplicaCount: '${OPENRESTY_MIN_REPLICA_COUNT}'
   maxReplicaCount: '${OPENRESTY_MAX_REPLICA_COUNT}'
+  geoip:
+    enabled: '${GEOIP2_ENABLED}'
+  cloudflare:
+    enabled: '${CLOUDFLARE_ENABLED}'
+
 ingress:
   annotations:
     kubernetes.io/ingress.class: '${INGRESS_CLASS}'

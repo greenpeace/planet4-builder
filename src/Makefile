@@ -105,6 +105,7 @@ PAGESPEED_ENABLED   ?= false
 INGRESS_CLASS				?= traefik
 
 ifeq ($(strip $(APP_ENVIRONMENT)),production)
+CLOUDFLARE_ENABLED  ?= true
 MIN_REPLICA_COUNT 	?= 2
 else
 MIN_REPLICA_COUNT 	?= 1
