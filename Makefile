@@ -89,9 +89,10 @@ endif
 
 lint-composer:
 ifndef COMPOSER
-$(error "composer is not installed: https://getcomposer.org/doc/00-intro.md#installation-linux-unix-macos")
-endif
+	$(warning "composer is not installed: https://getcomposer.org/doc/00-intro.md#installation-linux-unix-macos")
+else
 	@find . -type f -name 'composer*.json' | xargs composer validate >/dev/null
+endif
 
 lint-docker: src/Dockerfile
 ifndef DOCKER
