@@ -8,7 +8,21 @@ set -euo pipefail
 # Merges changes from develop
 # Deletes previous release branch from origin
 # Pushes changes to origin
-#
+
+# Get the git message for this commit
+git_message=$(git --git-dir=/tmp/workspace/src/.git log --format=%B -n 1 "$CIRCLE_SHA1")
+echo "The git message is:"
+echo "-----------"
+echo "$git_message";
+echo "-----------"
+
+# If the commit message contains [DEV] don't promote to release
+if [[ $git_message == *"[DEV]"* ]]; then
+    echo "The dev prefix exists so skipping release auto-promotion"
+    exit 0;
+fi
+
+
 old_release=$(git-current-tag.sh)
 new_release=$(git-new-version.sh)
 
