@@ -12,10 +12,12 @@ rm -fr "$dir"
 mkdir "$dir"
 
 GIT_COMMIT_DESC=$(git --git-dir=/tmp/workspace/.git log --format=%B -n 1 "$CIRCLE_SHA1")
-if [[ $GIT_COMMIT_DESC == *"[AUTO-PROCEED]"* ]]; then
-  GIT_PREFIX="[AUTO-PROCEED]";
+if [[ $GIT_COMMIT_DESC == *"[DEV]"* ]]; then
+  GIT_PREFIX="[DEV]"
+elif [[ $GIT_COMMIT_DESC == *"[AUTO-PROCEED]"* ]]; then
+  GIT_PREFIX="[AUTO-PROCEED]"
 else
-  GIT_PREFIX="";
+  GIT_PREFIX=""
 fi;
 
 # Checkout dependent repository and trigger CI with empty commit.
