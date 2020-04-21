@@ -21,6 +21,27 @@ mkdir -p "${built_assets_dir}"
 
 echo "rewrite_app_repos"
 
+build_assets() {
+  branch="$1"
+  reponame="$2"
+
+  git clone --recurse-submodules --single-branch --branch "${branch}" https://github.com/greenpeace/"${reponame}"
+
+  npm ci --prefix "${reponame}" "${reponame}"
+  npm run-script --prefix "${reponame}" build
+
+  if [[ "${reponame}" == *theme ]]; then \
+      subdir="themes"; \
+  else \
+      subdir="plugins"; \
+  fi; \
+
+  buildDir="${built_assets_dir}/public/wp-content/${subdir}/${reponame}/assets/build/"
+  mkdir -p "${buildDir}"
+  cp -a "${reponame}/assets/build/." "${buildDir}"
+  rm -rf "${reponame}"
+}
+
 for plugin_branch_env_var in "${plugin_branch_env_vars[@]}"
 do
   reponame=planet4-$( echo "${plugin_branch_env_var%_*}" | tr '[:upper:]' '[:lower:]' | sed 's/_/-/g')
@@ -62,21 +83,7 @@ do
         # This is not ideal, however there was no better alternative as packagist only works with files in a github repo.
         echo "Building assets for ${reponame} at branch ${branch}"
 
-        git clone --recurse-submodules --single-branch --branch "${branch}" https://github.com/greenpeace/"${reponame}"
-
-        time npm ci --prefix "${reponame}" "${reponame}"
-        time npm run-script --prefix "${reponame}" build
-
-        if [[ "${reponame}" == *theme ]]; then \
-            subdir="themes"; \
-        else \
-            subdir="plugins"; \
-        fi; \
-
-        buildDir="${built_assets_dir}/public/wp-content/${subdir}/${reponame}/assets/build/"
-        mkdir -p "${buildDir}"
-        cp -a "${reponame}/assets/build/." "${buildDir}"
-        rm -rf "${reponame}"
+        time build_assets "$branch" "$reponame" &
       else
         if [ -z "${plugin_version}" ]; then
           echo "Plugin ${reponame} is not in ${f}"
@@ -87,6 +94,8 @@ do
     fi
   done
 done
+
+wait
 
 echo "DEBUG: We will echo where master theme is defined as what: "
 grep -r -H '"greenpeace/planet4-master-theme" :' ./*
