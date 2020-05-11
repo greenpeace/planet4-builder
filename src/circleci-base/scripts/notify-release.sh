@@ -1,18 +1,5 @@
 #!/usr/bin/env bash
-set -u
-
-# Get the git message for this commit
-git_message=$(git --git-dir=/tmp/workspace/.git log --format=%B -n 1 "$CIRCLE_SHA1")
-echo "The git message is:"
-echo "-----------"
-echo "$git_message";
-echo "-----------"
-
-# If the commit message doesn't contain [AUTO-PROCEED] don't notify
-if [[ $git_message != *"[AUTO-PROCEED]"* ]]; then
-    echo "The auto-proceed prefix doesn't exist so skipping release notification"
-    exit 0
-fi
+set -eu
 
 if [ -z "$VERSION" ]; then
   echo "VERSION tag is missing"
@@ -24,8 +11,8 @@ if [ -z "$CHANGELOG" ]; then
   exit 1
 fi
 
-MSG_SUBJECT="🤖 Planet 4 new release: $VERSION"
-MSG_BODY="Hi everyone,<br><br> A new Planet 4 release is being deployed today. Below is the full list of changes.<br><br>$CHANGELOG<br>The P4 Bot 🤖"
+MSG_SUBJECT="[Planet 4][Release] $VERSION 🤖"
+MSG_BODY="Hi everyone,<br><br> A new Planet 4 release is being deployed today. Below is the full list of changes.<br><br>$CHANGELOG<br><br><a href='https://support.greenpeace.org/planet4/tech/changelog'><font size='1'>Release History</font></a><br>The P4 Bot 🤖"
 EMAIL_TO="$RELEASE_EMAIL_TO"
 EMAIL_FROM="$RELEASE_EMAIL_FROM"
 
