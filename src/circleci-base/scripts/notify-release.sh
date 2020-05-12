@@ -11,8 +11,8 @@ if [ -z "$CHANGELOG" ]; then
   exit 1
 fi
 
-MSG_SUBJECT="[Planet 4][Release] $VERSION 🤖"
-MSG_BODY="Hi everyone,<br><br> A new Planet 4 release is being deployed today. Below is the full list of changes.<br><br>$CHANGELOG<br><br><a href='https://support.greenpeace.org/planet4/tech/changelog'><font size='1'>Release History</font></a><br>The P4 Bot 🤖"
+MSG_SUBJECT="[Release] v$VERSION 🤖"
+MSG_BODY="Hi everyone,<br><br> A new Planet 4 release is being deployed today. Below is the full list of changes.<br>$CHANGELOG<br><a href='https://support.greenpeace.org/planet4/tech/changelog'><font size='1'>Release History</font></a><br><br>The P4 Bot 🤖"
 EMAIL_TO="$RELEASE_EMAIL_TO"
 EMAIL_FROM="$RELEASE_EMAIL_FROM"
 
