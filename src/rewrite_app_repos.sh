@@ -25,6 +25,10 @@ build_assets() {
   branch="$1"
   reponame="$2"
 
+  # Wait for the folder to be deleted first from a previous pending job
+  # TODO: Build assets once for all occurrences in composer files
+  while [ -d "$reponame" ]; do sleep 10; done
+
   git clone --recurse-submodules --single-branch --branch "${branch}" https://github.com/greenpeace/"${reponame}"
 
   npm ci --prefix "${reponame}" "${reponame}"
