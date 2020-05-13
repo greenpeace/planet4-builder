@@ -25,10 +25,6 @@ build_assets() {
   branch="$1"
   reponame="$2"
 
-  # Wait for the folder to be deleted first from a previous pending job
-  # TODO: Build assets once for all occurrences in composer files
-  while [ -d "$reponame" ]; do sleep 10; done
-
   git clone --recurse-submodules --single-branch --branch "${branch}" https://github.com/greenpeace/"${reponame}"
 
   npm ci --prefix "${reponame}" "${reponame}"
@@ -72,6 +68,8 @@ do
     echo "Nothing to replace for the ${reponame}"
   fi
 
+  repo_branch=""
+
   # now go throuhg the composer file and see if there are any dev branches for planet4 plugins or theme
   for f in "${composer_files[@]}"
   do
@@ -85,9 +83,8 @@ do
         # All built files are put together in built-dev-assets, which has the same directory structure as /app/source.
         # In the last step in the Dockerfile the contents of this directory are rsync'ed over the source.
         # This is not ideal, however there was no better alternative as packagist only works with files in a github repo.
-        echo "Building assets for ${reponame} at branch ${branch}"
-
-        time build_assets "$branch" "$reponame" &
+        echo "Repo ${reponame} exists for branch ${branch}"
+        repo_branch="${branch}"
       else
         if [ -z "${plugin_version}" ]; then
           echo "Plugin ${reponame} is not in ${f}"
@@ -97,6 +94,11 @@ do
       fi
     fi
   done
+
+  if [ -n "$repo_branch" ]; then
+    echo "Building assets for ${reponame} at branch ${repo_branch}"
+    time build_assets "$repo_branch" "$reponame" &
+  fi
 done
 
 wait
