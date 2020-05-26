@@ -46,7 +46,7 @@ services:
       - MYSQL_USER=${MYSQL_USER:-planet4}
 
   redis:
-    image: redis:4
+    image: redis:6
 
 volumes:
   data:
