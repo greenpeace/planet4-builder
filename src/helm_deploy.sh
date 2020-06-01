@@ -18,6 +18,11 @@ function install() {
     return 0
   fi
   echo "FAILURE: Could not deploy release $HELM_RELEASE"
+
+  if grep -q "kind Service with the name \"${HELM_RELEASE}-redis-headless\" already exists in the cluster and wasn't defined in the previous release" helm_output.txt;
+  then kubectl -n "${HELM_NAMESPACE}" delete svc "${HELM_RELEASE}"-redis-headless
+  fi
+
   return 1
 }
 
