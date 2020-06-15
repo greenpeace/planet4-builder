@@ -11,7 +11,7 @@ VERSION="$1"
 now="$(date +'%Y-%m-%d')"
 volunteer_memo=""
 
-changelog="\n<h2>${VERSION} - ${now}</h2>\n\n"
+changelog="<h2>${VERSION} - ${now}</h2>"
 
 JIRA_API_QUERY="https://jira.greenpeace.org/rest/api/latest/search?jql=project%20%3D%20PLANET%20AND%20fixVersion%20%3D%20${VERSION}&fields=summary,issuetype,customfield_13100,customfield_12100,issuetype,assignee"
 
@@ -71,12 +71,9 @@ done < /tmp/$$.assignees
 total=${#keys[*]}
 
 if [ "$total" -ne 0 ]; then
-  features="<h3>🔧 Features</h3>\n\n<ul>\n"
-  bugs="<h3>🐞 Bug Fixes</h3>\n\n<ul>\n"
-  infra="<h3>👷 Infrastructure</h3>\n\n<ul>\n"
-  features_md="### Features\n\n"
-  bugs_md="\n### Bug Fixes\n\n"
-  infra_md="\n### Infrastructure\n\n"
+  features="<h3>🔧 Features</h3><ul>"
+  bugs="<h3>🐞 Bug Fixes</h3><ul>"
+  infra="<h3>👷 Infrastructure</h3><ul>"
 
   for (( i=0; i<=$(( total -1 )); i++ ))
   do
@@ -93,46 +90,36 @@ if [ "$total" -ne 0 ]; then
       volunteer_memo="<font size='1'>⭐ Contributed by a volunteer</font>"
     fi
 
-    ticket="<li><a href='https://jira.greenpeace.org/browse/${key}'>${key}</a> - ${summary}${volunteer_star}</li>\n"
-    ticket_md="- [${key}](https://jira.greenpeace.org/browse/${key}) - ${summary}\n"
+    ticket="<li><a href='https://jira.greenpeace.org/browse/${key}'>${key}</a> - ${summary}${volunteer_star}</li>"
 
     if [ "$track" == "Infra" ]; then
       infra="$infra$ticket"
-      infra_md="$infra_md$ticket_md"
     elif [ "$issuetype" == "Task" ]; then
       features="$features$ticket"
-      features_md="$features_md$ticket_md"
     else
       bugs="$bugs$ticket"
-      bugs_md="$bugs_md$ticket_md"
     fi
 
   done
 
-  features="$features</ul>\n"
-  bugs="$bugs</ul>\n"
-  infra="$infra</ul>\n"
+  features="$features</ul>"
+  bugs="$bugs</ul>"
+  infra="$infra</ul>"
 fi
 
-md="## ${VERSION} - ${now}\n\n"
-
 if [ ${#features} -gt 100 ]; then
-  changelog="$changelog$features\n"
-  md="$md$features_md"
+  changelog="$changelog$features"
 fi
 
 if [ ${#bugs} -gt 100 ]; then
-  changelog="$changelog$bugs\n"
-  md="$md$bugs_md"
+  changelog="$changelog$bugs"
 fi
 
 if [ ${#infra} -gt 100 ]; then
-  changelog="$changelog$infra\n"
-  md="$md$infra_md"
+  changelog="$changelog$infra"
 fi
 
-changelog="$changelog\n$volunteer_memo\n"
-md="\n$md"
+changelog="$changelog$volunteer_memo"
 
 # Send Changelog to email
 MSG_SUBJECT="[Release] v$VERSION 🤖"
@@ -168,19 +155,3 @@ curl --request POST \
   --header "Authorization: Bearer $SENDGRID_API_KEY" \
   --header 'Content-Type: application/json' \
   --data "${json}"
-
-# Commit Chagelog to Gitbook
-git config user.email "circleci-bot@greenpeace.org"
-git config user.name "CircleCI Bot"
-git config push.default simple
-commit_message=":robot: Changelog $VERSION"
-git clone -b master git@github.com:greenpeace/planet4-docs.git
-cd planet4-docs/docs/tech/changelog/
-first=$(head -n 8 README.md)
-last=$(tail -n +9 README.md)
-echo "$first" > README.md
-echo -e "$md" >> README.md
-echo "$last" >> README.md
-git add README.md
-git commit -m "$commit_message"
-git push origin master
