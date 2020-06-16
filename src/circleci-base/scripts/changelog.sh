@@ -90,7 +90,7 @@ if [ "$total" -ne 0 ]; then
     volunteer_star=""
     if [ "$assignee" == "volunteer" ]; then
       volunteer_star=" <font size='1'>⭐</font>"
-      volunteer_memo="<font size='1'>⭐ Contributed by a volunteer</font>"
+      volunteer_memo="<font size='1'>⭐ Community contributed</font>"
     fi
 
     ticket="<li><a href='https://jira.greenpeace.org/browse/${key}'>${key}</a> - ${summary}${volunteer_star}</li>"
