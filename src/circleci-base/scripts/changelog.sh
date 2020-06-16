@@ -74,6 +74,9 @@ if [ "$total" -ne 0 ]; then
   features="<h3>🔧 Features</h3><ul>"
   bugs="<h3>🐞 Bug Fixes</h3><ul>"
   infra="<h3>👷 Infrastructure</h3><ul>"
+  features_md="### Features\n\n"
+  bugs_md="\n### Bug Fixes\n\n"
+  infra_md="\n### Infrastructure\n\n"
 
   for (( i=0; i<=$(( total -1 )); i++ ))
   do
@@ -91,13 +94,17 @@ if [ "$total" -ne 0 ]; then
     fi
 
     ticket="<li><a href='https://jira.greenpeace.org/browse/${key}'>${key}</a> - ${summary}${volunteer_star}</li>"
+    ticket_md="- [${key}](https://jira.greenpeace.org/browse/${key}) - ${summary}\n"
 
     if [ "$track" == "Infra" ]; then
       infra="$infra$ticket"
+      infra_md="$infra_md$ticket_md"
     elif [ "$issuetype" == "Task" ]; then
       features="$features$ticket"
+      features_md="$features_md$ticket_md"
     else
       bugs="$bugs$ticket"
+      bugs_md="$bugs_md$ticket_md"
     fi
 
   done
@@ -107,19 +114,25 @@ if [ "$total" -ne 0 ]; then
   infra="$infra</ul>"
 fi
 
+md="## ${VERSION} - ${now}\n\n"
+
 if [ ${#features} -gt 100 ]; then
   changelog="$changelog$features"
+  md="$md$features_md"
 fi
 
 if [ ${#bugs} -gt 100 ]; then
   changelog="$changelog$bugs"
+  md="$md$bugs_md"
 fi
 
 if [ ${#infra} -gt 100 ]; then
   changelog="$changelog$infra"
+  md="$md$infra_md"
 fi
 
 changelog="$changelog$volunteer_memo"
+md="\n$md"
 
 # Send Changelog to email
 MSG_SUBJECT="[Release] v$VERSION 🤖"
@@ -155,3 +168,19 @@ curl --request POST \
   --header "Authorization: Bearer $SENDGRID_API_KEY" \
   --header 'Content-Type: application/json' \
   --data "${json}"
+
+# Commit Chagelog to Gitbook
+git clone -b master git@github.com:greenpeace/planet4-docs.git
+cd planet4-docs/docs/tech/changelog/
+git config user.email "circleci-bot@greenpeace.org"
+git config user.name "CircleCI Bot"
+git config push.default simple
+commit_message=":robot: Changelog $VERSION"
+first=$(head -n 8 README.md)
+last=$(tail -n +9 README.md)
+echo "$first" > README.md
+echo -e "$md" >> README.md
+echo "$last" >> README.md
+git add README.md
+git commit -m "$commit_message"
+git push origin master
