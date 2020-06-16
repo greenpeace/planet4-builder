@@ -57,7 +57,7 @@ do
       if [ -e "$f" ]
       then
         echo " - $f"
-        sed -i "s|\"greenpeace\\/${reponame}\" : \".*\",|\"greenpeace\\/${reponame}\" : \"dev-${branch}\",|g" "${f}"
+        sed -i "s|\"greenpeace\\/${reponame}\" \?: \".*\",|\"greenpeace\\/${reponame}\" : \"dev-${branch}\",|g" "${f}"
       fi
     done
 
