@@ -9,7 +9,7 @@ fi
 VERSION="$1"
 
 now="$(date +'%Y-%m-%d')"
-volunteer_memo=""
+contributor_memo=""
 
 changelog="<h2>${VERSION} - ${now}</h2>"
 
@@ -87,13 +87,13 @@ if [ "$total" -ne 0 ]; then
     issuetype="${issuetypes[$i]}"
 
 
-    volunteer_star=""
-    if [ "$assignee" == "volunteer" ]; then
-      volunteer_star=" <font size='1'>⭐</font>"
-      volunteer_memo="<font size='1'>⭐ Community contributed</font>"
+    contributor_star=""
+    if [ "$assignee" == "contributor" ]; then
+      contributor_star=" <font size='1'>⭐</font>"
+      contributor_memo="<font size='1'>⭐ Community contributed</font>"
     fi
 
-    ticket="<li><a href='https://jira.greenpeace.org/browse/${key}'>${key}</a> - ${summary}${volunteer_star}</li>"
+    ticket="<li><a href='https://jira.greenpeace.org/browse/${key}'>${key}</a> - ${summary}${contributor_star}</li>"
     ticket_md="- [${key}](https://jira.greenpeace.org/browse/${key}) - ${summary}\n"
 
     if [ "$track" == "Infra" ]; then
@@ -131,7 +131,7 @@ if [ ${#infra} -gt 100 ]; then
   md="$md$infra_md"
 fi
 
-changelog="$changelog$volunteer_memo"
+changelog="$changelog$contributor_memo"
 md="\n$md"
 
 # Send Changelog to email
