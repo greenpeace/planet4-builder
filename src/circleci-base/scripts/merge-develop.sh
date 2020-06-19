@@ -3,7 +3,7 @@ set -euo pipefail
 
 # Description: Automatically merge develop branch to master on each commit
 
-GIT_COMMIT_MESSAGE=$(git --git-dir=/tmp/workspace/.git log --format=%B -n 1 "$CIRCLE_SHA1")
+GIT_COMMIT_MESSAGE=$(git --git-dir=/tmp/workspace/src/.git log --format=%B -n 1 "$CIRCLE_SHA1")
 if [[ $GIT_COMMIT_MESSAGE == *"[DEV]"* ]]; then
   echo "Not merging. There a DEV prefix"
   exit 0
