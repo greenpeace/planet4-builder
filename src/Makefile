@@ -26,9 +26,7 @@ APP_ENVIRONMENT     ?= production
 # The branch to checkout of GIT_SOURCE, eg:
 # Use local branch name if not set
 
-ifeq ($(strip $(APP_ENVIRONMENT)),staging)
-GIT_REF ?= release
-else ifeq ($(strip $(APP_ENVIRONMENT)),development)
+ifeq ($(strip $(APP_ENVIRONMENT)),development)
 GIT_REF ?= develop
 else
 GIT_REF ?= master
