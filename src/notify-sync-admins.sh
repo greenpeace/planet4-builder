@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 set -eu
 P4_SITE=${APP_HOSTNAME}/${APP_HOSTPATH}
-MSG_SUBJECT="Planet4 notification: In Two days a sync of production->staging and production->develop will happen"
-MSG_BODY="Hi there, <br> You receive this email because you are an administrator of the Planet4 website ${P4_SITE} . <br> As it is planned, every month on the 1st, an automatic sync will happen where the content of your production site will be copied to the staging and develop sites. <br> The content of the staging and develop sites will be overwritten. <br> Please keep somewhere else anything from your release or develop sites thaty ou would not like to be deleted. <br> You can read more at: https://planet4.greenpeace.org/handbook/dev-sync-your-production-environment-into-your-staging-and-develop-environments/"
+MSG_SUBJECT="[Planet 4] Automatic sync of production->staging->develop will happen in two days 🤖"
+MSG_BODY="Hi there,<br><br>You receive this email because you are an administrator of the Planet4 website ${P4_SITE}<br><br>As it is planned, every month on the 1st, an automatic sync will happen where the content of your production site will be copied to the staging and develop sites. <br> The content of the staging and develop sites will be overwritten. <br> Please keep somewhere else anything from your release or develop sites thaty ou would not like to be deleted.<br><br>You can read more at: https://planet4.greenpeace.org/handbook/dev-sync-your-production-environment-into-your-staging-and-develop-environments/"
+EMAIL_FROM="$RELEASE_EMAIL_FROM"
 GCLOUD_ZONE=us-central1-a
 
 
@@ -29,6 +30,7 @@ EMAIL_ADDRESS=$(kubectl --namespace "${HELM_NAMESPACE}" exec "$php" wp option ge
 
 
 json=$(jq -n \
+  --arg EMAIL_FROM "$EMAIL_FROM" \
   --arg EMAIL_ADDRESS "$EMAIL_ADDRESS" \
   --arg MSG_SUBJECT "$MSG_SUBJECT" \
   --arg MSG_BODY "$MSG_BODY" \
@@ -42,7 +44,7 @@ json=$(jq -n \
       ]
     }
   ],
-  "from": {"email": "planet4-pm-group@greenpeace.org"},
+  "from": {"email": $EMAIL_FROM},
   "subject": $MSG_SUBJECT,
   "content": [
     {
