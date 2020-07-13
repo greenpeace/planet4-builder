@@ -13,7 +13,6 @@ plugin_branch_env_vars=(
   "PLUGIN_BLOCKS_BRANCH"
   "PLUGIN_GUTENBERG_BLOCKS_BRANCH"
   "PLUGIN_ENGAGINGNETWORKS_BRANCH"
-  "PLUGIN_GUTENBERG_ENGAGINGNETWORKS_BRANCH"
 )
 
 built_assets_dir="${HOME}/source/built-dev-assets"
