@@ -68,7 +68,7 @@ do
           echo "CIRCLE_PR_USERNAME: ${CIRCLE_PR_USERNAME}"
           echo "CIRCLE_PR_REPONAME: ${CIRCLE_PR_REPONAME}"
           tmp=$(mktemp)
-          jq ".repositories |= [{\"type\": \"vcs\", \"url\": \"git@github.com:${FORK_USER}/${FORK_REPO}.git\"}] + ." "$f" > "$tmp"
+          jq ".repositories |= [{\"type\": \"vcs\", \"url\": \"https://github.com/${FORK_USER}/${FORK_REPO}\"}] + ." "$f" > "$tmp"
           mv "$tmp" "$f"
         fi
       fi
