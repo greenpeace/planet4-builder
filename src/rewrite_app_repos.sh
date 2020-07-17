@@ -58,7 +58,19 @@ do
       if [ -e "$f" ]
       then
         echo " - $f"
-        sed -i "s|\"greenpeace\\/${reponame}\" \?: \".*\",|\"greenpeace\\/${reponame}\" : \"dev-${branch}\",|g" "${f}"
+        tmp=$(mktemp)
+        jq ".require.\"greenpeace/${reponame}\" = \"dev-${branch}\"" "$f" > "$tmp"
+        mv "$tmp" "$f"
+
+        if [ -n "$FORK_USER" ]; then
+          echo "FORK_USER: ${FORK_USER}"
+          echo "FORK_REPO: ${FORK_REPO}"
+          echo "CIRCLE_PR_USERNAME: ${CIRCLE_PR_USERNAME}"
+          echo "CIRCLE_PR_REPONAME: ${CIRCLE_PR_REPONAME}"
+          tmp=$(mktemp)
+          jq ".repositories |= [{\"type\": \"vcs\", \"url\": \"git@github.com:${FORK_USER}/${FORK_REPO}.git\"}] + ." "$f" > "$tmp"
+          mv "$tmp" "$f"
+        fi
       fi
     done
 
