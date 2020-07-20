@@ -62,13 +62,14 @@ do
         jq ".require.\"greenpeace/${reponame}\" = \"dev-${branch}\"" "$f" > "$tmp"
         mv "$tmp" "$f"
 
-        if [ -n "$FORK_USER" ]; then
+        if [ -n "$FORK_USER" ] && [ "$FORK_REPO" == "$reponame" ]; then
           echo "FORK_USER: ${FORK_USER}"
           echo "FORK_REPO: ${FORK_REPO}"
           echo "CIRCLE_PR_USERNAME: ${CIRCLE_PR_USERNAME}"
           echo "CIRCLE_PR_REPONAME: ${CIRCLE_PR_REPONAME}"
+
           tmp=$(mktemp)
-          jq ".repositories |= [{\"type\": \"vcs\", \"url\": \"https://github.com/${FORK_USER}/${FORK_REPO}\"}] + ." "$f" > "$tmp"
+          jq ".repositories |= [{\"type\": \"path\", \"url\": \"/home/circleci/theme-src\"}] + ." "$f" > "$tmp"
           mv "$tmp" "$f"
         fi
       fi
