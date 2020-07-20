@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 set -o pipefail
 
-if [[ -z "$1" ]]
-then
+if [[ -z "$1" ]]; then
   current_version=$(git-current-tag.sh)
   new_version=$(increment-version.sh "$current_version")
 else

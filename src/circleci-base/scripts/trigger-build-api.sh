@@ -8,7 +8,7 @@ branch=${2:-develop}
 
 json=$(jq -n \
   --arg VAL "$branch" \
-'{
+  '{
 	"branch": $VAL
 }')
 

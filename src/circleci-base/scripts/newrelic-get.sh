@@ -5,5 +5,5 @@ endpoint=$1
 payload=$2
 
 curl -s -X GET "${endpoint}" \
-     -H "X-Api-Key:${NEWRELIC_REST_API_KEY}" \
-     "${payload}"
+  -H "X-Api-Key:${NEWRELIC_REST_API_KEY}" \
+  "${payload}"

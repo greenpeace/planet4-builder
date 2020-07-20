@@ -22,51 +22,46 @@ if [ "$retval" -ne 0 ]; then
   exit 1
 fi
 
-echo "$jira_json" | jq --raw-output '.issues []  | .key ' > /tmp/$$.keys
-echo "$jira_json" | jq --raw-output '.issues []  | .fields .summary ' > /tmp/$$.summaries
-echo "$jira_json" | jq --raw-output '.issues []  | .fields .customfield_12100 .value ' > /tmp/$$.tracks
-echo "$jira_json" | jq --raw-output '.issues []  | .fields .issuetype .name ' > /tmp/$$.issuetypes
-echo "$jira_json" | jq --raw-output '.issues []  | .fields .assignee .name ' > /tmp/$$.assignees
+echo "$jira_json" | jq --raw-output '.issues []  | .key ' >/tmp/$$.keys
+echo "$jira_json" | jq --raw-output '.issues []  | .fields .summary ' >/tmp/$$.summaries
+echo "$jira_json" | jq --raw-output '.issues []  | .fields .customfield_12100 .value ' >/tmp/$$.tracks
+echo "$jira_json" | jq --raw-output '.issues []  | .fields .issuetype .name ' >/tmp/$$.issuetypes
+echo "$jira_json" | jq --raw-output '.issues []  | .fields .assignee .name ' >/tmp/$$.assignees
 
 keys=()
 i=0
-while read -r line
-do
+while read -r line; do
   keys[i]=$line
   i=$((i + 1))
-done < /tmp/$$.keys
+done </tmp/$$.keys
 
 summaries=()
 i=0
-while read -r line
-do
+while read -r line; do
   summaries[i]=$line
   i=$((i + 1))
-done < /tmp/$$.summaries
+done </tmp/$$.summaries
 
 issuetypes=()
 i=0
-while read -r line
-do
+while read -r line; do
   issuetypes[i]=$line
   i=$((i + 1))
-done < /tmp/$$.issuetypes
+done </tmp/$$.issuetypes
 
 tracks=()
 i=0
-while read -r line
-do
+while read -r line; do
   tracks[i]=$line
   i=$((i + 1))
-done < /tmp/$$.tracks
+done </tmp/$$.tracks
 
 assignees=()
 i=0
-while read -r line
-do
+while read -r line; do
   assignees[i]=$line
   i=$((i + 1))
-done < /tmp/$$.assignees
+done </tmp/$$.assignees
 
 total=${#keys[*]}
 
@@ -78,14 +73,12 @@ if [ "$total" -ne 0 ]; then
   bugs_md="\n### Bug Fixes\n\n"
   infra_md="\n### Infrastructure\n\n"
 
-  for (( i=0; i<=$(( total -1 )); i++ ))
-  do
-    key=$(echo "${keys[$i]}" | xargs )
+  for ((i = 0; i <= $((total - 1)); i++)); do
+    key=$(echo "${keys[$i]}" | xargs)
     summary="${summaries[$i]}"
     assignee="${assignees[$i]}"
     track="${tracks[$i]}"
     issuetype="${issuetypes[$i]}"
-
 
     contributor_star=""
     if [ "$assignee" == "contributor" ]; then
@@ -144,7 +137,7 @@ json=$(jq -n \
   --arg EMAIL_FROM "$EMAIL_FROM" \
   --arg MSG_SUBJECT "$MSG_SUBJECT" \
   --arg MSG_BODY "$MSG_BODY" \
-'{
+  '{
   "personalizations": [
     {
       "to": [
@@ -178,9 +171,9 @@ git config push.default simple
 commit_message=":robot: Changelog $VERSION"
 first=$(head -n 8 README.md)
 last=$(tail -n +9 README.md)
-echo "$first" > README.md
-echo -e "$md" >> README.md
-echo "$last" >> README.md
+echo "$first" >README.md
+echo -e "$md" >>README.md
+echo "$last" >>README.md
 git add README.md
 git commit -m "$commit_message"
 git push origin master

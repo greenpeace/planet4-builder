@@ -6,8 +6,8 @@ set -euo pipefail
 
 # UTILITY
 
-function usage {
-  >&2 echo "Usage: $0 [-b|t] [-c <configfile>] ...
+function usage() {
+  echo >&2 "Usage: $0 [-b|t] [-c <configfile>] ...
 
 Build and test the CircleCI base image.
 
@@ -25,14 +25,15 @@ Options:
 [ -z ${TEMPLATE+x} ] && TEMPLATE=
 
 OPTIONS=':bt'
-while getopts $OPTIONS option
-do
-    case $option in
-        b  )    BUILD='true';;
-        t  )    TEMPLATE='true';;
-        *  )    usage
-                exit 1;;
-    esac
+while getopts $OPTIONS option; do
+  case $option in
+    b) BUILD='true' ;;
+    t) TEMPLATE='true' ;;
+    *)
+      usage
+      exit 1
+      ;;
+  esac
 done
 shift $((OPTIND - 1))
 
@@ -67,8 +68,7 @@ trap finish EXIT
     local file
     file="$1"
     declare -a var_array
-    while IFS=$'\n' read -r line
-    do
+    while IFS=$'\n' read -r line; do
       var_array+=("$line")
     done < <(grep '=' "${file}" | awk -F '=' '{if ($0!="" && $0 !~ /^\s*#/) print $1}' | sed -e "s/^/\"\${/" | sed -e "s/$/}\" \\\\/" | tr -s '}')
 
@@ -77,16 +77,15 @@ trap finish EXIT
 
   # Rewrite only the variables we want to change
   declare -a ENVVARS
-  while IFS=$'\n' read -r line
-  do
+  while IFS=$'\n' read -r line; do
     ENVVARS+=("$line")
   done < <(get_var_array "config.default")
 
   ENVVARS_STRING="$(printf "%s:" "${ENVVARS[@]}")"
   ENVVARS_STRING="${ENVVARS_STRING%:}"
 
-  envsubst "${ENVVARS_STRING}" < "src/circleci-base/templates/Dockerfile.in" > "src/circleci-base/Dockerfile.tmp"
-  envsubst "${ENVVARS_STRING}" < "README.md.in" > "README.md.tmp"
+  envsubst "${ENVVARS_STRING}" <"src/circleci-base/templates/Dockerfile.in" >"src/circleci-base/Dockerfile.tmp"
+  envsubst "${ENVVARS_STRING}" <"README.md.in" >"README.md.tmp"
 
   DOCKER_BUILD_STRING="# greenpeaceinternational/circleci-base:${BUILD_TAG}
 # $(echo "${APPLICATION_DESCRIPTION}" | tr -d '"')
@@ -101,12 +100,12 @@ trap finish EXIT
 
   _build "Rewriting Dockerfile from template ..."
   echo "${DOCKER_BUILD_STRING}
-$(cat "src/circleci-base/Dockerfile.tmp")" > "src/circleci-base/Dockerfile"
+$(cat "src/circleci-base/Dockerfile.tmp")" >"src/circleci-base/Dockerfile"
   rm "src/circleci-base/Dockerfile.tmp"
 
   _build "Rewriting README.md from template ..."
   echo "$(cat "README.md.tmp")
-Build: ${CIRCLE_BUILD_URL:-"(local)"}" > "README.md"
+Build: ${CIRCLE_BUILD_URL:-"(local)"}" >"README.md"
   rm "README.md.tmp"
 
   # -----------------------------------------------------------------------------
@@ -121,8 +120,7 @@ Build: ${CIRCLE_BUILD_URL:-"(local)"}" > "README.md"
   [[ -n "${BUILD_BRANCH}" ]] && docker tag "greenpeaceinternational/circleci-base:${BUILD_NUM}" "greenpeaceinternational/circleci-base:${BUILD_BRANCH}"
 }
 
-if [[ "$BUILD" != "true" ]] && [[ "${TEMPLATE}" != "true" ]]
-then
+if [[ "$BUILD" != "true" ]] && [[ "${TEMPLATE}" != "true" ]]; then
   _notice "No build option specified"
   echo
   usage

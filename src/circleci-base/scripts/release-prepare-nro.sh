@@ -13,15 +13,14 @@ set -euo pipefail
 git_message=$(git --git-dir=/tmp/workspace/src/.git log --format=%B -n 1 "$CIRCLE_SHA1")
 echo "The git message is:"
 echo "-----------"
-echo "$git_message";
+echo "$git_message"
 echo "-----------"
 
 # If the commit message contains [DEV] don't promote to release
 if [[ $git_message == *"[DEV]"* ]]; then
-    echo "The dev prefix exists so skipping release auto-promotion"
-    exit 0;
+  echo "The dev prefix exists so skipping release auto-promotion"
+  exit 0
 fi
-
 
 old_release=$(git-current-tag.sh)
 new_release=$(git-new-version.sh)
@@ -41,8 +40,7 @@ merged=false
 mkdir -p /tmp/workspace
 
 echo "-- 1.0   Before the first if"
-if release-start.sh "$new_release"
-then
+if release-start.sh "$new_release"; then
   echo "-- 1.1   New release branch created: release/$new_release"
   merged=true
 else
@@ -58,7 +56,7 @@ else
 
   grep -q "Already up-to-date." /tmp/workspace/merge.log || {
     echo "-- 1.2   We merged changes from develop into release/$new_release"
-    merged=true;
+    merged=true
   }
 fi
 
@@ -68,14 +66,12 @@ echo "-- 2.0   Performing automated release modifications ..."
 pin-composer-versions.sh
 
 # If there are any local changes
-if ! git diff --exit-code
-then
+if ! git diff --exit-code; then
   echo "-- 2.1   Staging modifications"
   # Stage changes
   git add .
 
-  if [[ "$merged" = "true" ]]
-  then
+  if [[ "$merged" = "true" ]]; then
     echo "-- 2.1.1 Since we've merged changes from develop, let's amend that commit"
     git commit --amend --no-edit --allow-empty
   else
@@ -85,8 +81,7 @@ then
   fi
 fi
 
-if [[ "$merged" = "false" ]]
-then
+if [[ "$merged" = "false" ]]; then
   # No local changes
   repo=$(git remote get-url origin | cut -d'/' -f 2 | cut -d'.' -f1)
   echo "-- 3.1   No changes to merge. Triggering $repo@release/$new_release via API"
@@ -97,8 +92,7 @@ else
   git push -u origin "release/$new_release"
 
   # Tidy up old releases
-  for release in $(git ls-remote --heads origin | grep release/ | cut -f2)
-  do
+  for release in $(git ls-remote --heads origin | grep release/ | cut -f2); do
     [[ $release =~ release/$new_release ]] || {
       echo "Deleting stale branch: release/$release"
       git push origin --delete "${release}"
