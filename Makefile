@@ -70,6 +70,7 @@ export BUILD_TAG
 
 DOCKER := $(shell command -v docker 2> /dev/null)
 SHELLCHECK := $(shell command -v shellcheck 2> /dev/null)
+SHFMT := $(shell command -v shfmt 2> /dev/null)
 YAMLLINT := $(shell command -v yamllint 2> /dev/null)
 
 # ---
@@ -97,6 +98,14 @@ clean:
 		@rm -f README.md $(SRC)/circleci-base/Dockerfile
 		@$(MAKE) -C test clean
 
+format: format-sh
+
+format-sh:
+ifndef SHFMT
+$(error "shfmt is not installed: https://github.com/mvdan/sh")
+endif
+	@shfmt -i 2 -ci -w .
+
 lint: init lint-yaml lint-sh lint-docker
 
 lint-yaml:
@@ -109,8 +118,11 @@ lint-sh:
 ifndef SHELLCHECK
 	$(error "shellcheck is not installed: https://github.com/koalaman/shellcheck")
 endif
-		@find . -type f -name '*.sh' | xargs $(SHELLCHECK) -x
-		@find src/circleci-base/bin/* -type f | xargs $(SHELLCHECK) -x
+ifndef SHFMT
+$(error "shfmt is not installed: https://github.com/mvdan/sh")
+endif
+	@shfmt -f . | xargs shellcheck -x
+	@shfmt -i 2 -ci -d .
 
 lint-docker: $(SRC)/$(IMAGE)/Dockerfile
 ifndef DOCKER
