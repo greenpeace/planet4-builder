@@ -29,11 +29,11 @@ build_assets() {
   npm ci --prefix "${reponame}" "${reponame}"
   npm run-script --prefix "${reponame}" build
 
-  if [[ "${reponame}" == *theme ]]; then \
-      subdir="themes"; \
-  else \
-      subdir="plugins"; \
-  fi; \
+  if [[ "${reponame}" == *theme ]]; then
+    subdir="themes"
+  else
+    subdir="plugins"
+  fi
 
   buildDir="${built_assets_dir}/public/wp-content/${subdir}/${reponame}/assets/build/"
   mkdir -p "${buildDir}"
@@ -41,9 +41,8 @@ build_assets() {
   rm -rf "${reponame}"
 }
 
-for plugin_branch_env_var in "${plugin_branch_env_vars[@]}"
-do
-  reponame=planet4-$( echo "${plugin_branch_env_var%_*}" | tr '[:upper:]' '[:lower:]' | sed 's/_/-/g')
+for plugin_branch_env_var in "${plugin_branch_env_vars[@]}"; do
+  reponame=planet4-$(echo "${plugin_branch_env_var%_*}" | tr '[:upper:]' '[:lower:]' | sed 's/_/-/g')
   composer_dev_prefix="dev-"
   # temp solution to remove it and add it again where it is needed. It would be better if this script got branchname
   # without dev- before it, so stripping it as the first thing allows us to change that
@@ -51,10 +50,8 @@ do
 
   if [ -n "${!plugin_branch_env_var}" ]; then
     echo "Replacing ${reponame} with branch ${branch} from environment variable"
-    for f in "${composer_files[@]}"
-    do
-      if [ -e "$f" ]
-      then
+    for f in "${composer_files[@]}"; do
+      if [ -e "$f" ]; then
         echo " - $f"
         sed -i "s|\"greenpeace\\/${reponame}\" \?: \".*\",|\"greenpeace\\/${reponame}\" : \"dev-${branch}\",|g" "${f}"
       fi
@@ -70,11 +67,10 @@ do
   repo_branch=""
 
   # now go throuhg the composer file and see if there are any dev branches for planet4 plugins or theme
-  for f in "${composer_files[@]}"
-  do
+  for f in "${composer_files[@]}"; do
     if [ -e "$f" ]; then
       json_path=".require.\"greenpeace/${reponame}\""
-      plugin_version=$(jq -r "${json_path} // empty" < "${f}")
+      plugin_version=$(jq -r "${json_path} // empty" <"${f}")
       branch=${plugin_version#"$composer_dev_prefix"}
 
       if [ -n "$branch" ]; then

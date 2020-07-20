@@ -13,13 +13,11 @@ main() {
     -l "release=${HELM_RELEASE},component=php" \
     -o jsonpath="{.items[-1:].metadata.name}")
 
-  if [[ -z "$php" ]]
-  then
-    >&2 echo "ERROR: php pod not found in release ${HELM_RELEASE}"
+  if [[ -z "$php" ]]; then
+    echo >&2 "ERROR: php pod not found in release ${HELM_RELEASE}"
   fi
 
-  if kubectl exec -n "${HELM_NAMESPACE}" "$php" -- wp plugin activate --all
-  then
+  if kubectl exec -n "${HELM_NAMESPACE}" "$php" -- wp plugin activate --all; then
     return 0
   fi
 
@@ -28,5 +26,5 @@ main() {
 
 retry main && exit 0
 
->&2 echo "FAILED"
+echo >&2 "FAILED"
 exit 1

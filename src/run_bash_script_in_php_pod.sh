@@ -6,9 +6,8 @@ external_script=$1
 base_external_script=$(basename "$external_script")
 shift
 
-if [[ ! -e "$external_script" ]]
-then
-  >&2 echo "ERROR: file does not exist: '$1'"
+if [[ ! -e "$external_script" ]]; then
+  echo >&2 "ERROR: file does not exist: '$1'"
   exit 1
 fi
 
@@ -18,9 +17,8 @@ php=$(kubectl get pods --namespace "${HELM_NAMESPACE}" \
   -l "release=${HELM_RELEASE},component=php" \
   -o jsonpath="{.items[-1:].metadata.name}")
 
-if [[ -z "$php" ]]
-then
-  >&2 echo "ERROR: php pod not found in release ${HELM_RELEASE}"
+if [[ -z "$php" ]]; then
+  echo >&2 "ERROR: php pod not found in release ${HELM_RELEASE}"
   exit 1
 fi
 

@@ -6,35 +6,29 @@ MSG_BODY="Hi there,<br><br>You receive this email because you are an administrat
 EMAIL_FROM="$RELEASE_EMAIL_FROM"
 GCLOUD_ZONE=us-central1-a
 
-
 gcloud container clusters get-credentials "${GCLOUD_CLUSTER}" \
---zone "${GCLOUD_ZONE}" \
---project "${GOOGLE_PROJECT_ID}"
-
+  --zone "${GCLOUD_ZONE}" \
+  --project "${GOOGLE_PROJECT_ID}"
 
 php=$(kubectl get pods --namespace "${HELM_NAMESPACE}" \
-    --sort-by=.metadata.creationTimestamp \
-    --field-selector=status.phase=Running \
-    -l "release=${HELM_RELEASE},component=php" \
-    -o jsonpath="{.items[-1:].metadata.name}")
+  --sort-by=.metadata.creationTimestamp \
+  --field-selector=status.phase=Running \
+  -l "release=${HELM_RELEASE},component=php" \
+  -o jsonpath="{.items[-1:].metadata.name}")
 
-if [[ -z "$php" ]]
-then
+if [[ -z "$php" ]]; then
   echo "ERROR: PHP pod not found!"
   exit 1
 fi
 
 EMAIL_ADDRESS=$(kubectl --namespace "${HELM_NAMESPACE}" exec "$php" wp option get admin_email)
 
-
-
-
 json=$(jq -n \
   --arg EMAIL_FROM "$EMAIL_FROM" \
   --arg EMAIL_ADDRESS "$EMAIL_ADDRESS" \
   --arg MSG_SUBJECT "$MSG_SUBJECT" \
   --arg MSG_BODY "$MSG_BODY" \
-'{
+  '{
   "personalizations": [
     {
       "to": [
