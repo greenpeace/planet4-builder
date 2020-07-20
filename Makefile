@@ -50,6 +50,7 @@ DOCKER := $(shell command -v docker 2> /dev/null)
 COMPOSER := $(shell command -v composer 2> /dev/null)
 JQ := $(shell command -v jq 2> /dev/null)
 SHELLCHECK := $(shell command -v shellcheck 2> /dev/null)
+SHFMT := $(shell command -v shfmt 2> /dev/null)
 YAMLLINT := $(shell command -v yamllint 2> /dev/null)
 
 # ============================================================================
@@ -74,6 +75,10 @@ ifndef SHELLCHECK
 $(error "shellcheck is not installed: https://github.com/koalaman/shellcheck")
 endif
 	@find . -type f -name '*.sh' | xargs shellcheck
+ifndef SHFMT
+$(error "shfmt is not installed: https://github.com/mvdan/sh")
+endif
+	@shfmt -i 2 -ci -d .
 
 lint-yaml:
 ifndef YAMLLINT
