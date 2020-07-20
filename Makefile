@@ -74,10 +74,10 @@ lint-sh:
 ifndef SHELLCHECK
 $(error "shellcheck is not installed: https://github.com/koalaman/shellcheck")
 endif
-	@find . -type f -name '*.sh' | xargs shellcheck
 ifndef SHFMT
 $(error "shfmt is not installed: https://github.com/mvdan/sh")
 endif
+	@shfmt -f . | xargs shellcheck
 	@shfmt -i 2 -ci -d .
 
 lint-yaml:
