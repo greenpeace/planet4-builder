@@ -26,7 +26,14 @@ build_assets() {
   branch="$1"
   reponame="$2"
 
-  git clone --recurse-submodules --single-branch --branch "${branch}" https://github.com/greenpeace/"${reponame}"
+  if [ -n "$FORK_USER" ] && [ "$FORK_REPO" == "$reponame" ]; then
+    mkdir -p "$reponame"
+    cp -r /home/circleci/theme-src/. "$reponame"
+    git -C "$reponame" submodule init
+    git -C "$reponame" submodule update --remote
+  else
+    git clone --recurse-submodules --single-branch --branch "${branch}" https://github.com/greenpeace/"${reponame}"
+  fi
 
   npm ci --prefix "${reponame}" "${reponame}"
   NODE_OPTIONS=--max_old_space_size=1024 npm run-script --prefix "${reponame}" build
