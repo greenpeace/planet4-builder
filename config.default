@@ -30,6 +30,9 @@ JUNIT_MERGE_VERSION=2.0.0
 # https://shellcheck.storage.googleapis.com/index.html
 SHELLCHECK_VERSION=0.7.1
 
+# https://github.com/mvdan/sh/releases
+SHFMT_VERSION=3.1.2
+
 # https://www.npmjs.com/package/tap-xunit
 TAP_XUNIT_VERSION=2.4.1
 
