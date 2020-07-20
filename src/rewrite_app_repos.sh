@@ -118,7 +118,7 @@ do
 
   if [ -n "$repo_branch" ]; then
     echo "Building assets for ${reponame} at branch ${repo_branch}"
-    time build_assets "$repo_branch" "$reponame" &
+    time PS4="__$reponame: " build_assets "$repo_branch" "$reponame" &
     pids+=($!)
   fi
 done
