@@ -68,6 +68,14 @@ init: .git/hooks/pre-commit
 clean:
 	rm -f src/Dockerfile
 
+format: format-sh
+
+format-sh:
+ifndef SHFMT
+$(error "shfmt is not installed: https://github.com/mvdan/sh")
+endif
+	@shfmt -i 2 -ci -w .
+
 lint: init lint-sh lint-yaml lint-json lint-composer lint-docker lint-ci
 
 lint-sh:
