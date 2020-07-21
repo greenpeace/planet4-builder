@@ -6,4 +6,4 @@ MSG_TITLE="${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME} @ ${CIRCLE_BRAN
 MSG_LINK="https://circleci.com/workflow-run/${CIRCLE_WORKFLOW_WORKSPACE_ID}" \
 MSG_TEXT="Build: #${CIRCLE_BUILD_NUM} ${EXTRA_TEXT:-}" \
 MSG_COLOUR="lightblue" \
-"${HOME}/scripts/notify-rocketchat.sh"
+"${HOME}/scripts/notify-slack.sh"

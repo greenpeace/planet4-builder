@@ -38,4 +38,4 @@ json=$(jq -n \
 
 curl -X POST -H 'Content-Type: application/json' \
   --data "$json" \
-  "${ROCKETCHAT_HOOK}"
+  "${SLACK_INFRA_WEBHOOK}"
