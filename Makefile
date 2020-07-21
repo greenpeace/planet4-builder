@@ -72,7 +72,7 @@ format: format-sh
 
 format-sh:
 ifndef SHFMT
-$(error "shfmt is not installed: https://github.com/mvdan/sh")
+	$(error "shfmt is not installed: https://github.com/mvdan/sh")
 endif
 	@shfmt -i 2 -ci -w .
 
@@ -80,10 +80,10 @@ lint: init lint-sh lint-yaml lint-json lint-composer lint-docker lint-ci
 
 lint-sh:
 ifndef SHELLCHECK
-$(error "shellcheck is not installed: https://github.com/koalaman/shellcheck")
+	$(error "shellcheck is not installed: https://github.com/koalaman/shellcheck")
 endif
 ifndef SHFMT
-$(error "shfmt is not installed: https://github.com/mvdan/sh")
+	$(error "shfmt is not installed: https://github.com/mvdan/sh")
 endif
 	@shfmt -f . | xargs shellcheck
 	@shfmt -i 2 -ci -d .
