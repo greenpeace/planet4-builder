@@ -10,9 +10,7 @@ composer_files=(
 
 plugin_branch_env_vars=(
   "MASTER_THEME_BRANCH"
-  "PLUGIN_BLOCKS_BRANCH"
   "PLUGIN_GUTENBERG_BLOCKS_BRANCH"
-  "PLUGIN_ENGAGINGNETWORKS_BRANCH"
 )
 
 pids=()
@@ -26,9 +24,11 @@ build_assets() {
   branch="$1"
   reponame="$2"
 
-  if [ -n "$FORK_USER" ] && [ "$FORK_REPO" == "$reponame" ]; then
+  # If the repository name is the repository of the current job, the code will already be checked out, even if it's a
+  # fork PR.
+  if [ "$CIRCLE_PROJECT_REPONAME" == "$reponame" ]; then
     mkdir -p "$reponame"
-    cp -r /home/circleci/theme-src/. "$reponame"
+    cp -r "/home/circleci/checkout/${reponame}/." "$reponame"
     git -C "$reponame" submodule init
     git -C "$reponame" submodule update --remote
   else
@@ -69,14 +69,10 @@ do
         jq ".require.\"greenpeace/${reponame}\" = \"dev-${branch}\"" "$f" > "$tmp"
         mv "$tmp" "$f"
 
-        if [ -n "$FORK_USER" ] && [ "$FORK_REPO" == "$reponame" ]; then
-          echo "FORK_USER: ${FORK_USER}"
-          echo "FORK_REPO: ${FORK_REPO}"
-          echo "CIRCLE_PR_USERNAME: ${CIRCLE_PR_USERNAME}"
-          echo "CIRCLE_PR_REPONAME: ${CIRCLE_PR_REPONAME}"
-
+        # If builder is running for the theme or plugin, then we can use the checked out code of the current commit.
+        if [ "$CIRCLE_PROJECT_REPONAME" == "$reponame" ]; then
           tmp=$(mktemp)
-          jq ".repositories |= [{\"type\": \"path\", \"url\": \"/home/circleci/theme-src\"}] + ." "$f" > "$tmp"
+          jq ".repositories |= [{\"type\": \"path\", \"url\": \"/home/circleci/checkout/${reponame}\"}] + ." "$f" > "$tmp"
           mv "$tmp" "$f"
         fi
       fi
