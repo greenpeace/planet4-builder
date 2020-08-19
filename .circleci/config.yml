@@ -5,7 +5,7 @@ defaults: &defaults
   environment:
     GOOGLE_PROJECT_ID: planet-4-151612
   docker:
-    - image: greenpeaceinternational/circleci-base:PLANET-5322-add-shfmt
+    - image: greenpeaceinternational/circleci-base:latest
   working_directory: /home/circleci/app
 
 jobs:
