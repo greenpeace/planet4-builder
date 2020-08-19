@@ -6,8 +6,8 @@ set -eu
 # Set application name from first parameter,
 # fallback to NEWRELIC_APPNAME or error if unset
 # Replace spaces with + characters
-appname=$(tr ' ' '+' <<< "${1:-${NEWRELIC_APPNAME}}")
+appname=$(tr ' ' '+' <<<"${1:-${NEWRELIC_APPNAME}}")
 
 curl -s -X GET "https://api.newrelic.com/v2/applications.json" \
-     -H "X-Api-Key:${NEWRELIC_REST_API_KEY}" \
-     -G -d "filter[name]=${appname}" | jq ".applications[].id"
+  -H "X-Api-Key:${NEWRELIC_REST_API_KEY}" \
+  -G -d "filter[name]=${appname}" | jq ".applications[].id"

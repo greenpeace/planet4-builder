@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-if [ -z "$(git tag)" ]
-then
+if [ -z "$(git tag)" ]; then
   exit 0
 fi
 

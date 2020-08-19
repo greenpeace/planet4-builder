@@ -5,18 +5,17 @@ FOLDER="/tmp/workspace/"
 mkdir -p "$FOLDER"
 cd "$FOLDER" || exit 1
 
-REPOS=( \
-  planet4-master-theme \
-  planet4-plugin-gutenberg-blocks \
-  planet4-landing-page \
+REPOS=(
+  planet4-master-theme
+  planet4-plugin-gutenberg-blocks
+  planet4-landing-page
 )
 
-for repo in "${REPOS[@]}"
-do
+for repo in "${REPOS[@]}"; do
   echo "Cloning repository"
   echo
   printf "%s" "$repo"
-	echo
+  echo
 
   git clone --recurse-submodules git@github.com:greenpeace/"$repo" "$repo"
 

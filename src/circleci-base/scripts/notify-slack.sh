@@ -21,7 +21,7 @@ json=$(jq -n \
   --arg MSG_TEXT "$MSG_TEXT" \
   --arg MSG_COLOUR "$MSG_COLOUR" \
   --arg MSG_IMAGE "$MSG_IMAGE" \
-'{
+  '{
   "username": $MSG_USERNAME,
   "text": $MSG_TYPE,
   "icon_url": $MSG_ICON,

@@ -3,13 +3,12 @@ set -euo pipefail
 
 DEBUG=${DEBUG:-0}
 
-debug () {
+debug() {
   [ "$DEBUG" -eq 0 ] && return
   printf "%s\\n" "$*"
 }
 
-if [ $# -gt 0 ]
-then
+if [ $# -gt 0 ]; then
   # Detect promotion string in first argument or most recent commit message
   message="$*"
   debug "Parsing argument for command: '$message'"
@@ -25,14 +24,12 @@ fi
   #  [ci tag 1.2.30]
   #  [ci tag v1.22.3]
   #  [ci tag v1.2.3-testing]
-  if grep -qE '\[ci (promote|tag|release) v?[[:digit:]]+\.[[:digit:]]+.*\]' <<< "$message"
-  then
+  if grep -qE '\[ci (promote|tag|release) v?[[:digit:]]+\.[[:digit:]]+.*\]' <<<"$message"; then
     # Detect version string
     regex='\[ci (promote|tag|release) (v?[[:digit:]]+\.[[:digit:]]+.*)\]'
     debug "Checking message: $message"
     debug "Against regex: $regex"
-    if [[ $message =~ $regex ]]
-    then
+    if [[ $message =~ $regex ]]; then
       tag="${BASH_REMATCH[2]}"
       echo "$tag"
       debug "Version string found: ${tag}"
@@ -47,16 +44,14 @@ fi
 
 # Fallback to incrementing latest tag
 current_version=$(git-current-tag.sh)
-if [[ -z "$current_version" ]]
-then
+if [[ -z "$current_version" ]]; then
   debug "Previous version not detected"
 else
   debug "Found existing tag: $current_version"
 fi
 
 tag=$(increment-version.sh "$current_version")
-if [[ -z "$tag" ]]
-then
+if [[ -z "$tag" ]]; then
   debug "Error generating new version string: '$tag'"
   exit 1
 fi

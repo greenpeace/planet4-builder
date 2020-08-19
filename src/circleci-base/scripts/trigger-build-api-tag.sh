@@ -8,7 +8,7 @@ tag=$2
 
 json=$(jq -n \
   --arg VAL "$tag" \
-'{
+  '{
 	"tag": $VAL
 }')
 
