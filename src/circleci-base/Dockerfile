@@ -1,14 +1,14 @@
-# gcr.io/planet-4-151612/circleci-base:v0.7.7
+# greenpeaceinternational/circleci-base:v0.7.38
 # Base image for performing CI/CD operations in CircleCI
-# Branch: develop
-# Commit: 17cafb613991e4ad3f8a53f24eaa9eb7802a0743
-# Build:  build-1402
+# Branch: v0.7.38
+# Commit: 2b36582e062b14cdd9eb76a4f7534099b6bf9d17
+# Build:  build-1611
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
 # ------------------------------------------------------------------------
 
-FROM circleci/php:7.0-node
+FROM circleci/php:7.3-node
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
@@ -20,13 +20,16 @@ ENV CIRCLECI_USER=circleci \
 
 USER root
 
-RUN apt-get install -y --no-install-recommends \
+# hadolint ignore=DL3008
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
       gawk \
       gettext \
-      mysql-client \
+      default-mysql-client \
       python-pip \
       python-pkg-resources \
       python-setuptools \
+      rsync \
       silversearcher-ag \
       vim \
       wget \
@@ -35,41 +38,50 @@ RUN apt-get install -y --no-install-recommends \
     rm -rf /var/lib/apt/lists/*
 
 RUN pip install \
-      yamllint==1.14.0 \
-      yq==2.7.2
+      yamllint==1.23.0 \
+      yq==2.10.1
+
 RUN git config --global alias.unstaged 'diff --name-only' && \
     git config --global alias.staged 'diff --name-only --cached'
-
 
 RUN npm install -g \
       bats@1.1.0 \
       junit-merge@2.0.0 \
-      tap-xunit@2.3.0
+      tap-xunit@2.4.1
 
 WORKDIR /home/circleci
 
 COPY --chown=circleci:circleci .curlrc /home/circleci
 
 RUN mkdir -p scripts && \
-    echo "Git Flow v1.11.0 ..." && \
-    curl https://raw.githubusercontent.com/petervanderdoes/gitflow-avh/develop/contrib/gitflow-installer.sh | bash -s install version 1.11.0 && \
+    echo "Git Flow v1.12.3 ..." && \
+    curl https://raw.githubusercontent.com/petervanderdoes/gitflow-avh/develop/contrib/gitflow-installer.sh | bash -s install version 1.12.3 && \
     rm -fr git-flow && \
     chown -R circleci:circleci /usr/local/bin
 
 USER circleci
 
-RUN echo "Hadolint v1.16.0 ..." && \
-    curl -sS "https://github.com/hadolint/hadolint/releases/download/v1.16.0/hadolint-Linux-x86_64" -o /usr/local/bin/hadolint && \
+RUN echo "Hadolint v1.18.0 ..." && \
+    curl -sS "https://github.com/hadolint/hadolint/releases/download/v1.18.0/hadolint-Linux-x86_64" -o /usr/local/bin/hadolint && \
     chmod 755 /usr/local/bin/hadolint && \
-    echo "Shellcheck v0.6.0 ..." && \
-    curl -sS "https://shellcheck.storage.googleapis.com/shellcheck-v0.6.0.linux.x86_64.tar.xz" -o /tmp/shellcheck.tar.xz && \
+    echo "Shellcheck v0.7.1 ..." && \
+    curl -sS "https://github.com/koalaman/shellcheck/releases/download/v0.7.1/shellcheck-v0.7.1.linux.x86_64.tar.xz" -o /tmp/shellcheck.tar.xz && \
     tar xf /tmp/shellcheck.tar.xz -C /tmp/ && \
-    mv /tmp/shellcheck-v0.6.0/shellcheck /usr/local/bin && \
-    echo "Helm v2.12.3 ..." && \
-    curl -sS https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get | bash - && \
+    mv /tmp/shellcheck-v0.7.1/shellcheck /usr/local/bin && \
+    echo "Helm v2.16.9 ..." && \
+    curl -sS "https://storage.googleapis.com/kubernetes-helm/helm-v2.16.9-linux-amd64.tar.gz" -o /tmp/helm.tar.gz && \
+    tar zxf /tmp/helm.tar.gz -C /tmp/ && \
+    mv /tmp/linux-amd64/helm /usr/local/bin/helm && \
+    echo "Trivy v0.9.1 ..." && \
+    curl -sSL https://github.com/knqyf263/trivy/releases/download/v0.9.1/trivy_0.9.1_Linux-64bit.tar.gz -o /tmp/trivy.tar.gz && \
+    tar zxvf /tmp/trivy.tar.gz -C /tmp/ && \
+    mv /tmp/trivy /usr/local/bin && \
+    echo "Shfmt v3.1.2 ..." && \
+    curl -sSfL https://github.com/mvdan/sh/releases/download/v3.1.2/shfmt_v3.1.2_linux_amd64 -o /usr/local/bin/shfmt && \
+    chmod +x /usr/local/bin/shfmt && \
     rm -rf /tmp/*
 
-RUN curl -sS "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-233.0.0-linux-x86_64.tar.gz" | tar xz && \
+RUN curl -sS "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-299.0.0-linux-x86_64.tar.gz" | tar xz && \
     CLOUDSDK_CORE_DISABLE_PROMPTS=1 ./google-cloud-sdk/install.sh \
         --usage-reporting false \
         --bash-completion false \
