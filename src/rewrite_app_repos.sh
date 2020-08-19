@@ -15,6 +15,8 @@ plugin_branch_env_vars=(
   "PLUGIN_ENGAGINGNETWORKS_BRANCH"
 )
 
+pids=()
+
 built_assets_dir="${HOME}/source/built-dev-assets"
 mkdir -p "${built_assets_dir}"
 
@@ -97,10 +99,13 @@ do
   if [ -n "$repo_branch" ]; then
     echo "Building assets for ${reponame} at branch ${repo_branch}"
     time build_assets "$repo_branch" "$reponame" &
+    pids+=($!)
   fi
 done
 
-wait
+for pid in ${pids[*]}; do
+  wait "$pid"
+done
 
 echo "DEBUG: We will echo where master theme is defined as what: "
 grep -r -H '"greenpeace/planet4-master-theme" :' ./*
