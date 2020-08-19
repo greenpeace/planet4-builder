@@ -6,4 +6,4 @@ MSG_TYPE="RESUME: ${TYPE:-Job} - ${CIRCLE_PROJECT_REPONAME} - ${CIRCLE_JOB}" \
   MSG_LINK="https://circleci.com/workflow-run/${CIRCLE_WORKFLOW_WORKSPACE_ID}" \
   MSG_TEXT="Build: #${CIRCLE_BUILD_NUM} ${EXTRA_TEXT:-}" \
   MSG_COLOUR="lightblue" \
-  "${HOME}/scripts/notify-rocketchat.sh"
+  "${HOME}/scripts/notify-slack.sh"

@@ -23,7 +23,7 @@ jobs:
             # Store current build number for future jobs
             mkdir -p /tmp/workspace/var
             echo "${CIRCLE_BUILD_NUM}" > /tmp/workspace/var/circle-build-num
-      - run: make clean lint
+      - run: make clean src lint
       - run: docker-login.sh
       - run: make build
       - run: make -k test
