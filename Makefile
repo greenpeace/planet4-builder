@@ -133,11 +133,10 @@ endif
 pull:
 		docker pull $(IMAGE_FROM)
 
-src: $(SRC)/$(IMAGE)/Dockerfile README.md
-$(SRC)/$(IMAGE)/%:
+src:
 		./bin/build.sh -t
 
-build: lint
+build: clean src lint
 		./bin/build.sh -b
 
 test:
