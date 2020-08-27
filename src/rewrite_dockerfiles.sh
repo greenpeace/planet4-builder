@@ -15,8 +15,7 @@ export SOURCE_PATH=/app/source
 # )
 # envvars_string="$(printf "%s:" "${envvars[@]}")"
 
-for i in build app openresty
-do
+for i in build app openresty; do
   build_dir=$i
-  envsubst < "${build_dir}/Dockerfile.in" > "${build_dir}/Dockerfile"
+  envsubst <"${build_dir}/Dockerfile.in" >"${build_dir}/Dockerfile"
 done

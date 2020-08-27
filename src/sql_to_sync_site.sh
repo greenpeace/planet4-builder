@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-function finish {
+function finish() {
   # Stop background jobs
   kill "$(jobs -p)"
 }
@@ -11,8 +11,7 @@ WP_DB_PASSWORD_DC=$(echo "${WP_DB_PASSWORD}" | base64 -d)
 SITE_ENV=$1
 CLOUDSQL_INSTANCE=${GOOGLE_PROJECT_ID}:us-central1:${CLOUDSQL_INSTANCE}
 export GOOGLE_APPLICATION_CREDENTIALS="/tmp/workspace/src/key.json"
-if [ -z ${CIRCLE_TAG+x} ];
-then
+if [ -z ${CIRCLE_TAG+x} ]; then
   SQL_TAG=$(date +%Y-%m-%d)
 else
   SQL_TAG=${CIRCLE_TAG}
@@ -27,7 +26,7 @@ echo ""
 echo ""
 echo "Creating the credential file for mysql"
 echo ""
-cat <<EOF > mysql.cnf
+cat <<EOF >mysql.cnf
 [client]
 user = ${WP_DB_USERNAME_DC}
 password = ${WP_DB_PASSWORD_DC}
@@ -41,7 +40,7 @@ cloud_sql_proxy \
 echo ""
 echo "Creating the credential file for mysql"
 echo ""
-cat <<EOF > mysql.cnf
+cat <<EOF >mysql.cnf
 [client]
 user = ${WP_DB_USERNAME_DC}
 password = ${WP_DB_PASSWORD_DC}
@@ -73,7 +72,7 @@ gunzip "content/${FILE_TO_IMPORT}.gz"
 echo ""
 echo "Importing the database to the ${WP_DB_TO_IMPORT_TO} database"
 echo ""
-mysql --defaults-extra-file="mysql.cnf" "${WP_DB_TO_IMPORT_TO}" < "content/${FILE_TO_IMPORT}"
+mysql --defaults-extra-file="mysql.cnf" "${WP_DB_TO_IMPORT_TO}" <"content/${FILE_TO_IMPORT}"
 
 echo ""
 echo "Get connected to gcloud"
@@ -110,17 +109,15 @@ echo "Replacing the path $OLD_PATH with $NEW_PATH for the images themselves"
 echo ""
 $kc exec "$POD" -- wp search-replace "$OLD_PATH" "$NEW_PATH" --precise --skip-columns=guid
 
-
 echo ""
 echo "Check if we are in an pathless environment"
 echo ""
-if [[ $APP_HOSTPATH == "<nil>" ]]
-then
-   OLD_PATH=$(yq -r .job_environments.production_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)
-   NEW_PATH=$(yq -r .job_environments."${SITE_ENV}"_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)
+if [[ $APP_HOSTPATH == "<nil>" ]]; then
+  OLD_PATH=$(yq -r .job_environments.production_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)
+  NEW_PATH=$(yq -r .job_environments."${SITE_ENV}"_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)
 else
-   OLD_PATH=$(yq -r .job_environments.production_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)/$APP_HOSTPATH
-   NEW_PATH=$(yq -r .job_environments."${SITE_ENV}"_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)/$APP_HOSTPATH
+  OLD_PATH=$(yq -r .job_environments.production_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)/$APP_HOSTPATH
+  NEW_PATH=$(yq -r .job_environments."${SITE_ENV}"_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)/$APP_HOSTPATH
 fi
 
 echo ""

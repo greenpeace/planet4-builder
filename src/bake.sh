@@ -45,22 +45,19 @@ sleep 20
 
 proxy_container=$(docker-compose -p build ps -q app)
 
-until [[ $success -ge $threshold ]]
-do
+until [[ $success -ge $threshold ]]; do
   # Curl to container and expect status code 200
-  if docker run --network "container:$proxy_container" --rm appropriate/curl -s -k "http://localhost:80" | grep -s "greenpeace" > /dev/null
-  then
-    success=$((success+1))
+  if docker run --network "container:$proxy_container" --rm appropriate/curl -s -k "http://localhost:80" | grep -s "greenpeace" >/dev/null; then
+    success=$((success + 1))
     echo "Success: $success/$threshold"
   else
     success=0
   fi
 
-  loop=$((loop-1))
-  if [[ $loop -lt 1 ]]
-  then
-    >&2 echo "[ERROR] Timeout waiting for docker-compose to start"
-    >&2 docker-compose -p build logs
+  loop=$((loop - 1))
+  if [[ $loop -lt 1 ]]; then
+    echo >&2 "[ERROR] Timeout waiting for docker-compose to start"
+    docker-compose >&2 -p build logs
     exit 1
   fi
 
@@ -94,9 +91,8 @@ numfiles=${#files[@]}
 
 echo "$numfiles files in source/public"
 
-if [[ $numfiles -lt 3 ]]
-then
-  >&2 echo "ERROR not enough files for a success"
+if [[ $numfiles -lt 3 ]]; then
+  echo >&2 "ERROR not enough files for a success"
   ls source/public
   exit 1
 fi
@@ -106,8 +102,7 @@ rm -f source/public/index.html
 
 # Tagged releases are production, remove the robots.txt
 # FIXME Find a better way to handle robots.txt
-if [[ -n "${CIRCLE_TAG:-}" ]]
-then
+if [[ -n "${CIRCLE_TAG:-}" ]]; then
   rm -f source/public/robots.txt
 fi
 

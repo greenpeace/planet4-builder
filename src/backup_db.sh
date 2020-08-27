@@ -9,7 +9,7 @@ set -euo pipefail
 release=${HELM_RELEASE:-$1}
 
 tag=${CIRCLE_TAG:-${CIRCLE_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}}
-tag=$(echo "$tag" |  tr -c '[[:alnum:]]._-' '-' | sed 's/-$//')
+tag=$(echo "$tag" | tr -c '[[:alnum:]]._-' '-' | sed 's/-$//')
 
 echo
 echo "Backup release database:"
@@ -17,8 +17,7 @@ echo "Release:   $release"
 echo "Tag:       $tag"
 echo
 
-if ! helm status "${HELM_RELEASE}" | tee release_status.txt
-then
+if ! helm status "${HELM_RELEASE}" | tee release_status.txt; then
   echo "SKIP: Release not yet deployed"
   exit 0
 fi
@@ -30,8 +29,7 @@ grep -Eq "STATUS: DEPLOYED" release_status.txt || {
 
 namespace=${HELM_NAMESPACE:-${2:-$(grep 'NAMESPACE:' release_status.txt | cut -d' ' -f2 | sed 's/planet4-//' | sed 's/-master$//' | sed 's/-release$//' | xargs)}}
 
-if ! kubectl get namespace "$namespace" > /dev/null
-then
+if ! kubectl get namespace "$namespace" >/dev/null; then
   echo "ERROR: Namespace '$namespace' not found."
   exit 1
 fi
@@ -45,14 +43,12 @@ php=$(kubectl get pods --namespace "${namespace}" \
   -l "release=${release},component=php" \
   -o jsonpath="{.items[-1:].metadata.name}")
 
-if [[ -z "$php" ]]
-then
+if [[ -z "$php" ]]; then
   echo "ERROR: PHP pod not found!"
   exit 1
 fi
 
-if ! $kc exec "$php" -- wp core is-installed
-then
+if ! $kc exec "$php" -- wp core is-installed; then
   echo "SKIP: Wordpress is not yet installed"
   exit 0
 fi
@@ -78,8 +74,7 @@ gzip "$filename"
 
 bucket="${release}-db-backup"
 
-if ! gsutil ls "gs://$bucket" >/dev/null
-then
+if ! gsutil ls "gs://$bucket" >/dev/null; then
   echo "Creating bucket: gs://$bucket"
   gsutil mb -p "${GOOGLE_PROJECT_ID:-planet-4-151612}" "gs://$bucket"
   gsutil label ch -l "nro:${APP_HOSTPATH:-undefined}" "gs://${bucket}"

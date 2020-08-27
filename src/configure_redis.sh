@@ -15,9 +15,8 @@ main() {
     -l "release=${HELM_RELEASE},component=php" \
     -o jsonpath="{.items[-1:].metadata.name}")
 
-  if [[ -z "$pod" ]]
-  then
-    >&2 echo "ERROR: php pod not found in release ${HELM_RELEASE}"
+  if [[ -z "$pod" ]]; then
+    echo >&2 "ERROR: php pod not found in release ${HELM_RELEASE}"
     return 1
   fi
 
@@ -25,10 +24,8 @@ main() {
     -l "app=redis,release=${HELM_RELEASE}" \
     -o jsonpath="{.items[0].metadata.name}")
 
-
-  if [[ -z "$redis_service" ]]
-  then
-    >&2 echo "ERROR: redis service not found in release ${HELM_RELEASE}"
+  if [[ -z "$redis_service" ]]; then
+    echo >&2 "ERROR: redis service not found in release ${HELM_RELEASE}"
     return 1
   fi
 
@@ -40,8 +37,7 @@ main() {
   echo ""
 
   if kubectl -n "${HELM_NAMESPACE}" exec "$pod" -- \
-    wp option patch update rt_wp_nginx_helper_options redis_hostname "$redis_service"
-  then
+    wp option patch update rt_wp_nginx_helper_options redis_hostname "$redis_service"; then
     return 0
   fi
 
@@ -51,5 +47,5 @@ main() {
 
 retry main && exit 0
 
->&2 echo "FAILED"
+echo >&2 "FAILED"
 exit 1
