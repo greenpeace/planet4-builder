@@ -14,7 +14,7 @@ json=$(jq -n \
   --arg CHANGELOG "$changelog" \
   --arg DESCRIPTION "$description" \
   --arg USER "$user" \
-'{
+  '{
   "deployment": {
     "revision": $REVISION,
     "changelog": $CHANGELOG,

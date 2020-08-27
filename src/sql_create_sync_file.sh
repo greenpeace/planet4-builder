@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-function finish {
+function finish() {
   # Stop background jobs
   kill "$(jobs -p)"
 }
@@ -11,8 +11,7 @@ WP_DB_PASSWORD_DC=$(echo "${WP_DB_PASSWORD}" | base64 -d)
 BUCKET_DESTINATION=gs://${CONTAINER_PREFIX}-source
 export GOOGLE_APPLICATION_CREDENTIALS="/tmp/workspace/src/key.json"
 
-if [ -z ${CIRCLE_TAG+x} ];
-then
+if [ -z ${CIRCLE_TAG+x} ]; then
   SQL_TAG=$(date +%Y-%m-%d)
 else
   SQL_TAG=${CIRCLE_TAG}
@@ -38,7 +37,7 @@ mysqldump -v \
   -u "$WP_DB_USERNAME_DC" \
   -p"$WP_DB_PASSWORD_DC" \
   -h 127.0.0.1 \
-  "${WP_DB_NAME}" > "content/${WP_DB_NAME}-${SQL_TAG}.sql"
+  "${WP_DB_NAME}" >"content/${WP_DB_NAME}-${SQL_TAG}.sql"
 
 echo ""
 echo "gzip ..."
@@ -49,15 +48,13 @@ gzip --test "content/${WP_DB_NAME}-${SQL_TAG}.sql.gz"
 echo ""
 echo "Checking if bucket exists"
 echo ""
-if ! gsutil ls "${BUCKET_DESTINATION}/"
-then
+if ! gsutil ls "${BUCKET_DESTINATION}/"; then
   echo "Bucket does not exist, attempting to create it"
-  gsutil mb "${BUCKET_DESTINATION}/";
+  gsutil mb "${BUCKET_DESTINATION}/"
   echo "And now we will apply labels"
   gsutil label ch -l "nro:${APP_HOSTNAME}/${APP_HOSTPATH:-}" "${BUCKET_DESTINATION}"
   gsutil label ch -l "environment:${ENVIRONMENT}" "${BUCKET_DESTINATION}"
 fi
-
 
 echo ""
 echo "uploading to ${BUCKET_DESTINATION}/..."

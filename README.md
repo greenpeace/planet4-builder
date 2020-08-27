@@ -14,3 +14,4 @@ Run `make init` after cloning to ensure you have the pre-commit hooks installed.
 4. yamllint
 5. circleci
 6. composer
+7. shfmt

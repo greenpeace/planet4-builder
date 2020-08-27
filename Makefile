@@ -50,6 +50,7 @@ DOCKER := $(shell command -v docker 2> /dev/null)
 COMPOSER := $(shell command -v composer 2> /dev/null)
 JQ := $(shell command -v jq 2> /dev/null)
 SHELLCHECK := $(shell command -v shellcheck 2> /dev/null)
+SHFMT := $(shell command -v shfmt 2> /dev/null)
 YAMLLINT := $(shell command -v yamllint 2> /dev/null)
 
 # ============================================================================
@@ -67,13 +68,25 @@ init: .git/hooks/pre-commit
 clean:
 	rm -f src/Dockerfile
 
+format: format-sh
+
+format-sh:
+ifndef SHFMT
+	$(error "shfmt is not installed: https://github.com/mvdan/sh")
+endif
+	@shfmt -i 2 -ci -w .
+
 lint: init lint-sh lint-yaml lint-json lint-composer lint-docker lint-ci
 
 lint-sh:
 ifndef SHELLCHECK
-$(error "shellcheck is not installed: https://github.com/koalaman/shellcheck")
+	$(error "shellcheck is not installed: https://github.com/koalaman/shellcheck")
 endif
-	@find . -type f -name '*.sh' | xargs shellcheck
+ifndef SHFMT
+	$(error "shfmt is not installed: https://github.com/mvdan/sh")
+endif
+	@shfmt -f . | xargs shellcheck
+	@shfmt -i 2 -ci -d .
 
 lint-yaml:
 ifndef YAMLLINT
