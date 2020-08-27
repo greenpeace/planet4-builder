@@ -10,9 +10,7 @@ composer_files=(
 
 plugin_branch_env_vars=(
   "MASTER_THEME_BRANCH"
-  "PLUGIN_BLOCKS_BRANCH"
   "PLUGIN_GUTENBERG_BLOCKS_BRANCH"
-  "PLUGIN_ENGAGINGNETWORKS_BRANCH"
 )
 
 pids=()
@@ -26,7 +24,17 @@ build_assets() {
   branch="$1"
   reponame="$2"
 
-  git clone --recurse-submodules --single-branch --branch "${branch}" https://github.com/greenpeace/"${reponame}"
+  # If the repository name is the repository of the current job, the code will already be checked out, even if it's a
+  # fork PR.
+  checkoutDir="/home/circleci/checkout/${reponame}"
+  if [ "$CIRCLE_PROJECT_REPONAME" == "$reponame" ] && [ -d "${checkoutDir}" ]; then
+    mkdir -p "$reponame"
+    cp -r "${checkoutDir}/." "$reponame"
+    git -C "$reponame" submodule init
+    git -C "$reponame" submodule update --remote
+  else
+    git clone --recurse-submodules --single-branch --branch "${branch}" https://github.com/greenpeace/"${reponame}"
+  fi
 
   npm ci --prefix "${reponame}" "${reponame}"
   NODE_OPTIONS=--max_old_space_size=1024 npm run-script --prefix "${reponame}" build
@@ -55,7 +63,17 @@ for plugin_branch_env_var in "${plugin_branch_env_vars[@]}"; do
     for f in "${composer_files[@]}"; do
       if [ -e "$f" ]; then
         echo " - $f"
-        sed -i "s|\"greenpeace\\/${reponame}\" \?: \".*\",|\"greenpeace\\/${reponame}\" : \"dev-${branch}\",|g" "${f}"
+        tmp=$(mktemp)
+        jq ".require.\"greenpeace/${reponame}\" = \"dev-${branch}\"" "$f" > "$tmp"
+        mv "$tmp" "$f"
+
+        checkoutDir="/home/circleci/checkout/${reponame}"
+        # If builder is running for the theme or plugin, then we can use the checked out code of the current commit.
+        if [ "$CIRCLE_PROJECT_REPONAME" == "$reponame" ] && [ -d "${checkoutDir}" ]; then
+          tmp=$(mktemp)
+          jq ".repositories |= [{\"type\": \"path\", \"url\": \"${checkoutDir}\"}] + ." "$f" > "$tmp"
+          mv "$tmp" "$f"
+        fi
       fi
     done
 
@@ -94,7 +112,7 @@ for plugin_branch_env_var in "${plugin_branch_env_vars[@]}"; do
 
   if [ -n "$repo_branch" ]; then
     echo "Building assets for ${reponame} at branch ${repo_branch}"
-    time build_assets "$repo_branch" "$reponame" &
+    time PS4="__$reponame: " build_assets "$repo_branch" "$reponame" &
     pids+=($!)
   fi
 done
