@@ -26,9 +26,10 @@ build_assets() {
 
   # If the repository name is the repository of the current job, the code will already be checked out, even if it's a
   # fork PR.
-  if [ "$CIRCLE_PROJECT_REPONAME" == "$reponame" ]; then
+  checkoutDir="/home/circleci/checkout/${reponame}"
+  if [ "$CIRCLE_PROJECT_REPONAME" == "$reponame" ] && [ -d "${checkoutDir}" ]; then
     mkdir -p "$reponame"
-    cp -r "/home/circleci/checkout/${reponame}/." "$reponame"
+    cp -r "${checkoutDir}/." "$reponame"
     git -C "$reponame" submodule init
     git -C "$reponame" submodule update --remote
   else
@@ -69,10 +70,11 @@ do
         jq ".require.\"greenpeace/${reponame}\" = \"dev-${branch}\"" "$f" > "$tmp"
         mv "$tmp" "$f"
 
+        checkoutDir="/home/circleci/checkout/${reponame}"
         # If builder is running for the theme or plugin, then we can use the checked out code of the current commit.
-        if [ "$CIRCLE_PROJECT_REPONAME" == "$reponame" ]; then
+        if [ "$CIRCLE_PROJECT_REPONAME" == "$reponame" ] && [ -d "${checkoutDir}" ]; then
           tmp=$(mktemp)
-          jq ".repositories |= [{\"type\": \"path\", \"url\": \"/home/circleci/checkout/${reponame}\"}] + ." "$f" > "$tmp"
+          jq ".repositories |= [{\"type\": \"path\", \"url\": \"${checkoutDir}\"}] + ." "$f" > "$tmp"
           mv "$tmp" "$f"
         fi
       fi
