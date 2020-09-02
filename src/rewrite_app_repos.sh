@@ -37,7 +37,10 @@ build_assets() {
   fi
 
   npm ci --prefix "${reponame}" "${reponame}"
-  NODE_OPTIONS=--max_old_space_size=2048 npm run-script --prefix "${reponame}" build
+  for i in {1..5}; do
+    echo "build attempt $i"
+    NODE_OPTIONS=--max_old_space_size=1024 npm run-script --prefix "${reponame}" build && break
+  done
 
   if [[ "${reponame}" == *theme ]]; then
     subdir="themes"
