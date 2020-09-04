@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -ex
+set -e
 
 composer_files=(
   "${HOME}/source/composer.json"
@@ -12,8 +12,6 @@ plugin_branch_env_vars=(
   "MASTER_THEME_BRANCH"
   "PLUGIN_GUTENBERG_BLOCKS_BRANCH"
 )
-
-pids=()
 
 built_assets_dir="${HOME}/source/built-dev-assets"
 mkdir -p "${built_assets_dir}"
@@ -39,7 +37,7 @@ build_assets() {
   npm ci --prefix "${reponame}" "${reponame}"
   for i in {1..5}; do
     echo "build attempt $i"
-    NODE_OPTIONS=--max_old_space_size=1024 npm run-script --prefix "${reponame}" build && break
+    NODE_OPTIONS=--max_old_space_size=2048 npm run-script --prefix "${reponame}" build && break
   done
 
   if [[ "${reponame}" == *theme ]]; then
@@ -115,13 +113,8 @@ for plugin_branch_env_var in "${plugin_branch_env_vars[@]}"; do
 
   if [ -n "$repo_branch" ]; then
     echo "Building assets for ${reponame} at branch ${repo_branch}"
-    time PS4="__$reponame: " build_assets "$repo_branch" "$reponame" &
-    pids+=($!)
+    time PS4="__$reponame: " build_assets "$repo_branch" "$reponame"
   fi
-done
-
-for pid in ${pids[*]}; do
-  wait "$pid"
 done
 
 echo "DEBUG: We will echo where master theme is defined as what: "
