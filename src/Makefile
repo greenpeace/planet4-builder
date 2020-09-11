@@ -252,13 +252,11 @@ pull:
 	docker pull $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_PREFIX)-openresty:$(BUILD_TAG) &
 	wait
 
-deploy: deploy-helm update-meta
+deploy: prepare-helm deploy-helm post-deploy
 
-update-meta:
-	# Set meta on stateless content to max-age 31 days
-	# gsutil -m setmeta -r -h "Cache-Control:public, max-age=2678400" gs://$(WP_STATELESS_BUCKET) > /dev/null
+rollback: checkout copy persist prepare-helm rollback-helm post-deploy
 
-deploy-helm:
+prepare-helm:
 ifndef NEWRELIC_REST_API_KEY
 	$(error NEWRELIC_REST_API_KEY is not set)
 endif
@@ -270,6 +268,11 @@ endif
 	--zone $(GCLOUD_ZONE) \
 	--project $(GOOGLE_PROJECT_ID)
 
+rollback-helm:
+	# Rollback to the previous good release
+	./helm_rollback.sh
+
+deploy-helm:
 	# Ensure Helm release is in a usable state
 	# See: https://github.com/kubernetes/helm/issues/4004
 	./helm_prepare.sh
@@ -285,6 +288,7 @@ endif
 
 	./helm_confirm.sh
 
+post-deploy:
 	./activate_plugins.sh
 
 	./flush_redis.sh
