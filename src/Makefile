@@ -10,7 +10,7 @@ PARENT_IMAGE			?= gcr.io/planet-4-151612/wordpress
 PARENT_VERSION    ?= latest
 
 # Wordpress Helm chart version
-CHART_VERSION 		?= 0.8.11
+CHART_VERSION 		?= 0.8.12
 
 # Use current folder name as prefix for built containers,
 # eg planet4-gpi-app planet4-gpi-openresty
