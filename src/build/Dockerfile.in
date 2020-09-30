@@ -18,15 +18,20 @@ COPY . /app/
 
 WORKDIR /app/source
 
+RUN time composer -v update --lock --no-dev --no-ansi
+
+RUN time composer -v update --lock --no-dev --no-ansi
+
+RUN time composer -v install --no-dev --no-ansi --no-interaction
+
 RUN \
-    time composer -v update --lock --no-dev --no-ansi && \
-    time composer -v install --no-dev --no-ansi --no-interaction && \
     if [ -f "${SOURCE_PATH}/composer-local.json" ]; then \
       rm -f composer.lock; \
       time composer -v config --no-ansi extra.merge-plugin.require composer-local.json; \
-    fi && \
-    time composer -v update --lock --no-dev --no-ansi && \
-    time composer -v install --no-dev --no-ansi --no-interaction
+    fi
+RUN time composer -v update --lock --no-dev --no-ansi
+
+RUN time composer -v install --no-dev --no-ansi --no-interaction
 
 RUN \
     if [ -d ${SOURCE_PATH}/built-dev-assets/ ]; then \
