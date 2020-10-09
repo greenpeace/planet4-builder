@@ -111,7 +111,10 @@ for plugin_branch_env_var in "${plugin_branch_env_vars[@]}"; do
     fi
   done
 
-  if [ -n "$repo_branch" ]; then
+  # We don't need to build the assets for tags anymore, as we made those work with github releases.
+  # Branches still need to be built at this point for now.
+  # We know if it's a branch when the prefix was present, so $branch should differ from $plugin_version only in that case.
+  if [ -n "$repo_branch" ] && [ "${branch}" != "${plugin_version}" ]; then
     echo "Building assets for ${reponame} at branch ${repo_branch}"
     time PS4="__$reponame: " build_assets "$repo_branch" "$reponame"
   fi
