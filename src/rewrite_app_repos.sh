@@ -62,19 +62,20 @@ for plugin_branch_env_var in "${plugin_branch_env_vars[@]}"; do
   if [ -n "${!plugin_branch_env_var}" ]; then
     echo "Replacing ${reponame} with branch ${branch} from environment variable"
     for f in "${composer_files[@]}"; do
-      if [ -e "$f" ]; then
-        echo " - $f"
-        tmp=$(mktemp)
-        jq ".require.\"greenpeace/${reponame}\" = \"dev-${branch}\"" "$f" >"$tmp"
-        mv "$tmp" "$f"
+      if [ ! -e "$f" ]; then
+        continue
+      fi
+      echo " - $f"
+      tmp=$(mktemp)
+      jq ".require.\"greenpeace/${reponame}\" = \"dev-${branch}\"" "$f" >"$tmp"
+      mv "$tmp" "$f"
 
-        checkoutDir="/home/circleci/checkout/${reponame}"
-        # If builder is running for the theme or plugin, then we can use the checked out code of the current commit.
-        if [ "$CIRCLE_PROJECT_REPONAME" == "$reponame" ] && [ -d "${checkoutDir}" ]; then
-          tmp=$(mktemp)
-          jq ".repositories |= [{\"type\": \"path\", \"url\": \"${checkoutDir}\"}] + ." "$f" >"$tmp"
-          mv "$tmp" "$f"
-        fi
+      checkoutDir="/home/circleci/checkout/${reponame}"
+      # If builder is running for the theme or plugin, then we can use the checked out code of the current commit.
+      if [ "$CIRCLE_PROJECT_REPONAME" == "$reponame" ] && [ -d "${checkoutDir}" ]; then
+        tmp=$(mktemp)
+        jq ".repositories |= [{\"type\": \"path\", \"url\": \"${checkoutDir}\"}] + ." "$f" >"$tmp"
+        mv "$tmp" "$f"
       fi
     done
 
@@ -89,32 +90,39 @@ for plugin_branch_env_var in "${plugin_branch_env_vars[@]}"; do
 
   # now go throuhg the composer file and see if there are any dev branches for planet4 plugins or theme
   for f in "${composer_files[@]}"; do
-    if [ -e "$f" ]; then
-      json_path=".require.\"greenpeace/${reponame}\""
-      plugin_version=$(jq -r "${json_path} // empty" <"${f}")
-      branch=${plugin_version#"$composer_dev_prefix"}
+    echo "Checking $f..."
 
-      if [ -n "$branch" ]; then
-        # Assets are not included in the repositories, so we need to build them here.
-        # All built files are put together in built-dev-assets, which has the same directory structure as /app/source.
-        # In the last step in the Dockerfile the contents of this directory are rsync'ed over the source.
-        # This is not ideal, however there was no better alternative as packagist only works with files in a github repo.
-        echo "Repo ${reponame} exists for branch ${branch}"
-        repo_branch="${branch}"
-      else
-        if [ -z "${plugin_version}" ]; then
-          echo "Plugin ${reponame} is not in ${f}"
-        else
-          echo "Version ${plugin_version} for ${reponame} in ${f} is not a branch"
-        fi
-      fi
+    if [ ! -e "$f" ]; then
+      echo "...It does not exist."
+      continue
     fi
+
+    json_path=".require.\"greenpeace/${reponame}\""
+    plugin_version=$(jq -r "${json_path} // empty" <"${f}")
+    branch=${plugin_version#"$composer_dev_prefix"}
+
+    if [ -z "${plugin_version}" ]; then
+      echo "Plugin ${reponame} is not in ${f}"
+      continue
+    fi
+
+    # We don't need to build the assets for tags anymore, as we made those work with github releases.
+    # Branches still need to be built at this point for now.
+    # We know if it's a branch when the prefix was present, so $branch should differ from $plugin_version only in that case.
+    if [ "${branch}" == "${plugin_version}" ]; then
+      echo "Version ${plugin_version} for ${reponame} in ${f} is not a branch"
+    fi
+
+    # Assets are not included in the repositories, so we need to build them here.
+    # All built files are put together in built-dev-assets, which has the same directory structure as /app/source.
+    # In the last step in the Dockerfile the contents of this directory are rsync'ed over the source.
+    # This is not ideal, however there was no better alternative as packagist only works with files in a github repo.
+    echo "Repo ${reponame} exists for branch ${branch}"
+    repo_branch="${branch}"
   done
 
-  # We don't need to build the assets for tags anymore, as we made those work with github releases.
-  # Branches still need to be built at this point for now.
-  # We know if it's a branch when the prefix was present, so $branch should differ from $plugin_version only in that case.
-  if [ -n "$repo_branch" ] && [ "${branch}" != "${plugin_version}" ]; then
+  # Build the last encountered branch's assets
+  if [ -n "$repo_branch" ]; then
     echo "Building assets for ${reponame} at branch ${repo_branch}"
     time PS4="__$reponame: " build_assets "$repo_branch" "$reponame"
   fi
