@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-FILE="/tmp/workspace/src/composer.json"
+FILE="/tmp/workspace/composer.json"
 
 [ -e "$FILE" ] || {
   echo >&2 "File not found: $FILE"
   exit 1
 }
 
-version=$(jq -r .version <composer.json)
+version=$(jq -r .version <$FILE)
 
 echo "$version"
