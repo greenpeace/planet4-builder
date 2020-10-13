@@ -110,7 +110,10 @@ for plugin_branch_env_var in "${plugin_branch_env_vars[@]}"; do
     # Branches still need to be built at this point for now.
     # We know if it's a branch when the prefix was present, so $branch should differ from $plugin_version only in that case.
     if [ "${branch}" == "${plugin_version}" ]; then
-      echo "Version ${plugin_version} for ${reponame} in ${f} is not a branch"
+      echo "Version ${plugin_version} for ${reponame} in ${f} is not a branch, no need to build."
+      # Empty $repo_branch in case a previous composer file had set it.
+      repo_branch=""
+      continue
     fi
 
     # Assets are not included in the repositories, so we need to build them here.
