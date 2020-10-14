@@ -37,7 +37,7 @@ SHFMT_VERSION=3.1.2
 TAP_XUNIT_VERSION=2.4.1
 
 # https://github.com/knqyf263/trivy/releases
-TRIVY_VERSION=0.9.1
+TRIVY_VERSION=0.11.1
 
 # https://pypi.org/project/yamllint/#history
 YAMLLINT_VERSION=1.23.0
