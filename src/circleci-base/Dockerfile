@@ -1,8 +1,8 @@
-# greenpeaceinternational/circleci-base:v0.7.38
+# greenpeaceinternational/circleci-base:v0.7.41
 # Base image for performing CI/CD operations in CircleCI
-# Branch: v0.7.38
-# Commit: 2b36582e062b14cdd9eb76a4f7534099b6bf9d17
-# Build:  build-1611
+# Branch: v0.7.41
+# Commit: 051445e2912bb28f7bda067f4d44711e681265f1
+# Build:  build-1626
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
@@ -72,8 +72,8 @@ RUN echo "Hadolint v1.18.0 ..." && \
     curl -sS "https://storage.googleapis.com/kubernetes-helm/helm-v2.16.9-linux-amd64.tar.gz" -o /tmp/helm.tar.gz && \
     tar zxf /tmp/helm.tar.gz -C /tmp/ && \
     mv /tmp/linux-amd64/helm /usr/local/bin/helm && \
-    echo "Trivy v0.9.1 ..." && \
-    curl -sSL https://github.com/knqyf263/trivy/releases/download/v0.9.1/trivy_0.9.1_Linux-64bit.tar.gz -o /tmp/trivy.tar.gz && \
+    echo "Trivy v0.11.1 ..." && \
+    curl -sSL https://github.com/knqyf263/trivy/releases/download/v0.11.1/trivy_0.11.1_Linux-64bit.tar.gz -o /tmp/trivy.tar.gz && \
     tar zxvf /tmp/trivy.tar.gz -C /tmp/ && \
     mv /tmp/trivy /usr/local/bin && \
     echo "Shfmt v3.1.2 ..." && \
