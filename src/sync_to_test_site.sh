@@ -46,7 +46,7 @@ POD=$($kc get pods -n "${NRO}" -l component=php | grep master | head -n1 | cut -
 echo ""
 echo "Generate the db dump"
 echo ""
-DB=$($kc exec "${POD}" -- wp db export --tables=wp_commentmeta,wp_comments,wp_postmeta,wp_posts,wp_termmeta,wp_terms,wp_term_relationships,wp_term_taxonomy --add-drop-table | cut -d' ' -f4 | sed -e "s/'\.//" -e "s/'//")
+DB=$($kc exec "${POD}" -- wp db export --tables=wp_commentmeta,wp_comments,wp_postmeta,wp_posts,wp_termmeta,wp_terms,wp_term_relationships,wp_term_taxonomy --add-drop-table --set-gtid-purged=OFF | cut -d' ' -f4 | sed -e "s/'\.//" -e "s/'//")
 $kc exec "${POD}" -- wp option get planet4_options --format=json >options.json
 FRONTPAGE=$($kc exec "${POD}" -- wp option get page_on_front)
 
