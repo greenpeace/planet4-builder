@@ -1,8 +1,8 @@
 # Planet 4 build container
 # https://github.com/greenpeace/planet4-builder
 #
-# Version: develop
-# Build:   https://circleci.com/gh/greenpeace/planet4-builder/1310
+# Version: v1.2.74
+# Build:   https://circleci.com/gh/greenpeace/planet4-builder/1326
 
 # hadolint ignore=DL3007
 FROM greenpeaceinternational/circleci-base:latest
