@@ -222,7 +222,7 @@ build-openresty:
 	./rewrite_dockerfiles.sh
 	mkdir -p openresty/source/public
 	rsync -a --delete source/public/ openresty/source/public
-	rsync -av source/built-dev-assets/public openresty/source
+	rsync -av --ignore-missing-args source/built-dev-assets/public openresty/source
 	source ./lib/retry.sh && \
 	retry docker pull gcr.io/planet-4-151612/openresty:$(PARENT_VERSION) && \
 	pushd openresty && \
