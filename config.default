@@ -10,24 +10,24 @@
 # Vendor application versions
 
 # https://www.npmjs.com/package/bats
-BATS_VERSION=1.1.0
+BATS_VERSION=1.2.0
 
 # https://github.com/petervanderdoes/gitflow-avh/releases
 GIT_FLOW_VERSION=1.12.3
 
 # https://cloud.google.com/sdk/docs/quickstart-linux
-GOOGLE_SDK_VERSION=299.0.0
+GOOGLE_SDK_VERSION=316.0.0
 
 # https://github.com/hadolint/hadolint/releases
 HADOLINT_VERSION=1.18.0
 
 # https://github.com/helm/helm/releases
-HELM_VERSION=2.16.9
+HELM_VERSION=2.17.0
 
 # https://www.npmjs.com/package/junit-merge
 JUNIT_MERGE_VERSION=2.0.0
 
-# https://shellcheck.storage.googleapis.com/index.html
+# https://github.com/koalaman/shellcheck
 SHELLCHECK_VERSION=0.7.1
 
 # https://github.com/mvdan/sh/releases
@@ -40,10 +40,10 @@ TAP_XUNIT_VERSION=2.4.1
 TRIVY_VERSION=0.11.1
 
 # https://pypi.org/project/yamllint/#history
-YAMLLINT_VERSION=1.23.0
+YAMLLINT_VERSION=1.25.0
 
 # https://pypi.org/project/yq/#history
-YQ_VERSION=2.10.1
+YQ_VERSION=2.11.1
 
 # =============================================================================
 
