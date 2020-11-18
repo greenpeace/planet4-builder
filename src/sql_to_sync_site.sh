@@ -102,8 +102,14 @@ echo ""
 POD=$($kc get pods -l component=php | grep "${HELM_RELEASE}" | head -n1 | cut -d' ' -f1)
 echo "Pod:        $POD"
 
-OLD_PATH="https://storage.googleapis.com/${CONTAINER_PREFIX}-stateless/"
-NEW_PATH="https://storage.googleapis.com/${CONTAINER_PREFIX}-stateless-${SITE_ENV}/"
+# Check if this in greenpeace.org domain
+if [[ "$APP_HOSTNAME" == *"greenpeace.org"* ]]; then
+  OLD_PATH="https://www.greenpeace.org/static/${CONTAINER_PREFIX}-stateless/"
+  NEW_PATH="https://www.greenpeace.org/static/${CONTAINER_PREFIX}-stateless-${SITE_ENV}/"
+else
+  OLD_PATH="https://storage.googleapis.com/${CONTAINER_PREFIX}-stateless/"
+  NEW_PATH="https://storage.googleapis.com/${CONTAINER_PREFIX}-stateless-${SITE_ENV}/"
+fi
 echo ""
 echo "Replacing the path $OLD_PATH with $NEW_PATH for the images themselves"
 echo ""
@@ -119,8 +125,6 @@ else
   OLD_PATH=$(yq -r .job_environments.production_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)/$APP_HOSTPATH
   NEW_PATH=$(yq -r .job_environments."${SITE_ENV}"_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)/$APP_HOSTPATH
 fi
-
-echo ""
 echo "Domain and path replacement. We will replace $OLD_PATH with $NEW_PATH"
 echo ""
 $kc exec "$POD" -- wp search-replace "$OLD_PATH" "$NEW_PATH" --precise --skip-columns=guid
