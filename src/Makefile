@@ -253,6 +253,9 @@ pull:
 	docker pull $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_PREFIX)-openresty:$(BUILD_TAG) &
 	wait
 
+backup:
+	./backup_db.sh
+
 deploy: prepare-helm deploy-helm post-deploy
 
 rollback: checkout copy persist prepare-helm rollback-helm post-deploy
@@ -274,13 +277,6 @@ rollback-helm:
 	./helm_rollback.sh
 
 deploy-helm:
-	# Ensure Helm release is in a usable state
-	# See: https://github.com/kubernetes/helm/issues/4004
-	./helm_prepare.sh
-
-	# Backup database
-	./backup_db.sh
-
 	# Upgrade or install deployment to cluster
 	./helm_deploy.sh
 
