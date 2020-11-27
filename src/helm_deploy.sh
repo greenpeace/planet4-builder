@@ -24,7 +24,7 @@ function install() {
   return 1
 }
 
-echo "Deploying $HELM_RELEASE in $HELM_NAMESPACE ..."
+echo "Deploying $HELM_RELEASE in $HELM_NAMESPACE with chart version $CHART_VERSION..."
 echo
 
 # Create Helm deploy secrets file from environment
