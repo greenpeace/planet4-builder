@@ -10,7 +10,7 @@ PARENT_IMAGE			?= gcr.io/planet-4-151612/wordpress
 PARENT_VERSION    ?= latest
 
 # Wordpress Helm chart version
-CHART_VERSION 		?= 0.8.13
+CHART_VERSION 		?= 0.8.14
 
 # Use current folder name as prefix for built containers,
 # eg planet4-gpi-app planet4-gpi-openresty
@@ -253,6 +253,9 @@ pull:
 	docker pull $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_PREFIX)-openresty:$(BUILD_TAG) &
 	wait
 
+backup:
+	./backup_db.sh
+
 deploy: prepare-helm deploy-helm post-deploy
 
 rollback: checkout copy persist prepare-helm rollback-helm post-deploy
@@ -274,13 +277,6 @@ rollback-helm:
 	./helm_rollback.sh
 
 deploy-helm:
-	# Ensure Helm release is in a usable state
-	# See: https://github.com/kubernetes/helm/issues/4004
-	./helm_prepare.sh
-
-	# Backup database
-	./backup_db.sh
-
 	# Upgrade or install deployment to cluster
 	./helm_deploy.sh
 
