@@ -102,10 +102,13 @@ echo ""
 POD=$($kc get pods -l component=php | grep "${HELM_RELEASE}" | head -n1 | cut -d' ' -f1)
 echo "Pod:        $POD"
 
-# Check if this in greenpeace.org domain
+# Check if this in .org or .ch domain
 if [[ "$APP_HOSTNAME" == *"greenpeace.org"* ]]; then
   OLD_PATH="https://www.greenpeace.org/static/${CONTAINER_PREFIX}-stateless/"
   NEW_PATH="https://www.greenpeace.org/static/${CONTAINER_PREFIX}-stateless-${SITE_ENV}/"
+elif [[ "$APP_HOSTNAME" == *"greenpeace.ch"* ]]; then
+  OLD_PATH="https://www.greenpeace.ch/static/${CONTAINER_PREFIX}-stateless/"
+  NEW_PATH="https://www.greenpeace.ch/static/${CONTAINER_PREFIX}-stateless-${SITE_ENV}/"
 else
   OLD_PATH="https://storage.googleapis.com/${CONTAINER_PREFIX}-stateless/"
   NEW_PATH="https://storage.googleapis.com/${CONTAINER_PREFIX}-stateless-${SITE_ENV}/"
