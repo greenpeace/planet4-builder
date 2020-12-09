@@ -27,7 +27,7 @@ RUN apt-get update && \
     rm -rf /tmp/* && \
     rm -rf /var/lib/apt/lists/*
 
-RUN pip install \
+RUN pip install --no-cache-dir \
       yamllint==${YAMLLINT_VERSION} \
       yq==${YQ_VERSION}
 
