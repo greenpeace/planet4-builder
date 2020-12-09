@@ -92,12 +92,12 @@ if [ "$total" -ne 0 ]; then
     if [ "$track" == "Infra" ]; then
       infra="$infra$ticket"
       infra_md="$infra_md$ticket_md"
-    elif [ "$issuetype" == "Task" ]; then
-      features="$features$ticket"
-      features_md="$features_md$ticket_md"
-    else
+    elif [ "$issuetype" == "Bug" ]; then
       bugs="$bugs$ticket"
       bugs_md="$bugs_md$ticket_md"
+    else
+      features="$features$ticket"
+      features_md="$features_md$ticket_md"
     fi
 
   done
