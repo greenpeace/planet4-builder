@@ -5,6 +5,7 @@ import json
 import requests
 from requests.auth import HTTPBasicAuth
 from requests_oauthlib import OAuth1
+from oauthlib.oauth1 import SIGNATURE_RSA
 import sys
 import re
 import argparse
@@ -20,7 +21,7 @@ INSTANCE_REPO_PREFIX = 'greenpeace/planet4-test-'
 JIRA_INSTANCE_FIELD = 'customfield_13000'
 
 
-def get_pull_request(pr_number=None, repository=None, pr_url=None):
+def get_pull_request(pr_url):
     """
     Fetch PR details
 
@@ -28,13 +29,12 @@ def get_pull_request(pr_number=None, repository=None, pr_url=None):
     Request PR data
     """
 
-    if pr_url:
-        regex = re.compile('https://github.com/(.*)/pull/([0-9]{1,6})')
-        matches = regex.match(pr_url)
-        vprint('Parsing URL {0}'.format(matches.groups()))
+    regex = re.compile('https://github.com/(.*)/pull/([0-9]{1,6})')
+    matches = regex.match(pr_url)
+    vprint('Parsing URL {0}'.format(matches.groups()))
 
-        repository = matches[1] if not repository else repository
-        pr_number = matches[2] if not pr_number else pr_number
+    repository = matches[1] or None
+    pr_number = matches[2] or None
 
     if not repository or not pr_number:
         raise Exception('PR id could not be parsed.')
@@ -294,13 +294,22 @@ def get_jira_auth():
     """
 
     if os.getenv('JIRA_APP_KEY'):
+        if os.getenv('JIRA_PKEY_FILE'):
+            key = open(os.getenv('JIRA_PKEY_FILE')).read()
+        elif os.getenv('JIRA_PKEY'):
+            key = os.getenv('JIRA_PKEY')
+        else:
+            key = None
+
         return {
             'type': 'oauth',
             'auth': OAuth1(
                 os.getenv('JIRA_APP_KEY'),
-                os.getenv('JIRA_APP_SECRET'),
-                os.getenv('JIRA_OAUTH_TOKEN'),
-                os.getenv('JIRA_OAUTH_TOKEN_SECRET')
+                #os.getenv('JIRA_APP_SECRET'),
+                resource_owner_key=os.getenv('JIRA_OAUTH_TOKEN'),
+                resource_owner_secret=os.getenv('JIRA_OAUTH_TOKEN_SECRET'),
+                rsa_key=key,
+                signature_method=SIGNATURE_RSA,
             )
         }
 
@@ -345,49 +354,57 @@ if __name__ == '__main__':
     verbose = args.verbosity
     use_request_cache = not args.no_cache
     results_file = args.results
-    vprint = print if verbose else lambda *a, **k: None
+    # Logs
+    logs = []
+    def vprint(*args):
+        for msg in args:
+            logs.append(msg)
+            if verbose:
+                print(msg)
     # Auth
     jira_auth = get_jira_auth()
 
     # Main program
 
-    vprint('\n# Running for {0}'.format(pr_url))
+    vprint('# Running for {0}'.format(pr_url))
     if dryrun:
         vprint('## Dry run, nothing will be commited.')
 
     # Fetch PR details
-    pull = get_pull_request(pr_url=pr_url)
-    if not pull:
+    pr = get_pull_request(pr_url=pr_url)
+    if not pr:
         raise Exception('No pull request found, aborting.')
 
     # Fetch issue details from Github PR
     try:
-        issue = get_jira_issue(pr=pull)
+        issue = get_jira_issue(pr=pr)
     except Exception as e:
         vprint(e)
-        issue = False
+        issue = None
 
     # Define instance
     if not issue:
-        instance = False
-        vprint('No corresponding issue found, booking will not be executed.')
+        raise Exception('No corresponding issue found, booking will not be executed.')
+
+    if issue['test_instance']:
+        instance = issue['test_instance']
+        vprint('Issue is already deployed on {0}, reusing.'.format(instance))
     else:
-        if issue['test_instance']:
-            instance = issue['test_instance']
-            vprint(
-                'Issue is already deployed on {0}, reusing.'.format(instance))
-        else:
-            instance = get_available_instance()
+        instance = get_available_instance()
 
-        # Book instance
-        try:
-            book_instance(instance, issue)
-        except Exception as e:
-            vprint(e)
-            instance = False
+    # Book instance
+    try:
+        book_instance(instance, issue)
+    except Exception as e:
+        vprint(e)
+        instance = None
 
-    save_results({
-        'instance': instance,
-        'issue': issue,
-        'pr': pull
-    }, results_file)
+    if results_file:
+        save_results({
+            'instance': instance,
+            'issue': issue,
+            'pr': pr,
+            'logs': logs,
+        }, results_file)
+
+    print(instance)
