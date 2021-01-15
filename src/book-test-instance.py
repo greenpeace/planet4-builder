@@ -289,26 +289,23 @@ def api_failed(response, endpoint, exit_on_error=True):
 
 def get_jira_auth():
     """
-    Based on env variables JIRA_USER and JIRA_PASS
-    Would be a lot better with a token in place
+    Based on env variables
+
     https://developer.atlassian.com/server/jira/platform/oauth/
     """
 
-    if os.getenv('JIRA_APP_KEY'):
-        if os.getenv('JIRA_PKEY_FILE'):
-            key = open(os.getenv('JIRA_PKEY_FILE')).read()
-        elif os.getenv('JIRA_PKEY'):
-            key = os.getenv('JIRA_PKEY')
+    if os.getenv('JIRA_CLIENT_KEY'):
+        if os.getenv('JIRA_PRIVATE_KEY'):
+            key = os.getenv('JIRA_PRIVATE_KEY')
         else:
             key = None
 
         return {
             'type': 'oauth',
             'auth': OAuth1(
-                os.getenv('JIRA_APP_KEY'),
-                #os.getenv('JIRA_APP_SECRET'),
+                os.getenv('JIRA_CLIENT_KEY'),
                 resource_owner_key=os.getenv('JIRA_OAUTH_TOKEN'),
-                resource_owner_secret=os.getenv('JIRA_OAUTH_TOKEN_SECRET'),
+                resource_owner_secret=os.getenv('JIRA_OAUTH_SECRET'),
                 rsa_key=key,
                 signature_method=SIGNATURE_RSA,
             )
