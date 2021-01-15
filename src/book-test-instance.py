@@ -33,8 +33,8 @@ def get_pull_request(pr_url):
     matches = regex.match(pr_url)
     vprint('Parsing URL {0}'.format(matches.groups()))
 
-    repository = matches[1] or None
-    pr_number = matches[2] or None
+    repository = matches.group(1) or None
+    pr_number = matches.group(2) or None
 
     if not repository or not pr_number:
         raise Exception('PR id could not be parsed.')
@@ -61,7 +61,7 @@ def get_jira_issue(pr=None, jira_key=None):
         title_re = re.compile('^(PLANET-[0-9]{3,6})')
         matches = title_re.match(title)
 
-        jira_key = matches[1] if matches else None
+        jira_key = matches.group(1) if matches else None
 
         # @todo: from commits
 
@@ -85,7 +85,7 @@ def get_jira_issue(pr=None, jira_key=None):
     }
 
 
-def book_instance(instance, jira_issue) -> bool:
+def book_instance(instance, jira_issue):
     """
     Check jira ticket status & assigned instance
     Move status if needed, book instance on ticket
@@ -392,12 +392,8 @@ if __name__ == '__main__':
     else:
         instance = get_available_instance()
 
-    # Book instance
-    try:
+    if not dryrun:
         book_instance(instance, issue)
-    except Exception as e:
-        vprint(e)
-        instance = None
 
     if results_file:
         save_results({
