@@ -94,9 +94,6 @@ def book_instance(instance, jira_issue):
     loop through it to be able to lock multiple issues to one instance & pr
     """
 
-    if not jira_auth:
-        raise Exception('Issue cannot be modified without Jira credentials.')
-
     current_state = jira_issue['state']
     editable_status = ['Open', 'Validated']
     invalid_status = ['Closed']
@@ -124,6 +121,8 @@ def book_instance(instance, jira_issue):
 
 
 def transition_issue(jira_issue):
+    if not jira_auth:
+        raise Exception('Issue cannot be modified without Jira credentials.')
 
     in_dev = 'IN DEVELOPMENT'
     transition_endpoint = '{0}/issue/{1}/transitions'.format(
@@ -166,6 +165,8 @@ def transition_issue(jira_issue):
 
 
 def edit_issue(jira_issue, instance):
+    if not jira_auth:
+        raise Exception('Issue cannot be modified without Jira credentials.')
 
     endpoint = '{0}/issue/{1}'.format(JIRA_API, jira_issue['key'])
     data = {'fields': {JIRA_INSTANCE_FIELD: [{'value': instance}], }}
@@ -392,8 +393,7 @@ if __name__ == '__main__':
     else:
         instance = get_available_instance()
 
-    if not dryrun:
-        book_instance(instance, issue)
+    book_instance(instance, issue)
 
     if results_file:
         save_results({
