@@ -313,8 +313,8 @@ def get_jira_auth():
 
     return {
         'type': 'basic',
-        'auth': HTTPBasicAuth(os.getenv('JIRA_USER'), os.getenv('JIRA_PASS'))
-    } if os.getenv('JIRA_USER') else {}
+        'auth': HTTPBasicAuth(os.getenv('JIRA_USERNAME'), os.getenv('JIRA_PASSWORD'))
+    } if os.getenv('JIRA_USERNAME') else {}
 
 
 def save_results(results, filename='booking-results.json'):
