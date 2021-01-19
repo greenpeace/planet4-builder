@@ -32,6 +32,7 @@ The base image builds upon the `${IMAGE_FROM}` image and adds:
 -   [shellcheck](https://github.com/koalaman/shellcheck) ${SHELLCHECK_VERSION}
 -   [shfmt](https://github.com/mvdan/sh) ${SHFMT_VERSION}
 -   [tap-xunit](https://github.com/aghassemi/tap-xunit) ${TAP_XUNIT_VERSION}
+-   [trivy](https://github.com/knqyf263/trivy) ${TRIVY_VERSION}
 -   [yamllint](https://pypi.org/project/yamllint) ${YAMLLINT_VERSION}
 -   [yq](https://pypi.org/project/yq) ${YQ_VERSION}
 
