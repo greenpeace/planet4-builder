@@ -1,7 +1,7 @@
 
 # Planet 4 CircleCI build containers
 
-[![CircleCI](https://circleci.com/gh/greenpeace/planet4-circleci/tree/develop.svg?style=shield)](https://circleci.com/gh/greenpeace/planet4-circleci)
+[![CircleCI](https://circleci.com/gh/greenpeace/planet4-circleci.svg?style=shield)](https://circleci.com/gh/greenpeace/planet4-circleci)
 
 Performs builds and tests for the Planet 4 web application and associated infrastructure
 
@@ -26,7 +26,8 @@ The base image builds upon the `${IMAGE_FROM}` image and adds:
 -   [gcloud](https://cloud.google.com/sdk/docs/#install_the_latest_cloud_tools_version_cloudsdk_current_version) ${GOOGLE_SDK_VERSION}
 -   [git-flow](https://github.com/petervanderdoes/gitflow-avh) ${GIT_FLOW_VERSION}
 -   [hadolint](https://github.com/hadolint/hadolint) ${HADOLINT_VERSION}
--   [helm](https://github.com/kubernetes/helm) ${HELM_VERSION}
+-   [helm2](https://github.com/kubernetes/helm) ${HELM2_VERSION}
+-   [helm3](https://github.com/kubernetes/helm) ${HELM3_VERSION}
 -   [junit-merge](https://www.npmjs.com/package/junit-merge) ${JUNIT_MERGE_VERSION}
 -   [shellcheck](https://github.com/koalaman/shellcheck) ${SHELLCHECK_VERSION}
 -   [shfmt](https://github.com/mvdan/sh) ${SHFMT_VERSION}
