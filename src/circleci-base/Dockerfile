@@ -1,8 +1,8 @@
-# greenpeaceinternational/circleci-base:v0.7.41
+# greenpeaceinternational/circleci-base:v0.7.45
 # Base image for performing CI/CD operations in CircleCI
-# Branch: v0.7.41
-# Commit: 051445e2912bb28f7bda067f4d44711e681265f1
-# Build:  build-1626
+# Branch: v0.7.45
+# Commit: ee75ff06ebffb0f22c8b437ce968dc4a081ec026
+# Build:  build-1666
 # ------------------------------------------------------------------------
 #                     DO NOT MAKE CHANGES HERE
 # This file is built automatically from ./templates/Dockerfile.in
@@ -37,15 +37,15 @@ RUN apt-get update && \
     rm -rf /tmp/* && \
     rm -rf /var/lib/apt/lists/*
 
-RUN pip install \
-      yamllint==1.23.0 \
-      yq==2.10.1
+RUN pip install --no-cache-dir \
+      yamllint==1.25.0 \
+      yq==2.11.1
 
 RUN git config --global alias.unstaged 'diff --name-only' && \
     git config --global alias.staged 'diff --name-only --cached'
 
 RUN npm install -g \
-      bats@1.1.0 \
+      bats@1.2.0 \
       junit-merge@2.0.0 \
       tap-xunit@2.4.1
 
@@ -68,12 +68,16 @@ RUN echo "Hadolint v1.18.0 ..." && \
     curl -sS "https://github.com/koalaman/shellcheck/releases/download/v0.7.1/shellcheck-v0.7.1.linux.x86_64.tar.xz" -o /tmp/shellcheck.tar.xz && \
     tar xf /tmp/shellcheck.tar.xz -C /tmp/ && \
     mv /tmp/shellcheck-v0.7.1/shellcheck /usr/local/bin && \
-    echo "Helm v2.16.9 ..." && \
-    curl -sS "https://storage.googleapis.com/kubernetes-helm/helm-v2.16.9-linux-amd64.tar.gz" -o /tmp/helm.tar.gz && \
+    echo "Helm v2 v2.17.0 ..." && \
+    curl -sS "https://get.helm.sh/helm-v2.17.0-linux-amd64.tar.gz" -o /tmp/helm.tar.gz && \
     tar zxf /tmp/helm.tar.gz -C /tmp/ && \
     mv /tmp/linux-amd64/helm /usr/local/bin/helm && \
-    echo "Trivy v0.11.1 ..." && \
-    curl -sSL https://github.com/knqyf263/trivy/releases/download/v0.11.1/trivy_0.11.1_Linux-64bit.tar.gz -o /tmp/trivy.tar.gz && \
+    echo "Helm3 v3.4.2 ..." && \
+    curl -sS "https://get.helm.sh/helm-v3.4.2-linux-amd64.tar.gz" -o /tmp/helm3.tar.gz && \
+    tar zxf /tmp/helm3.tar.gz -C /tmp/ && \
+    mv /tmp/linux-amd64/helm /usr/local/bin/helm3 && \
+    echo "Trivy v0.14.0 ..." && \
+    curl -sSL https://github.com/knqyf263/trivy/releases/download/v0.14.0/trivy_0.14.0_Linux-64bit.tar.gz -o /tmp/trivy.tar.gz && \
     tar zxvf /tmp/trivy.tar.gz -C /tmp/ && \
     mv /tmp/trivy /usr/local/bin && \
     echo "Shfmt v3.1.2 ..." && \
@@ -81,7 +85,7 @@ RUN echo "Hadolint v1.18.0 ..." && \
     chmod +x /usr/local/bin/shfmt && \
     rm -rf /tmp/*
 
-RUN curl -sS "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-299.0.0-linux-x86_64.tar.gz" | tar xz && \
+RUN curl -sS "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-316.0.0-linux-x86_64.tar.gz" | tar xz && \
     CLOUDSDK_CORE_DISABLE_PROMPTS=1 ./google-cloud-sdk/install.sh \
         --usage-reporting false \
         --bash-completion false \
