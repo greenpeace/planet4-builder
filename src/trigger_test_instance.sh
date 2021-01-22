@@ -52,6 +52,8 @@ git -C "$instance_repo" add composer-local.json
 
 git -C "$instance_repo" commit --allow-empty \
   -m "$CIRCLE_PROJECT_REPONAME at branch $CIRCLE_BRANCH, commit $CIRCLE_SHA1" \
-  -m "/unhold $CIRCLE_WORKFLOW_ID"
+  -m "/unhold $CIRCLE_WORKFLOW_ID" \
+  -m "Caller workflow: https://app.circleci.com/pipelines/github/greenpeace/$repo/55/workflows/$CIRCLE_WORKFLOW_ID" \
+  -m "Caller commit: https://github.com/greenpeace/$repo/commit/$CIRCLE_SHA1"
 
 git -C "$instance_repo" push
