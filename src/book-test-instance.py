@@ -134,6 +134,7 @@ def transition_issue(jira_issue):
                    ['name'], 'name': s['name']},
         response['transitions']
     ))
+    vprint(available_transitions)
     dev_transition = list(
         filter(lambda t: t['status'] == in_dev, available_transitions))[0]
 
@@ -144,9 +145,9 @@ def transition_issue(jira_issue):
     # Transition
     data = {'transition': {'id': dev_transition['id']}}
 
+    vprint('POST {0}\n{1}'.format(transition_endpoint, json.dumps(data, indent=4)))
+
     if dryrun:
-        vprint('POST {0}\n{1}'.format(
-            transition_endpoint, json.dumps(data, indent=4)))
         return True
 
     response = requests.post(transition_endpoint,
@@ -156,6 +157,10 @@ def transition_issue(jira_issue):
                                  'Content-type': 'application/json',
                                  'Accept': 'application/json'
                              })
+
+    vprint('Transitioned issue, response: ');
+    vprint(response, response.text, response.headers)
+
     failed = api_failed(response, transition_endpoint, exit_on_error=False)
     if failed:
         vprint('Status transition failed, please move the issue manually in Jira.')
