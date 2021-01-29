@@ -132,6 +132,11 @@ echo "Domain and path replacement. We will replace $OLD_PATH with $NEW_PATH"
 echo ""
 $kc exec "$POD" -- wp search-replace "$OLD_PATH" "$NEW_PATH" --precise --skip-columns=guid
 
+echo
+echo "Discourage search engines from indexing dev/stage sites"
+echo
+$kc exec "$POD" -- wp option update blog_public 0
+
 echo ""
 echo "Flushing cache"
 echo ""
