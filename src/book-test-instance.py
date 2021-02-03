@@ -159,7 +159,7 @@ def transition_issue(jira_issue):
                              })
 
     vprint('Transitioned issue, response: ');
-    vprint(response, response.text, response.headers)
+    vprint(response.status_code, response.headers, response.text)
 
     failed = api_failed(response, transition_endpoint, exit_on_error=False)
     if failed:
@@ -285,7 +285,7 @@ def api_failed(response, endpoint, exit_on_error=True):
         return False
 
     vprint('API call failed')
-    vprint(response, response.text, response.headers)
+    vprint(response.status_code, response.headers, response.text)
     if exit_on_error:
         raise Exception("Status code {0} calling {1}".format(
             response.status_code, endpoint))
