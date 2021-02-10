@@ -1,31 +1,16 @@
 SHELL := /bin/bash
 
-IMAGE := circleci-base
 # ---
 
 # Read default configuration
 include config.default
 export $(shell sed 's/=.*//' config.default)
 
-# Read custom configuration if exist
-ifneq (,$(wildcard config.custom))
-include config.custom
-export $(shell sed 's/=.*//' config.custom)
-endif
-
 # ---
 
-# Parent image
-ifeq ($(strip $(IMAGE_FROM)),)
-IMAGE_FROM := $(BASE_NAMESPACE)/$(BASE_IMAGE):$(BASE_TAG)
-endif
-
-BUILD_IMAGE_NAMESPACE ?= gcr.io
-BUILD_IMAGE_PROJECT ?= greenpeaceinternational
-BUILD_IMAGE_NAME ?= circleci-base
-
 # Image to build
-BUILD_IMAGE ?= $(BUILD_IMAGE_PROJECT)/$(BUILD_IMAGE_NAME)
+BUILD_IMAGE ?= $(BUILD_NAMESPACE)/$(IMAGE_NAME)
+export BUILD_IMAGE
 
 # ---
 
@@ -53,12 +38,7 @@ else
 PUSH_LATEST := true
 endif
 
-export IMAGE_FROM
-
-export BUILD_IMAGE
-export BUILD_IMAGE_NAME
-export BUILD_IMAGE_PROJECT
-export BUILD_IMAGE_NAMESPACE
+REVISION_TAG = $(shell git rev-parse --short HEAD)
 
 export BUILD_NUM
 export BUILD_BRANCH
@@ -81,22 +61,14 @@ SRC := src
 
 .DEFAULT_GOAL := all
 
-.PHONY: all init clean lint lint-sh lint-yaml lint-docker src pull build test
+.PHONY: all init lint lint-sh lint-yaml lint-docker Dockerfile prepare build test
 
-all: clean pull build test
+all: init prepare lint build test
 
-init: .git/hooks/pre-commit
-	git update-index --assume-unchanged README.md
-	git update-index --assume-unchanged $(SRC)/$(IMAGE)/Dockerfile
-
-.git/hooks/pre-commit:
+init:
 	@chmod 755 .githooks/*
 	@find .git/hooks -type l -exec rm {} \;
 	@find .githooks -type f -exec ln -sf ../../{} .git/hooks/ \;
-
-clean:
-		@rm -f README.md $(SRC)/circleci-base/Dockerfile
-		@$(MAKE) -C test clean
 
 format: format-sh
 
@@ -124,20 +96,30 @@ endif
 		@shfmt -f . | xargs shellcheck -x
 		@shfmt -i 2 -ci -d .
 
-lint-docker: $(SRC)/$(IMAGE)/Dockerfile
+lint-docker: $(SRC)/Dockerfile
 ifndef DOCKER
 	$(error "docker is not installed: https://docs.docker.com/install/")
 endif
-		@docker run --rm -i hadolint/hadolint < $(SRC)/$(IMAGE)/Dockerfile
+		@docker run --rm -i hadolint/hadolint < $(SRC)/Dockerfile
 
-pull:
-		docker pull $(IMAGE_FROM)
+prepare: Dockerfile
 
-src:
-		./bin/build.sh -t
+Dockerfile:
+	envsubst '$${BASE_NAMESPACE},$${BASE_IMAGE},$${BASE_TAG},$${CIRCLECI_USER}, \
+		$${YAMLLINT_VERSION},$${YQ_VERSION},$${BATS_VERSION},$${JUNIT_MERGE_VERSION},$${TAP_XUNIT_VERSION}, \
+		$${HADOLINT_VERSION},$${SHELLCHECK_VERSION},$${HELM2_VERSION},$${HELM3_VERSION},$${TRIVY_VERSION}, \
+		$${SHFMT_VERSION},$${GOOGLE_SDK_VERSION}$${NODE_VERSION}' \
+		< Dockerfile.in > src/Dockerfile
 
-build: clean src lint
-		./bin/build.sh -b
+build:
+ifndef DOCKER
+$(error "docker is not installed: https://docs.docker.com/install/")
+endif
+	docker build \
+		--tag=$(BUILD_IMAGE):$(BUILD_TAG) \
+		--tag=$(BUILD_IMAGE):$(BUILD_NUM) \
+		--tag=$(BUILD_IMAGE):$(REVISION_TAG) \
+		src/ ; \
 
 test:
 		@$(MAKE) -j1 -C $@ clean

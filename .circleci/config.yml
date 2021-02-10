@@ -6,8 +6,6 @@ docker_auth: &docker_auth
   password: $DOCKERHUB_PASSWORD
 
 defaults: &defaults
-  environment:
-    GOOGLE_PROJECT_ID: planet-4-151612
   docker:
     - image: greenpeaceinternational/circleci-base:latest
       auth:
@@ -24,51 +22,55 @@ jobs:
       - run:
           name: Configure
           command: |
-            # Ensure all shell scripts are executable
-            chmod +x ./bin/*.sh
-            # Store current build number for future jobs
             mkdir -p /tmp/workspace/var
             echo "${CIRCLE_BUILD_NUM}" > /tmp/workspace/var/circle-build-num
-      - run: make clean src lint
-      - run: docker-login.sh
-      - run: make build
-      - run: make -k test
-      - run: make -j push
       - run:
-          name: Notify failure
-          when: on_fail
-          command: notify-job-failure.sh
+          name: prepare Dockerfiles
+          command: make prepare
+      - run:
+          name: lint
+          command: make lint
+      - run: docker-login.sh
+      - run:
+          name: build
+          command: make build
+      - run:
+          name: test
+          command: make -k test
+      - run:
+          name: push
+          command: make -j push push-latest
       - store_test_results:
-          path: /home/circleci/app/test/logs
+          path: /home/circleci/app/test/logs/
       - store_artifacts:
-          path: /home/circleci/app/test/logs
+          path: /home/circleci/app/test/logs/
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
             - var
 
-  notify-promote:
-    <<: *defaults
-    steps:
-      - run:
-          name: Notify of held workflow
-          command: TYPE="@jencub Promotion" notify-job-hold.sh
-
-  promote:
+  tag:
     <<: *defaults
     steps:
       - attach_workspace:
           at: /tmp/workspace
       - checkout
-      - deploy:
-          name: Start release
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: prepare git
           command: |
-            new_version="$(git-new-version.sh)"
-            release-start.sh "$new_version"
-            release-finish.sh "$new_version"
-            git checkout ${CIRCLE_BRANCH}
-            make src
-            update-build-numbers.sh -f README.md src/circleci-base/Dockerfile
+            git config user.email "circleci-bot@greenpeace.org"
+            git config user.name "CircleCI Bot"
+            git config merge.ours.driver true
+      - run:
+          name: tag
+          command: |
+            current_version=$(git-current-tag.sh)
+            new_version=$(increment-version.sh $current_version)
+            echo "Tagging to ${new_version}"
+            git tag -a "$new_version" -m "$new_version"
+            git push origin --tags
 
   deploy:
     <<: *defaults
@@ -78,21 +80,9 @@ jobs:
           at: /tmp/workspace
       - setup_remote_docker:
           docker_layer_caching: true
-      - run:
-          background: true
-          command: |
-            make src
-            update-build-numbers.sh -f README.md src/circleci-base/Dockerfile
       - run: docker-login.sh
       - deploy:
-          name: Tag :latest
-          command: |
-            export CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle-build-num)
-            docker pull greenpeaceinternational/circleci-base:build-${CIRCLE_BUILD_NUM}
-            docker tag greenpeaceinternational/circleci-base:build-${CIRCLE_BUILD_NUM} greenpeaceinternational/circleci-base:latest
-            TYPE="Tag: greenpeaceinternational/circleci-base:latest" notify-job-success.sh
-            docker push greenpeaceinternational/circleci-base:latest
-      - run:
+          name: trigger planet4-builder
           command: trigger-build-api.sh planet4-builder develop
 
 workflow_common:
@@ -102,38 +92,28 @@ workflow_common:
       branches:
         ignore: /.*/
       tags:
-        only: /^v\p{Digit}+\.\p{Digit}+\.\p{Digit}+.*/
+        only: /^v.*/
 
 workflows:
-  version: 2
   branch:
     jobs:
       - build:
           context: org-global
-          filters:
-            branches:
-              ignore: master
       - hold-promote:
           type: approval
           requires:
             - build
           filters:
             branches:
-              only: develop
-      - notify-promote:
-          context: org-global
-          requires:
-            - build
-          filters:
-            branches:
-              only: develop
-      - promote:
+              only: main
+      - tag:
           context: org-global
           requires:
             - hold-promote
           filters:
             branches:
-              only: develop
+              only: main
+
   tag:
     jobs:
       - build:

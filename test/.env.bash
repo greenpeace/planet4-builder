@@ -2,7 +2,7 @@
 # shellcheck disable=2034
 set -a
 
-VERSION_REGEX="v?[[:digit:]]+\\.[[:digit:]]+"
+VERSION_REGEX="?[[:digit:]]+\\.[[:digit:]]+"
 
 [ -z "${BUILD_IMAGE+x}" ] && BUILD_IMAGE=greenpeaceinternational/circleci-base
 [ -z "${BUILD_TAG+x}" ] && BUILD_TAG=build-$(uname -n | tr '[:upper:]' '[:lower:]' | sed 's/[^a-zA-Z0-9._-]/-/g')

@@ -1,9 +1,20 @@
 # =============================================================================
 
-# Create a custom file and set values are described above, and pass it to the
-# build binary as a parameter, like so:
+# Container user
+CIRCLECI_USER=circleci
 
-# $ ./build.sh -c config.custom
+# Application environment
+APPLICATION_DESCRIPTION="Planet 4 base image for CI/CD operations in CircleCI"
+GOOGLE_PROJECT_ID=planet-4-151612
+
+# Build image
+BUILD_NAMESPACE=greenpeaceinternational
+IMAGE_NAME=circleci-base
+
+# Upstream image
+BASE_IMAGE=php
+BASE_NAMESPACE=cimg
+BASE_TAG=7.3-node
 
 # =============================================================================
 
@@ -47,24 +58,3 @@ YAMLLINT_VERSION=1.25.0
 
 # https://pypi.org/project/yq/#history
 YQ_VERSION=2.11.1
-
-# =============================================================================
-
-CIRCLECI_USER=circleci
-
-# Application environment
-APPLICATION_DESCRIPTION="Base image for performing CI/CD operations in CircleCI"
-GOOGLE_PROJECT_ID=planet-4-151612
-MAINTAINER="Raymond Walker <raymond.walker@greenpeace.org>"
-
-# Container registry
-NAMESPACE=gcr.io
-
-# Upstream image
-BASE_IMAGE=php
-BASE_NAMESPACE=circleci
-BASE_TAG=7.3-node
-
-# Vars left intentionally blank to inform get_var_array to rewrite these
-BRANCH_NAME=
-IMAGE_FROM=

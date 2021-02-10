@@ -1,81 +1,67 @@
-FROM ${IMAGE_FROM}
+FROM ${BASE_NAMESPACE}/${BASE_IMAGE}:${BASE_TAG}
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-LABEL maintainer=${MAINTAINER} \
-      description=${APPLICATION_DESCRIPTION}
-
 ENV CIRCLECI_USER=${CIRCLECI_USER} \
-    PATH=/home/${CIRCLECI_USER}/scripts:/home/${CIRCLECI_USER}/google-cloud-sdk/bin:${PATH}
+    PATH=/home/${CIRCLECI_USER}/google-cloud-sdk/bin:${PATH}
 
 USER root
 
+# Install system dependencies
 # hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-      gawk \
-      gettext \
-      default-mysql-client \
-      python-pip \
-      python-pkg-resources \
-      python-setuptools \
-      rsync \
-      silversearcher-ag \
-      vim \
-      wget \
-      && \
+    default-mysql-client \
+    gawk \
+    gettext \
+    python3-pip \
+    python3-pkg-resources \
+    python3-setuptools \
+    rsync \
+    silversearcher-ag \
+    wget && \
     rm -rf /tmp/* && \
     rm -rf /var/lib/apt/lists/*
 
-RUN pip install --no-cache-dir \
-      yamllint==${YAMLLINT_VERSION} \
-      yq==${YQ_VERSION}
+# Install pip dependencies
+RUN pip3 install --no-cache-dir yamllint==${YAMLLINT_VERSION} yq==${YQ_VERSION} && \
+    npm install -g bats@${BATS_VERSION} junit-merge@${JUNIT_MERGE_VERSION} tap-xunit@${TAP_XUNIT_VERSION}
 
+# Git and user config
 RUN git config --global alias.unstaged 'diff --name-only' && \
-    git config --global alias.staged 'diff --name-only --cached'
-
-RUN npm install -g \
-      bats@${BATS_VERSION} \
-      junit-merge@${JUNIT_MERGE_VERSION} \
-      tap-xunit@${TAP_XUNIT_VERSION}
+    git config --global alias.staged 'diff --name-only --cached' && \
+    chown -R circleci:circleci /usr/local/bin
 
 WORKDIR /home/${CIRCLECI_USER}
 
 COPY --chown=${CIRCLECI_USER}:${CIRCLECI_USER} .curlrc /home/${CIRCLECI_USER}
 
-RUN mkdir -p scripts && \
-    echo "Git Flow v${GIT_FLOW_VERSION} ..." && \
-    curl https://raw.githubusercontent.com/petervanderdoes/gitflow-avh/develop/contrib/gitflow-installer.sh | bash -s install version ${GIT_FLOW_VERSION} && \
-    rm -fr git-flow && \
-    chown -R ${CIRCLECI_USER}:${CIRCLECI_USER} /usr/local/bin
-
 USER ${CIRCLECI_USER}
 
+# Install all extra tools
 RUN echo "Hadolint v${HADOLINT_VERSION} ..." && \
-    curl -sS "https://github.com/hadolint/hadolint/releases/download/v${HADOLINT_VERSION}/hadolint-Linux-x86_64" -o /usr/local/bin/hadolint && \
+    curl "https://github.com/hadolint/hadolint/releases/download/v${HADOLINT_VERSION}/hadolint-Linux-x86_64" -o /usr/local/bin/hadolint && \
     chmod 755 /usr/local/bin/hadolint && \
     echo "Shellcheck v${SHELLCHECK_VERSION} ..." && \
-    curl -sS "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.linux.x86_64.tar.xz" -o /tmp/shellcheck.tar.xz && \
+    curl "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.linux.x86_64.tar.xz" -o /tmp/shellcheck.tar.xz && \
     tar xf /tmp/shellcheck.tar.xz -C /tmp/ && \
     mv /tmp/shellcheck-v${SHELLCHECK_VERSION}/shellcheck /usr/local/bin && \
     echo "Helm v2 v${HELM2_VERSION} ..." && \
-    curl -sS "https://get.helm.sh/helm-v${HELM2_VERSION}-linux-amd64.tar.gz" -o /tmp/helm.tar.gz && \
+    curl "https://get.helm.sh/helm-v${HELM2_VERSION}-linux-amd64.tar.gz" -o /tmp/helm.tar.gz && \
     tar zxf /tmp/helm.tar.gz -C /tmp/ && \
     mv /tmp/linux-amd64/helm /usr/local/bin/helm && \
     echo "Helm3 v${HELM3_VERSION} ..." && \
-    curl -sS "https://get.helm.sh/helm-v${HELM3_VERSION}-linux-amd64.tar.gz" -o /tmp/helm3.tar.gz && \
+    curl "https://get.helm.sh/helm-v${HELM3_VERSION}-linux-amd64.tar.gz" -o /tmp/helm3.tar.gz && \
     tar zxf /tmp/helm3.tar.gz -C /tmp/ && \
     mv /tmp/linux-amd64/helm /usr/local/bin/helm3 && \
     echo "Trivy v${TRIVY_VERSION} ..." && \
-    curl -sSL https://github.com/knqyf263/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz -o /tmp/trivy.tar.gz && \
+    curl https://github.com/knqyf263/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz -o /tmp/trivy.tar.gz && \
     tar zxvf /tmp/trivy.tar.gz -C /tmp/ && \
     mv /tmp/trivy /usr/local/bin && \
     echo "Shfmt v${SHFMT_VERSION} ..." && \
-    curl -sSfL https://github.com/mvdan/sh/releases/download/v${SHFMT_VERSION}/shfmt_v${SHFMT_VERSION}_linux_amd64 -o /usr/local/bin/shfmt && \
+    curl https://github.com/mvdan/sh/releases/download/v${SHFMT_VERSION}/shfmt_v${SHFMT_VERSION}_linux_amd64 -o /usr/local/bin/shfmt && \
     chmod +x /usr/local/bin/shfmt && \
-    rm -rf /tmp/*
-
-RUN curl -sS "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${GOOGLE_SDK_VERSION}-linux-x86_64.tar.gz" | tar xz && \
+    curl "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${GOOGLE_SDK_VERSION}-linux-x86_64.tar.gz" | tar xz && \
     CLOUDSDK_CORE_DISABLE_PROMPTS=1 ./google-cloud-sdk/install.sh \
         --usage-reporting false \
         --bash-completion false \
@@ -83,6 +69,4 @@ RUN curl -sS "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-
     gcloud --quiet components update kubectl cloud_sql_proxy && \
     rm -fr /tmp/*
 
-COPY --chown=${CIRCLECI_USER}:${CIRCLECI_USER} ./bin /home/${CIRCLECI_USER}/bin
-
-COPY --chown=${CIRCLECI_USER}:${CIRCLECI_USER} ./scripts /home/${CIRCLECI_USER}/scripts
+COPY --chown=${CIRCLECI_USER}:${CIRCLECI_USER} ./bin/* /usr/local/bin/
