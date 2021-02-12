@@ -5,7 +5,7 @@ Container for running our CI operations.
 
 ---
 
-The base image builds upon CircleCI's next image: `cimg/base:stable` image and adds:
+The base image builds upon CircleCI's next image: `cimg/php-node` image and adds:
 -   [ag](https://github.com/ggreer/the_silver_searcher)
 -   [bats](https://www.npmjs.com/package/bats)
 -   [gcloud](https://cloud.google.com/sdk/docs/#install_the_latest_cloud_tools_version_cloudsdk_current_version)
@@ -20,3 +20,20 @@ The base image builds upon CircleCI's next image: `cimg/base:stable` image and a
 -   [trivy](https://github.com/knqyf263/trivy)
 -   [yamllint](https://pypi.org/project/yamllint)
 -   [yq](https://pypi.org/project/yq)
+
+## Development
+
+Jusr run `make`, or if you prefer to run it step-by-step:
+
+```
+make init
+make prepare
+make lint
+make build
+make test
+```
+
+### Requirements
+
+1.  Docker
+2.  yamllint
