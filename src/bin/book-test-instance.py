@@ -90,7 +90,7 @@ def book_instance(instance, jira_issue):
     Check jira ticket status & assigned instance
     Move status if needed, book instance on ticket
 
-    @todo: make jira_issue a list of issues, 
+    @todo: make jira_issue a list of issues,
     loop through it to be able to lock multiple issues to one instance & pr
     """
 
