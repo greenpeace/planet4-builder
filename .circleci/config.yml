@@ -29,11 +29,6 @@ jobs:
           mkdir -p /tmp/workspace/var
           echo "${CIRCLE_BUILD_NUM}" > /tmp/workspace/var/circle-build-num
       - run: make -j2 push
-      - run: TYPE="@rawalker Promotion" notify-job-hold.sh
-      - run:
-          name: Notify failure
-          when: on_fail
-          command: TYPE="Build-push greenpeaceinternational/p4-builder" notify-job-failure.sh
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
