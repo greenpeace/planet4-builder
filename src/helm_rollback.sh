@@ -43,13 +43,6 @@ function rollback() {
   # Perform rollback
   if helm rollback "$release" "$previous"; then
     echo "SUCCESS: Release $release now at revision: $previous"
-    TYPE="Helm Rollback" \
-      EXTRA_TEXT="\`\`\`
-    History:
-    $(helm history "${HELM_RELEASE}" --max=5)
-    \`\`\`" \
-      notify-job-success.sh
-
     return 0
   fi
 
@@ -60,13 +53,7 @@ function rollback() {
 retry rollback && exit 0
 
 echo >&2 "ERROR: Failed during rollback"
-helm status "$release
-"
-TYPE="Helm Rollback" \
-  EXTRA_TEXT="\`\`\`
-History:
-$(helm history "${HELM_RELEASE}" --max=5)
-\`\`\`" \
-  notify-job-failure.sh
+
+helm status "$release"
 
 exit 1

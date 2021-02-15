@@ -240,14 +240,6 @@ push:
 	retry docker push $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_PREFIX)-openresty:build-$(CIRCLE_BUILD_NUM) && \
 	retry docker push $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_PREFIX)-app:build-$(CIRCLE_BUILD_NUM)
 
-save:
-	# gsutil ls gs://$(SOURCE_BUCKET) || gsutil mb gs://$(SOURCE_BUCKET)
-	# gsutil -m rsync -d -r source gs://$(SOURCE_BUCKET)/$(SOURCE_BUCKET_PATH)
-	# @echo "Source files available at:"
-	# @echo "- gs://$(SOURCE_BUCKET)/$(SOURCE_BUCKET_PATH)"
-	# @echo "- https://console.cloud.google.com/storage/browser/$(SOURCE_BUCKET)/$(SOURCE_BUCKET_PATH)?project=planet-4-151612"
-	# TYPE="Source Build" EXTRA_TEXT="View built source files: https://console.cloud.google.com/storage/browser/$(SOURCE_BUCKET)/$(SOURCE_BUCKET_PATH)?project=planet-4-151612" "${HOME}/scripts/notify-job-success.sh"
-
 pull:
 	docker pull $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_PREFIX)-app:$(BUILD_TAG) &
 	docker pull $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_PREFIX)-openresty:$(BUILD_TAG) &
@@ -282,8 +274,6 @@ deploy-helm:
 
 	# Remove secrets file
 	rm -f secrets.yaml
-
-	./helm_confirm.sh
 
 post-deploy:
 	./activate_plugins.sh

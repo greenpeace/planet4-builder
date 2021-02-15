@@ -39,16 +39,6 @@ TIMEOUT=10 retry install && exit 0
 
 echo >&2 "ERROR: Helm release ${HELM_RELEASE} failed to deploy"
 
-TYPE="Helm Deployment" \
-  EXTRA_TEXT="\`\`\`
-History:
-$(helm history "${HELM_RELEASE}" --max=5)
-
-Build:
-$(cat helm_output.txt)
-\`\`\`" \
-  notify-job-failure.sh
-
 ./helm_rollback.sh
 
 exit 1
