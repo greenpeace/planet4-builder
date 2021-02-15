@@ -1,53 +1,46 @@
 ---
+version: 2.1
+
 docker_auth: &docker_auth
   username: $DOCKERHUB_USERNAME
   password: $DOCKERHUB_PASSWORD
 
 defaults: &defaults
-  environment:
-    GOOGLE_PROJECT_ID: planet-4-151612
   docker:
     - image: greenpeaceinternational/circleci-base:latest
       auth:
         <<: *docker_auth
   working_directory: /home/circleci/app
 
-version: 2
-
 jobs:
-  build-push:
+  build:
     <<: *defaults
     steps:
       - setup_remote_docker:
           docker_layer_caching: true
       - checkout
+      - run:
+          name: configure
+          command: |
+            mkdir -p /tmp/workspace/var
+            echo "${CIRCLE_BUILD_NUM}" > /tmp/workspace/var/circle-build-num
+      - run:
+          name: lint
+          command: make lint
+      - run:
+          name: clean
+          command: make clean
+      - run:
+          name: build
+          command: make build
       - run: docker-login.sh
-      - run: make clean build
-      - run: activate-gcloud-account.sh
-      - run: gcloud auth configure-docker
-      - run: |
-          mkdir -p /tmp/workspace/var
-          echo "${CIRCLE_BUILD_NUM}" > /tmp/workspace/var/circle-build-num
       - run: make -j2 push
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
             - var
-  promote:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-          at: /tmp/workspace
-      - checkout
-      - run:
-          name: Release
-          command: |
-            new_version=$(git-new-version.sh)
-            echo "Promoting branch ${CIRCLE_BRANCH} to ${new_version}"
-            release-start.sh $new_version
-            release-finish.sh $new_version
 
-  commit:
+  tag:
     <<: *defaults
     steps:
       - attach_workspace:
@@ -56,61 +49,46 @@ jobs:
       - setup_remote_docker:
           docker_layer_caching: true
       - run:
-          name: Commit
+          name: prepare git
           command: |
-            git checkout ${CIRCLE_BRANCH}
-            make clean
-            make -j lint
-            make src/Dockerfile
-            git update-index --no-assume-unchanged src/Dockerfile
-            update-build-numbers.sh -f src/Dockerfile
+            git config user.email "circleci-bot@greenpeace.org"
+            git config user.name "CircleCI Bot"
+            git config merge.ours.driver true
+      - run:
+          name: tag
+          command: |
+            current_version=$(git-current-tag.sh)
+            new_version=$(increment-version.sh $current_version)
+            echo "Tagging to ${new_version}"
+            git tag -a "$new_version" -m "$new_version"
+            git push origin --tags
 
 workflows:
-  version: 2
   branch:
     jobs:
-      - build-push:
+      - build:
           context: org-global
-          filters:
-            branches:
-              ignore: master
-      - hold:
+      - hold-promote:
           type: approval
           requires:
-            - build-push
+            - build
           filters:
             branches:
-              only: develop
-      - promote:
+              only: main
+      - tag:
           context: org-global
           requires:
-            - hold
+            - hold-promote
           filters:
             branches:
-              only: develop
-      - commit:
-          context: org-global
-          requires:
-            - promote
-          filters:
-            branches:
-              only: develop
+              only: main
 
   tag:
     jobs:
-      - build-push:
+      - build:
           context: org-global
           filters:
             branches:
               ignore: /.*/
             tags:
               only: /^v.*/
-      - commit:
-          context: org-global
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v.*/
-          requires:
-            - build-push

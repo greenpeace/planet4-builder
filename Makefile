@@ -76,7 +76,7 @@ ifndef SHFMT
 endif
 	@shfmt -i 2 -ci -w .
 
-lint: init lint-sh lint-yaml lint-json lint-composer lint-docker lint-ci
+lint: init lint-sh lint-yaml lint-json lint-composer lint-docker
 
 lint-sh:
 ifndef SHELLCHECK
@@ -112,12 +112,6 @@ ifndef DOCKER
 $(error "docker is not installed: https://docs.docker.com/install/")
 endif
 	@docker run --rm -i hadolint/hadolint < src/Dockerfile >/dev/null
-
-lint-ci:
-ifndef CIRCLECI
-$(error "circleci is not installed: https://circleci.com/docs/2.0/local-cli/#installation")
-endif
-	@circleci config validate >/dev/null
 
 pull:
 	docker pull $(BUILD_NAMESPACE)/circleci-base:$(BASE_IMAGE_VERSION)
