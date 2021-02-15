@@ -1,0 +1,13 @@
+# =============================================================================
+
+# Parent image
+BASE_NAMESPACE=greenpeaceinternational
+BASE_IMAGE=circleci-base
+BASE_TAG=latest
+
+# Build image
+BUILD_NAMESPACE=greenpeaceinternational
+IMAGE_NAME=p4-builder
+
+# Container user
+CIRCLECI_USER=circleci

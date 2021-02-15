@@ -1,16 +1,10 @@
-# Planet 4 build container
-# https://github.com/greenpeace/planet4-builder
-#
-# Version: ${BUILD_TAG}
-# Build:   https://circleci.com/gh/greenpeace/planet4-builder/${BUILD_NUM}
-
 # hadolint ignore=DL3007
-FROM greenpeaceinternational/circleci-base:${BASE_IMAGE_VERSION}
+FROM ${BASE_NAMESPACE}/${BASE_IMAGE}:${BASE_TAG}
 
-LABEL authors="Raymond Walker <raymond.walker@greenpeace.org>"
+ENV PATH=/home/${CIRCLECI_USER}/bin:${PATH}
 
 RUN helm init --client-only && \
     helm repo add p4 https://planet4-helm-charts.storage.googleapis.com && \
     helm repo add rimusz https://charts.rimusz.net
 
-COPY --chown=circleci:circleci . /home/circleci/
+COPY --chown=${CIRCLECI_USER}:${CIRCLECI_USER} . /home/circleci/

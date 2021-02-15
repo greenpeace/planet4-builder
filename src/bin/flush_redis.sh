@@ -12,7 +12,7 @@ done
 FLUSH_REDIS_DIR="$(cd -P "$(dirname "$source")" && pwd)"
 
 # shellcheck disable=SC1090
-. "${FLUSH_REDIS_DIR}/lib/retry.sh"
+. "${FLUSH_REDIS_DIR}/../lib/retry.sh"
 
 function flush() {
   redis=$(kubectl get pods --namespace "${HELM_NAMESPACE}" \

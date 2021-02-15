@@ -16,7 +16,7 @@ if [ "$APP_ENVIRONMENT" == "staging" ]; then
     ver=${i//*:/}
     printf "%s @ %s" "$repo" "$ver"
 
-    release_branch=$(./latest_release_branch.sh "$repo")
+    release_branch=$(latest_release_branch.sh "$repo")
     if [ -n "$release_branch" ] && [[ $ver != "dev-$release_branch" ]]; then
       release_branch=dev-${release_branch}
       echo " => $release_branch"

@@ -1,10 +1,19 @@
 # Planet 4 Build Container
 
+![Planet4](./planet4.png)
+
 Responsible for building and deploying Planet 4 containers on our Kubernetes clusters.
 
 ## Development
 
-Run `make init` after cloning to ensure you have the pre-commit hooks installed.
+Jusr run make, or if you prefer to run it step-by-step:
+
+```
+make init
+make prepare
+make lint
+make build
+```
 
 ### Requirements
 

@@ -1,16 +1,16 @@
 SHELL := /bin/bash
 
-# Version of parent container to use
-BASE_IMAGE_VERSION ?= latest
-export BASE_IMAGE_VERSION
+# ---
 
-BUILD_NAMESPACE ?= greenpeaceinternational
-GOOGLE_PROJECT_ID ?= planet-4-151612
+# Read default configuration
+include config.default
+export $(shell sed 's/=.*//' config.default)
 
-MAINTAINER_NAME ?= Raymond Walker
-MAINTAINER_EMAIL ?= raymond.walker@greenpeace.org
+# Image to build
+BUILD_IMAGE ?= $(BUILD_NAMESPACE)/$(IMAGE_NAME)
+export BUILD_IMAGE
 
-# ============================================================================
+# ---
 
 SED_MATCH ?= [^a-zA-Z0-9._-]
 
@@ -40,12 +40,11 @@ REVISION_TAG = $(shell git rev-parse --short HEAD)
 
 export BUILD_NUM
 export BUILD_TAG
+export BRANCH_NAME
 
-# ============================================================================
+# ---
 
 # Check necessary commands exist
-
-CIRCLECI := $(shell command -v circleci 2> /dev/null)
 DOCKER := $(shell command -v docker 2> /dev/null)
 COMPOSER := $(shell command -v composer 2> /dev/null)
 JQ := $(shell command -v jq 2> /dev/null)
@@ -55,18 +54,12 @@ YAMLLINT := $(shell command -v yamllint 2> /dev/null)
 
 # ============================================================================
 
-ALL: clean build push
+ALL: init prepare lint build push
 
-init: .git/hooks/pre-commit
-	git update-index --assume-unchanged src/Dockerfile
-
-.git/hooks/pre-commit:
+init:
 	@chmod 755 .githooks/*
 	@find .git/hooks -type l -exec rm {} \;
 	@find .githooks -type f -exec ln -sf ../../{} .git/hooks/ \;
-
-clean:
-	rm -f src/Dockerfile
 
 format: format-sh
 
@@ -90,13 +83,13 @@ endif
 
 lint-yaml:
 ifndef YAMLLINT
-$(error "yamllint is not installed: https://github.com/adrienverge/yamllint")
+	$(error "yamllint is not installed: https://github.com/adrienverge/yamllint")
 endif
 	@find . -type f -name '*.yml' | xargs yamllint
 
 lint-json:
 ifndef JQ
-$(error "jq is not installed: https://stedolan.github.io/jq/download/")
+	$(error "jq is not installed: https://stedolan.github.io/jq/download/")
 endif
 	@find . -type f -name '*.json' | xargs jq type | grep -q '"object"'
 
@@ -107,36 +100,35 @@ else
 	@find . -type f -name 'composer*.json' | xargs composer validate >/dev/null
 endif
 
-lint-docker: src/Dockerfile
+lint-docker:
 ifndef DOCKER
-$(error "docker is not installed: https://docs.docker.com/install/")
+	$(error "docker is not installed: https://docs.docker.com/install/")
 endif
 	@docker run --rm -i hadolint/hadolint < src/Dockerfile >/dev/null
 
-pull:
-	docker pull $(BUILD_NAMESPACE)/circleci-base:$(BASE_IMAGE_VERSION)
+prepare: Dockerfile
 
-src/Dockerfile:
-	envsubst < src/templates/Dockerfile.in > $@
+Dockerfile:
+	envsubst '$${BASE_NAMESPACE},$${BASE_IMAGE},$${BASE_TAG},$${CIRCLECI_USER}' \
+		< Dockerfile.in > src/Dockerfile
 
 build:
-	$(MAKE) -j lint pull
 	docker build \
-		--tag=$(BUILD_NAMESPACE)/p4-builder:$(BUILD_TAG) \
-		--tag=$(BUILD_NAMESPACE)/p4-builder:build-$(BUILD_NUM) \
-		--tag=$(BUILD_NAMESPACE)/p4-builder:$(REVISION_TAG) \
+		--tag=$(BUILD_NAMESPACE)/${IMAGE_NAME}:$(BUILD_TAG) \
+		--tag=$(BUILD_NAMESPACE)/${IMAGE_NAME}:build-$(BUILD_NUM) \
+		--tag=$(BUILD_NAMESPACE)/${IMAGE_NAME}:$(REVISION_TAG) \
 		src
 
 push: push-tag push-latest
 
 push-tag:
-	docker push $(BUILD_NAMESPACE)/p4-builder:$(BUILD_TAG)
-	docker push $(BUILD_NAMESPACE)/p4-builder:build-$(BUILD_NUM)
+	docker push $(BUILD_NAMESPACE)/${IMAGE_NAME}:$(BUILD_TAG)
+	docker push $(BUILD_NAMESPACE)/${IMAGE_NAME}:build-$(BUILD_NUM)
 
 push-latest:
 	if [[ "$(PUSH_LATEST)" = "true" ]]; then { \
-		docker tag $(BUILD_NAMESPACE)/p4-builder:$(REVISION_TAG) $(BUILD_NAMESPACE)/p4-builder:latest; \
-		docker push $(BUILD_NAMESPACE)/p4-builder:latest; \
+		docker tag $(BUILD_NAMESPACE)/${IMAGE_NAME}:$(REVISION_TAG) $(BUILD_NAMESPACE)/${IMAGE_NAME}:latest; \
+		docker push $(BUILD_NAMESPACE)/${IMAGE_NAME}:latest; \
 	}	else { \
 		echo "Not tagged.. skipping latest"; \
 	} fi
