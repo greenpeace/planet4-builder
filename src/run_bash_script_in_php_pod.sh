@@ -12,7 +12,7 @@ if [[ ! -e "$external_script" ]]; then
 fi
 
 # Second parameter is the directory where script output is stored.
-output_dir=$2
+output_dir=${2:-}
 
 php=$(kubectl get pods --namespace "${HELM_NAMESPACE}" \
   --sort-by=.metadata.creationTimestamp \
@@ -27,11 +27,11 @@ fi
 
 kubectl -n "${HELM_NAMESPACE}" cp "$external_script" "$php:/tmp/$base_external_script"
 
-[[ -e "$output_dir" ]] && kubectl -n "${HELM_NAMESPACE}" exec "$php" -- mkdir -p /tmp/probe-output
+[[ -z "$output_dir" ]] && kubectl -n "${HELM_NAMESPACE}" exec "$php" -- mkdir -p /tmp/probe-output
 
 kubectl -n "${HELM_NAMESPACE}" exec "$php" -- "/tmp/$base_external_script" "$*"
 
 kubectl -n "${HELM_NAMESPACE}" exec "$php" -- rm "/tmp/$base_external_script"
 
-[[ -e "$output_dir" ]] && kubectl -n "${HELM_NAMESPACE}" cp "$php:/tmp/probe-output/*" "$output_dir"
-[[ -e "$output_dir" ]] && kubectl -n "${HELM_NAMESPACE}" exec "$php" -- rm /tmp/probe-output/*
+[[ -z "$output_dir" ]] && kubectl -n "${HELM_NAMESPACE}" cp "$php:/tmp/probe-output/*" "$output_dir"
+[[ -z "$output_dir" ]] && kubectl -n "${HELM_NAMESPACE}" exec "$php" -- rm /tmp/probe-output/*
