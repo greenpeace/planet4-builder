@@ -14,3 +14,7 @@ RUN helm init --client-only && \
     helm repo add rimusz https://charts.rimusz.net
 
 COPY --chown=circleci:circleci . /home/circleci/
+
+# Quick fix to avoid having to rebase all PRs.
+RUN echo "alias pip=pip3" >> /etc/bash.bashrc
+RUN echo "alias python=python3" >> /etc/bash.bashrc
