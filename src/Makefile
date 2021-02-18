@@ -185,7 +185,7 @@ checkout:
 	checkout.sh
 
 rewrite-app-repos:
-	use_release_branches.sh
+	composer-requirements.py "${HOME}/merge/" "${APP_ENVIRONMENT}"
 	rewrite_app_repos.sh
 
 rewrite:

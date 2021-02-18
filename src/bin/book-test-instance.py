@@ -158,7 +158,7 @@ def transition_issue(jira_issue):
                                  'Accept': 'application/json'
                              })
 
-    vprint('Transitioned issue, response: ');
+    vprint('Transitioned issue, response: ')
     vprint(response.status_code, response.headers, response.text)
 
     failed = api_failed(response, transition_endpoint, exit_on_error=False)
