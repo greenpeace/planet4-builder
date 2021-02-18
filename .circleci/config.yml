@@ -25,16 +25,20 @@ jobs:
             mkdir -p /tmp/workspace/var
             echo "${CIRCLE_BUILD_NUM}" > /tmp/workspace/var/circle-build-num
       - run:
+          name: prepare
+          command: make prepare
+      - run:
           name: lint
           command: make lint
       - run:
-          name: clean
-          command: make clean
-      - run:
           name: build
           command: make build
-      - run: docker-login.sh
-      - run: make -j2 push
+      - run:
+          name: dockerhub login
+          command: docker-login.sh
+      - run:
+          name: push
+          command: make -j2 push
       - persist_to_workspace:
           root: /tmp/workspace
           paths:

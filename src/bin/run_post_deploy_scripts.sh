@@ -13,5 +13,5 @@ for file in "$workspace"/tasks/post-deploy/*; do
   echo ""
   echo "Running the script : $(basename "$file")"
   echo ""
-  ./run_bash_script_in_php_pod.sh "$file"
+  run_bash_script_in_php_pod.sh "$file"
 done

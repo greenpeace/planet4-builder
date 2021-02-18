@@ -8,8 +8,8 @@ function install() {
 
   if helm upgrade --install --force --wait --timeout 300 "${HELM_RELEASE}" \
     --namespace "${HELM_NAMESPACE}" \
-    --values values.yaml \
-    --values secrets.yaml \
+    --values "$HOME"/var/values.yaml \
+    --values "$HOME"/var/secrets.yaml \
     --version "${CHART_VERSION}" \
     p4/wordpress 2>&1 | tee -a helm_output.txt; then
     echo "SUCCESS: Deployed release $HELM_RELEASE"
@@ -29,16 +29,16 @@ echo
 
 # Create Helm deploy secrets file from environment
 # FIXME: generate this in ramfs
-envsubst <secrets.yaml.in >secrets.yaml
+envsubst <"$HOME"/var/secrets.yaml.in >"$HOME"/var/secrets.yaml
 
 # Create values file
-envsubst <values.yaml.in >values.yaml
-cat values.yaml
+envsubst <"$HOME"/var/values.yaml.in >"$HOME"/var/values.yaml
+cat "$HOME"/var/values.yaml
 
 TIMEOUT=10 retry install && exit 0
 
 echo >&2 "ERROR: Helm release ${HELM_RELEASE} failed to deploy"
 
-./helm_rollback.sh
+helm_rollback.sh
 
 exit 1

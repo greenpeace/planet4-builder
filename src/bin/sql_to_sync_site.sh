@@ -82,7 +82,7 @@ gcloud container clusters get-credentials "${GCLOUD_CLUSTER}" --zone "${GCLOUD_Z
 echo ""
 echo "flushing the redis database"
 echo ""
-/home/circleci/flush_redis.sh
+flush_redis.sh
 
 SOURCE_BUCKET="${CONTAINER_PREFIX}-stateless"
 echo ""
