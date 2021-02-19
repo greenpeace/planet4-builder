@@ -34,7 +34,7 @@ build_assets() {
     git clone --recurse-submodules --single-branch --branch "${branch}" https://github.com/greenpeace/"${reponame}"
   fi
 
-  npm ci --prefix "${reponame}" "${reponame}"
+  PUPPETEER_SKIP_DOWNLOAD=true PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true npm ci --prefix "${reponame}" "${reponame}"
   for i in {1..5}; do
     echo "build attempt $i"
     NODE_OPTIONS=--max_old_space_size=2048 npm run-script --prefix "${reponame}" build && break
