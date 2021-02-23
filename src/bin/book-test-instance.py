@@ -6,10 +6,8 @@ import requests
 from requests.auth import HTTPBasicAuth
 from requests_oauthlib import OAuth1
 from oauthlib.oauth1 import SIGNATURE_RSA
-import sys
 import re
 import argparse
-import tempfile
 import hashlib
 
 
@@ -81,7 +79,8 @@ def get_jira_issue(pr=None, jira_key=None):
         'title': issue['fields']['summary'],
         'state': issue['fields']['status']['name'],
         'assignee': issue['fields']['assignee']['name'] if issue['fields']['assignee'] else None,
-        'test_instance': issue['fields'][JIRA_INSTANCE_FIELD][0]['value'] if issue['fields'][JIRA_INSTANCE_FIELD] else None,
+        'test_instance': (issue['fields'][JIRA_INSTANCE_FIELD][0]['value']
+                          if issue['fields'][JIRA_INSTANCE_FIELD] else None),
     }
 
 
@@ -348,7 +347,8 @@ if __name__ == '__main__':
     parser.add_argument("--no-booking", action="store_true",
                         help="Disable instance booking action")
     parser.add_argument("--results", default="booking-results.json",
-                        help="Save result in json to the specified file (default booking-results.json)")
+                        help=("Save result in json to the specified file "
+                              "(default booking-results.json)"))
     args = parser.parse_args()
 
     # Parsed options
@@ -359,6 +359,7 @@ if __name__ == '__main__':
     results_file = args.results
     # Logs
     logs = []
+
     def vprint(*args):
         for msg in args:
             logs.append(msg)

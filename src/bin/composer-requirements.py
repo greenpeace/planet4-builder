@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import json
-from os import path
 import sys
 
 
@@ -10,14 +9,12 @@ COMPOSER_LOCAL = 'composer-local.json'
 def merge_requirements(env_data, local_data):
     env_require = env_data['require']
 
-    for package in env_require:
-        if package in local_data['require'].keys():
-            local_data['require'][package]=env_require[package]
-            print('Found {0}: Replacing with {1}'.format(package, env_require[package]))
+    local_data['require'].update(env_require)
 
     return local_data
 
-if __name__== "__main__":
+
+if __name__ == "__main__":
     if len(sys.argv) < 3:
         print('Argument are missing.\n Syntax: {0} <directory> <environment>'.format(sys.argv[0]))
         exit(1)
