@@ -2,7 +2,7 @@
 set -u
 
 repo=$1
-branch=${2:-develop}
+branch=${2:-main}
 
 dir=$(echo "$repo" | tr -dc 'a-zA-Z0-9' | head -n 1)
 
@@ -25,7 +25,7 @@ git config user.email "circleci-bot@greenpeace.org"
 git config user.name "CircleCI Bot"
 git config push.default simple
 git checkout "$branch"
-if [ "$branch" == "develop" ]; then
+if [ "$branch" == "main" ]; then
   git commit --allow-empty -m ":robot:${GIT_PREFIX} Trigger build #${CIRCLE_BUILD_NUM}" -m "${CIRCLE_BUILD_URL}"
   git push origin "$branch"
 else

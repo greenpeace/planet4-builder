@@ -4,7 +4,7 @@ set -eu
 
 repo=$1
 user=greenpeace
-branch=${2:-develop}
+branch=${2:-main}
 
 json=$(jq -n \
   --arg VAL "$branch" \

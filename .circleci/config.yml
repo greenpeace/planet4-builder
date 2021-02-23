@@ -83,7 +83,7 @@ jobs:
       - run: docker-login.sh
       - deploy:
           name: trigger planet4-builder
-          command: trigger-build-api.sh planet4-builder develop
+          command: trigger-build-api.sh planet4-builder main
 
 workflow_common:
   tag_common: &tag_common
