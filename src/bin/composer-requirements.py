@@ -10,10 +10,7 @@ COMPOSER_LOCAL = 'composer-local.json'
 def merge_requirements(env_data, local_data):
     env_require = env_data['require']
 
-    for package in env_require:
-        if package in local_data['require'].keys():
-            local_data['require'][package]=env_require[package]
-            print('Found {0}: Replacing with {1}'.format(package, env_require[package]))
+    local_data['require'].update(env_require)
 
     return local_data
 
