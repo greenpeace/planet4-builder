@@ -51,6 +51,7 @@ JQ := $(shell command -v jq 2> /dev/null)
 SHELLCHECK := $(shell command -v shellcheck 2> /dev/null)
 SHFMT := $(shell command -v shfmt 2> /dev/null)
 YAMLLINT := $(shell command -v yamllint 2> /dev/null)
+FLAKE8 := $(shell command -v flake8 2> /dev/null)
 
 # ============================================================================
 
@@ -69,7 +70,7 @@ ifndef SHFMT
 endif
 	@shfmt -i 2 -ci -w .
 
-lint: init lint-sh lint-yaml lint-json lint-composer lint-docker
+lint: init lint-sh lint-py lint-yaml lint-json lint-composer lint-docker
 
 lint-sh:
 ifndef SHELLCHECK
@@ -80,6 +81,12 @@ ifndef SHFMT
 endif
 	@shfmt -f . | xargs shellcheck
 	@shfmt -i 2 -ci -d .
+
+lint-py:
+ifndef FLAKE8
+	$(error "flake8 is not installed: https://pypi.org/project/flake8/")
+endif
+	@flake8
 
 lint-yaml:
 ifndef YAMLLINT

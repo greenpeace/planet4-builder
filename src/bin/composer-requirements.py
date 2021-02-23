@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import json
-from os import path
 import sys
 
 
@@ -14,7 +13,8 @@ def merge_requirements(env_data, local_data):
 
     return local_data
 
-if __name__== "__main__":
+
+if __name__ == "__main__":
     if len(sys.argv) < 3:
         print('Argument are missing.\n Syntax: {0} <directory> <environment>'.format(sys.argv[0]))
         exit(1)
