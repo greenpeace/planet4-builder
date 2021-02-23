@@ -232,7 +232,7 @@ def get_instance_last_commit_date(instance):
     Return last commit date for an instance repo
     """
     commit = api_query(
-        GITHUB_API + '/repos/' + INSTANCE_REPO_PREFIX + instance + '/commits/develop',
+        GITHUB_API + '/repos/' + INSTANCE_REPO_PREFIX + instance + '/commits/main',
         {'Accept': 'application/vnd.github.v3+json'}
     )
 
