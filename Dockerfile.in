@@ -24,7 +24,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Install pip dependencies
-RUN pip3 install --no-cache-dir yamllint==${YAMLLINT_VERSION} yq==${YQ_VERSION} && \
+RUN pip3 install --no-cache-dir yamllint==${YAMLLINT_VERSION} yq==${YQ_VERSION} flake8==${FLAKE8_VERSION} && \
     npm install -g bats@${BATS_VERSION} junit-merge@${JUNIT_MERGE_VERSION} tap-xunit@${TAP_XUNIT_VERSION}
 
 # Git and user config

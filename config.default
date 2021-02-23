@@ -41,6 +41,9 @@ HELM3_VERSION=3.4.2
 # https://www.npmjs.com/package/junit-merge
 JUNIT_MERGE_VERSION=2.0.0
 
+# https://pypi.org/project/flake8/
+FLAKE8_VERSION=3.8.4
+
 # https://github.com/koalaman/shellcheck
 SHELLCHECK_VERSION=0.7.1
 
