@@ -20,25 +20,16 @@ CONTAINER_PREFIX  ?= planet4-test
 
 # Configure composer source and merge repository data
 
-# Define APP_ENVIRONMENT because we need it in order to know what GIT_REF to use
+# Define APP_ENVIRONMENT in case it's not set to development already
 APP_ENVIRONMENT     ?= production
-
-# The branch to checkout of GIT_SOURCE, eg:
-# Use local branch name if not set
-
-ifeq ($(strip $(APP_ENVIRONMENT)),development)
-GIT_REF ?= develop
-else
-GIT_REF ?= master
-endif
 
 # Base composer project repository
 # FIXME change this to greenpeace/planet4-base once things are settled
-GIT_SOURCE        ?= https://github.com/greenpeace/planet4-base-fork
+GIT_SOURCE        ?= https://github.com/greenpeace/planet4-base
 
 # The branch to checkout of GIT_SOURCE, eg:
 # Use local branch name if not set
-GIT_REF           ?= develop
+GIT_REF           ?= main
 
 # Merge composer project directory (NRO)
 MERGE_SOURCE      ?= $(CIRCLE_REPOSITORY_URL)
@@ -77,7 +68,6 @@ ifeq ($(APP_HOSTPATH),<nil>)
 # So if APP_HOSTPATH is set, but blank, clean this value
 APP_HOSTPATH :=
 endif
-# APP_ENVIRONMENT     ?= production
 BUILD_NAMESPACE     ?= gcr.io
 GOOGLE_PROJECT_ID   ?= planet-4-151612
 NEWRELIC_APPNAME    ?= Greenpeace Planet4 Wordpress Test
@@ -102,8 +92,8 @@ PAGESPEED_ENABLED   ?= false
 
 INGRESS_CLASS				?= traefik
 
-ifeq ($(strip $(APP_ENVIRONMENT)),production)
 CLOUDFLARE_ENABLED  ?= true
+ifeq ($(strip $(APP_ENVIRONMENT)),production)
 MIN_REPLICA_COUNT 	?= 2
 else
 MIN_REPLICA_COUNT 	?= 1
@@ -185,6 +175,7 @@ checkout:
 	checkout.sh
 
 rewrite-app-repos:
+	composer-requirements.py "${HOME}/source/composer.json" "${APP_ENVIRONMENT}"
 	composer-requirements.py "${HOME}/merge/composer-local.json" "${APP_ENVIRONMENT}"
 	rewrite_app_repos.sh
 
