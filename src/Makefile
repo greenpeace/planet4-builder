@@ -185,7 +185,7 @@ checkout:
 	checkout.sh
 
 rewrite-app-repos:
-	composer-requirements.py "${HOME}/merge/" "${APP_ENVIRONMENT}"
+	composer-requirements.py "${HOME}/merge/composer-local.json" "${APP_ENVIRONMENT}"
 	rewrite_app_repos.sh
 
 rewrite:
