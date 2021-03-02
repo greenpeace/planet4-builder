@@ -9,6 +9,7 @@ REPOS=(
   planet4-master-theme
   planet4-plugin-gutenberg-blocks
   planet4-landing-page
+  planet4-homepage
 )
 
 for repo in "${REPOS[@]}"; do
