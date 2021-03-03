@@ -39,7 +39,7 @@ else
   git remote add origin "$GIT_SOURCE"
   git fetch
   if [ "$APP_ENVIRONMENT" == "production" ]; then
-    latest_tag=$(git-current-tag.sh)
+    latest_tag=$(git describe --tags "$(git rev-list --tags --max-count=1)")
     git checkout "$latest_tag"
   else
     git reset "origin/${GIT_REF}"
