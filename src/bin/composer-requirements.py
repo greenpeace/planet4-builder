@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 import json
+import os
 import sys
-
-
-COMPOSER_LOCAL = 'composer-local.json'
 
 
 def merge_requirements(env_data, local_data):
@@ -16,20 +14,21 @@ def merge_requirements(env_data, local_data):
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
-        print('Argument are missing.\n Syntax: {0} <directory> <environment>'.format(sys.argv[0]))
+        print('Argument are missing.\n Syntax: {0} <composer> <environment>'.format(sys.argv[0]))
         exit(1)
 
-    directory = sys.argv[1]
+    composer = sys.argv[1]
     environment = sys.argv[2]
+    directory = os.path.split(composer)[0]
 
     try:
-        env_file = open('{0}{1}.json'.format(directory, environment), 'r')
+        env_file = open('{0}/{1}.json'.format(directory, environment), 'r')
     except FileNotFoundError:
         print('No environment specific requirements')
         exit(0)
 
     try:
-        local_file = open('{0}{1}'.format(directory, COMPOSER_LOCAL), 'r')
+        local_file = open(composer, 'r')
     except FileNotFoundError:
         print('No local specific requirements')
         exit(0)
@@ -40,8 +39,11 @@ if __name__ == "__main__":
     local_file.close()
 
     merged_data = merge_requirements(env_data, local_data)
+    composer_final = json.dumps(merged_data, indent=4)
 
-    with open('{0}{1}'.format(directory, COMPOSER_LOCAL), 'w') as f:
-        f.write(json.dumps(merged_data, indent=4))
+    with open(composer, 'w') as f:
+        f.write(composer_final)
+
+    print(composer_final)
 
     exit(0)

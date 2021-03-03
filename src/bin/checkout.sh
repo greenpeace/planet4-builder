@@ -38,9 +38,13 @@ else
   git init
   git remote add origin "$GIT_SOURCE"
   git fetch
-  git reset "origin/${GIT_REF}"
+  if [ "$APP_ENVIRONMENT" == "production" ]; then
+    latest_tag=$(git-current-tag.sh)
+    git checkout "$latest_tag"
+  else
+    git reset "origin/${GIT_REF}"
+  fi
   git checkout -- .
-  # git clone "$GIT_SOURCE" .
 fi
 
 ls -al
