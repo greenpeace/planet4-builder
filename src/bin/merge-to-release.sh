@@ -2,7 +2,7 @@
 set -o pipefail
 
 # Configure git user
-git config user.email "circleci-bot@greenpeace.org"
+git config user.email "${GIT_USER_EMAIL}"
 git config user.name ":robot: CI Bot"
 git config push.default simple
 
