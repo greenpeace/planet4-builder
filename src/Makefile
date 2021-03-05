@@ -2,9 +2,6 @@ SHELL := /bin/bash
 
 .EXPORT_ALL_VARIABLES:
 
-################################################################################
-MAINTAINER        ?= Raymond Walker <raymond.walker@greenpeace.org>
-
 # https://github.com/greenpeace/planet4-docker
 PARENT_IMAGE			?= gcr.io/planet-4-151612/wordpress
 PARENT_VERSION    ?= latest

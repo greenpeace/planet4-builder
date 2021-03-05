@@ -11,8 +11,8 @@ fi
 
 instance_repo=planet4-test-$(cat /tmp/workspace/test-instance)
 
-git config --global user.email "circleci-bot@greenpeace.org"
-git config --global user.name ":robot: CI Bot"
+git config --global user.email "${GIT_USER_EMAIL}"
+git config --global user.name "CircleCI Bot"
 git config --global push.default simple
 git config --global url."ssh://git@github.com".insteadOf "https://github.com" || true
 mkdir -p ~/.ssh/ && echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >~/.ssh/config
