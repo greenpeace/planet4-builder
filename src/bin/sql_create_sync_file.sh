@@ -33,7 +33,7 @@ sleep 2
 echo ""
 echo "mysqldump ${WP_DB_NAME} > content/${WP_DB_NAME}-${SQL_TAG}.sql ..."
 echo ""
-mysqldump -v \
+mysqldump -v --column-statistics=0 \
   -u "$WP_DB_USERNAME_DC" \
   -p"$WP_DB_PASSWORD_DC" \
   -h 127.0.0.1 \
