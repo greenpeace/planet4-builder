@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -eo pipefail
 
 if [ -z "$1" ]; then
   echo "Version tag is missing"
   exit 1
 fi
 
-VERSION="$1"
+# Assign version and strip "v" prefix
+VERSION="${1#v}"
 
 now="$(date +'%Y-%m-%d')"
 contributor_memo=""
