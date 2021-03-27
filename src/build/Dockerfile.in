@@ -24,7 +24,7 @@ RUN time composer -v install --no-dev --no-ansi --no-interaction --prefer-dist
 
 RUN \
     if [ -f "${SOURCE_PATH}/composer-local.json" ]; then \
-      rm -f composer.lock; \
+#      rm -f composer.lock; \
       time composer -v config --no-ansi extra.merge-plugin.require composer-local.json; \
     fi
 RUN time composer -v update --lock --no-dev --no-ansi --prefer-dist
