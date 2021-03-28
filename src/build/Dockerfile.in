@@ -18,7 +18,7 @@ COPY . /app/
 
 WORKDIR /app/source
 
-RUN time composer -v update --lock --no-dev --no-ansi --prefer-dist
+#RUN time composer -v update --lock --no-dev --no-ansi --prefer-dist
 
 RUN time composer -v install --no-dev --no-ansi --no-interaction --prefer-dist
 
