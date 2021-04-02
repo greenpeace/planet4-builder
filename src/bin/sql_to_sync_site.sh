@@ -101,26 +101,10 @@ echo "Find the first php pod in the release ${HELM_RELEASE}"
 echo ""
 POD=$($kc get pods -l component=php | grep "${HELM_RELEASE}" | head -n1 | cut -d' ' -f1)
 echo "Pod:        $POD"
+echo
 
-# Check if this in .org or .ch domain
-if [[ "$APP_HOSTNAME" == *"greenpeace.org"* ]]; then
-  OLD_PATH="https://www.greenpeace.org/static/${CONTAINER_PREFIX}-stateless/"
-  NEW_PATH="https://www.greenpeace.org/static/${CONTAINER_PREFIX}-stateless-${SITE_ENV}/"
-elif [[ "$APP_HOSTNAME" == *"greenpeace.ch"* ]]; then
-  OLD_PATH="https://www.greenpeace.ch/static/${CONTAINER_PREFIX}-stateless/"
-  NEW_PATH="https://www.greenpeace.ch/static/${CONTAINER_PREFIX}-stateless-${SITE_ENV}/"
-else
-  OLD_PATH="https://storage.googleapis.com/${CONTAINER_PREFIX}-stateless/"
-  NEW_PATH="https://storage.googleapis.com/${CONTAINER_PREFIX}-stateless-${SITE_ENV}/"
-fi
-echo ""
-echo "Replacing the path $OLD_PATH with $NEW_PATH for the images themselves"
-echo ""
-$kc exec "$POD" -- wp search-replace "$OLD_PATH" "$NEW_PATH" --precise --skip-columns=guid
-
-echo ""
-echo "Check if we are in an pathless environment"
-echo ""
+# Full db domain and path replacement
+# Check if we are in an pathless environment
 if [[ $APP_HOSTPATH == "<nil>" ]]; then
   OLD_PATH=$(yq -r .job_environments.production_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)
   NEW_PATH=$(yq -r .job_environments."${SITE_ENV}"_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)
@@ -128,7 +112,28 @@ else
   OLD_PATH=$(yq -r .job_environments.production_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)/$APP_HOSTPATH
   NEW_PATH=$(yq -r .job_environments."${SITE_ENV}"_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)/$APP_HOSTPATH
 fi
-echo "Domain and path replacement. We will replace $OLD_PATH with $NEW_PATH"
+echo "Domain and path replacement."
+echo "We will replace $OLD_PATH with $NEW_PATH"
+echo
+$kc exec "$POD" -- wp search-replace "$OLD_PATH" "$NEW_PATH" --precise --skip-columns=guid
+echo
+
+# Stateless domain and path replacement
+# Check if this in .org or .ch domain
+if [[ "$APP_HOSTNAME" == *"greenpeace.org"* ]]; then
+  OLD_PATH="https://www.greenpeace.org/static/${CONTAINER_PREFIX}-stateless/"
+  NEW_PATH="https://www.greenpeace.org/static/${CONTAINER_PREFIX}-stateless-${SITE_ENV}/"
+elif [[ "$APP_HOSTNAME" == *"greenpeace.ch"* ]]; then
+  NEW_DOMAIN=$(yq -r .job_environments."${SITE_ENV}"_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)
+  OLD_PATH="https://${NEW_DOMAIN}/static/${CONTAINER_PREFIX}-stateless/"
+  NEW_PATH="https://www.greenpeace.ch/static/${CONTAINER_PREFIX}-stateless-${SITE_ENV}/"
+else
+  OLD_PATH="https://storage.googleapis.com/${CONTAINER_PREFIX}-stateless/"
+  NEW_PATH="https://storage.googleapis.com/${CONTAINER_PREFIX}-stateless-${SITE_ENV}/"
+fi
+echo ""
+echo "Stateless domain and path replacement."
+echo "We will replace the path $OLD_PATH with $NEW_PATH for the images themselves"
 echo ""
 $kc exec "$POD" -- wp search-replace "$OLD_PATH" "$NEW_PATH" --precise --skip-columns=guid
 
