@@ -55,7 +55,7 @@ RUN echo "Hadolint v${HADOLINT_VERSION} ..." && \
     tar zxf /tmp/helm3.tar.gz -C /tmp/ && \
     mv /tmp/linux-amd64/helm /usr/local/bin/helm3 && \
     echo "Trivy v${TRIVY_VERSION} ..." && \
-    curl https://github.com/knqyf263/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz -o /tmp/trivy.tar.gz && \
+    curl https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz -o /tmp/trivy.tar.gz && \
     tar zxvf /tmp/trivy.tar.gz -C /tmp/ && \
     mv /tmp/trivy /usr/local/bin && \
     echo "Shfmt v${SHFMT_VERSION} ..." && \

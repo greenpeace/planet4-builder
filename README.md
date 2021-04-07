@@ -17,7 +17,7 @@ The base image builds upon CircleCI's next image: `cimg/php-node` image and adds
 -   [shellcheck](https://github.com/koalaman/shellcheck)
 -   [shfmt](https://github.com/mvdan/sh)
 -   [tap-xunit](https://github.com/aghassemi/tap-xunit)
--   [trivy](https://github.com/knqyf263/trivy)
+-   [trivy](https://github.com/aquasecurity/trivy)
 -   [yamllint](https://pypi.org/project/yamllint)
 -   [yq](https://pypi.org/project/yq)
 
