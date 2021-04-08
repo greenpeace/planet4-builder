@@ -28,8 +28,7 @@ build_assets() {
   if [ "$CIRCLE_PROJECT_REPONAME" == "$reponame" ] && [ -d "${checkoutDir}" ]; then
     mkdir -p "$reponame"
     cp -r "${checkoutDir}/." "$reponame"
-    git -C "$reponame" submodule init
-    git -C "$reponame" submodule update --remote
+    git -C "$reponame" submodule update --init
   else
     git clone --recurse-submodules --single-branch --branch "${branch}" https://github.com/greenpeace/"${reponame}"
   fi
