@@ -11,6 +11,7 @@ composer_files=(
 plugin_branch_env_vars=(
   "MASTER_THEME_BRANCH"
   "PLUGIN_GUTENBERG_BLOCKS_BRANCH"
+  "GPCA_PLUGIN_BLOCKS"
 )
 
 built_assets_dir="${HOME}/source/built-dev-assets"
