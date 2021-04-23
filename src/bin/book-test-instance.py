@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Moved from builder repo. Latest commit there:
+# https://github.com/greenpeace/planet4-builder/commit/d6640747ad20ed54b7e8d40b0920af106880e17f
 
 import argparse
 import hashlib
