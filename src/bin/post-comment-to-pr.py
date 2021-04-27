@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+from datetime import datetime
 import json
 import os
 import re
@@ -31,23 +32,50 @@ def get_pull_request(pr_url):
         pr_number
     )
 
-    return pr_endpoint
+    comments_endpoint = '{0}/repos/{1}/issues/comments/'.format(
+        GITHUB_API,
+        repository
+    )
+
+    return pr_endpoint, comments_endpoint
 
 
-def post_comment(pr_endpoint, test_instance):
+def check_for_comment(pr_endpoint, title):
+    oauth_key = os.getenv('GITHUB_OAUTH_TOKEN')
+
+    headers = {
+        'Authorization': 'token {0}'.format(oauth_key),
+        'Accept': 'application/vnd.github.v3+json'
+    }
+
+    response = requests.get(pr_endpoint, headers=headers)
+
+    for comment in response.json():
+        if comment['body'].splitlines()[0] == title:
+            return comment['id']
+
+    return False
+
+
+def post_comment(pr_endpoint, comment_endpoint, comment_id, body):
     oauth_key = os.getenv('GITHUB_OAUTH_TOKEN')
 
     data = {
-        'body': '[{0}]({1}{0}) test instance is ready :rocket:'.format(test_instance, TEST_INSTANCE_PREFIX)
+        'body': body
     }
     headers = {
         'Authorization': 'token {0}'.format(oauth_key),
         'Accept': 'application/vnd.github.v3+json'
     }
 
-    response = requests.post(pr_endpoint, headers=headers, data=json.dumps(data))
+    if comment_id:
+        endpoint = '{0}{1}'.format(comment_endpoint, comment_id)
+        print(endpoint)
+        response = requests.patch(endpoint, headers=headers, data=json.dumps(data))
+        return response.json()
 
-    print(response.json())
+    response = requests.post(pr_endpoint, headers=headers, data=json.dumps(data))
+    return response.json()
 
 
 if __name__ == '__main__':
@@ -65,7 +93,18 @@ if __name__ == '__main__':
     test_instance = args.test_instance
 
     # Fetch PR details
-    pr_endpoint = get_pull_request(pr_url=pr_url)
+    pr_endpoint, comments_endpoint = get_pull_request(pr_url=pr_url)
 
-    # Post comment
-    post_comment(pr_endpoint, test_instance)
+    # Construct comment body
+    now = datetime.now().strftime('%Y.%m.%d %H:%M:%S')
+    title = '### Test instance is ready :rocket:'
+    msg = (':new_moon: [{0}]({1}{0})\n\n'
+           ':watch: {2}').format(
+            test_instance, TEST_INSTANCE_PREFIX, now)
+    body = '{0}\n\n{1}'.format(title, msg)
+
+    # Post comment, but only once
+    comment_id = check_for_comment(pr_endpoint, title)
+    # if not exists:
+    response = post_comment(pr_endpoint, comments_endpoint, comment_id, body)
+    print(response)
