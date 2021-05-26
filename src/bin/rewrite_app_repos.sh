@@ -68,14 +68,6 @@ for plugin_branch_env_var in "${plugin_branch_env_vars[@]}"; do
       tmp=$(mktemp)
       jq ".require.\"greenpeace/${reponame}\" = \"dev-${branch}\"" "$f" >"$tmp"
       mv "$tmp" "$f"
-
-      checkoutDir="/home/circleci/checkout/${reponame}"
-      # If builder is running for the theme or plugin, then we can use the checked out code of the current commit.
-      if [ "$CIRCLE_PROJECT_REPONAME" == "$reponame" ] && [ -d "${checkoutDir}" ]; then
-        tmp=$(mktemp)
-        jq ".repositories |= [{\"type\": \"path\", \"url\": \"${checkoutDir}\"}] + ." "$f" >"$tmp"
-        mv "$tmp" "$f"
-      fi
     done
 
     echo "And now, delete any cached version of this package"
