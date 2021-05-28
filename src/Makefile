@@ -26,7 +26,7 @@ GIT_SOURCE        ?= https://github.com/greenpeace/planet4-base
 
 # The branch to checkout of GIT_SOURCE, eg:
 # Use local branch name if not set
-GIT_REF           ?= main
+GIT_REF           ?= cmb2
 
 # Merge composer project directory (NRO)
 MERGE_SOURCE      ?= $(CIRCLE_REPOSITORY_URL)
