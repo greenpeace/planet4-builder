@@ -26,7 +26,7 @@ get_other_repos=".repositories // [] | map(select( .package.name != \"greenpeace
 other_repos=$(jq "$get_other_repos" <"$composer_file")
 
 if [ "$is_merge_commit" == true ]; then
-  # If the workflow is running for a merge commit, we set the version to the branch that was merged to (master mostly).
+  # If the workflow is running for a merge commit, we set the version to the branch that was merged to (main mostly).
   version="dev-$CIRCLE_BRANCH"
   package_repo=""
 else

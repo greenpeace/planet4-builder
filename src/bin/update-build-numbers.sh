@@ -59,8 +59,8 @@ if [[ -z "${CIRCLE_BRANCH}" ]] && [[ -n "${CIRCLE_TAG}" ]]; then
 
   if [[ -z "$CIRCLE_BRANCH" ]]; then
     echo >&2 "Could not reliably determine branch"
-    echo >&2 "Forcing master (since they should be the only branches tagged)"
-    CIRCLE_BRANCH=master
+    echo >&2 "Forcing main (since they should be the only branches tagged)"
+    CIRCLE_BRANCH=main
   fi
 
   # Checkout that branch / tag
