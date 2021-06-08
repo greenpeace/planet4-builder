@@ -37,7 +37,7 @@ else
   cd /home/circleci/source
   git init
   git remote add origin "$GIT_SOURCE"
-  git fetch
+  git fetch --all --tags
   if [ "$APP_ENVIRONMENT" == "production" ]; then
     latest_tag=$(git describe --tags "$(git rev-list --tags --max-count=1)")
     git checkout "$latest_tag"

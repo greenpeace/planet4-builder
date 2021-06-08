@@ -14,7 +14,8 @@ plugin_branch_env_vars=(
 )
 
 built_assets_dir="${HOME}/source/built-dev-assets"
-mkdir -p "${built_assets_dir}"
+artifacts_dir="${HOME}/source/artifacts"
+mkdir -p "${built_assets_dir}" "${artifacts_dir}"
 
 echo "rewrite_app_repos"
 
@@ -97,13 +98,26 @@ for plugin_branch_env_var in "${plugin_branch_env_vars[@]}"; do
       continue
     fi
 
-    # We don't need to build the assets for tags anymore, as we made those work with github releases.
-    # Branches still need to be built at this point for now.
-    # We know if it's a branch when the prefix was present, so $branch should differ from $plugin_version only in that case.
-    if [ "${branch}" == "${plugin_version}" ]; then
-      echo "Version ${plugin_version} for ${reponame} in ${f} is not a branch, no need to build."
+    # We don't need to build the assets for tags and test instances, both are zip files
+    # Test instances use "7" as a version number
+    if [ "${plugin_version}" == "7" ]; then
+      echo "Version ${plugin_version} for ${reponame} in ${f} means test instance, no need to build"
       # Empty $repo_branch in case a previous composer file had set it.
       repo_branch=""
+      continue
+    fi
+    # We know if it's a branch when the dev- prefix was present
+    # so $branch should differ from $plugin_version only in that case.
+    if [ "${branch}" == "${plugin_version}" ]; then
+      echo "Version ${plugin_version} for ${reponame} in ${f} is not a branch, no need to build"
+      # Empty $repo_branch in case a previous composer file had set it.
+      repo_branch=""
+      echo "Pulling the zip file"
+      http_code=$(curl -OL --output-dir "${artifacts_dir}" "https://github.com/greenpeace/${reponame}/releases/download/${plugin_version}/${reponame}.zip" -w "%{http_code}")
+      if [[ $http_code -ge 400 ]]; then
+        echo "File not found"
+        exit 1
+      fi
       continue
     fi
 
