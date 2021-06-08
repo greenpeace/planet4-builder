@@ -113,7 +113,7 @@ for plugin_branch_env_var in "${plugin_branch_env_vars[@]}"; do
       # Empty $repo_branch in case a previous composer file had set it.
       repo_branch=""
       echo "Pulling the zip file"
-      http_code=$(curl -OL --output-dir "${artifacts_dir}" "https://github.com/greenpeace/${reponame}/releases/download/${plugin_version}/${reponame}.zip" -w "%{http_code}")
+      http_code=$(curl -L -o "${artifacts_dir}/${reponame}.zip" "https://github.com/greenpeace/${reponame}/releases/download/${plugin_version}/${reponame}.zip" -w "%{http_code}")
       if [[ $http_code -ge 400 ]]; then
         echo "File not found"
         exit 1
