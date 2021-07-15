@@ -7,6 +7,7 @@ import hashlib
 import json
 from oauthlib.oauth1 import SIGNATURE_RSA
 import os
+import random
 import re
 import requests
 from requests.auth import HTTPBasicAuth
@@ -66,7 +67,7 @@ def get_jira_issue(pr=None, jira_key=None):
         # @todo: from commits
 
     if not jira_key:
-        raise Exception('Jira issue key could not be found.')
+        return None
 
     vprint('Jira key found: {0}'.format(jira_key))
     search_result = api_query(
@@ -200,7 +201,7 @@ Instances
 """
 
 
-def get_available_instance():
+def get_available_instance(randomize=False):
     """
     fetch instances from swarm | filter available
     fetch last commit date on each, reverse order for a steady rotation
@@ -209,13 +210,17 @@ def get_available_instance():
     instances = get_instances()
 
     available_list = list(filter(lambda name: instances[name] == 1, instances))
+
+    if not len(available_list):
+        raise Exception('No available instance could be found.')
+
+    if randomize:
+        random.shuffle(available_list)
+        return available_list[0]
+
     dated_list = list(
         map(lambda name: [name, get_instance_last_commit_date(name)], available_list))
-
     dated_list.sort(key=lambda i: i[1])
-
-    if not dated_list[0][0]:
-        raise Exception('No available instance could be found.')
 
     return dated_list[0][0]
 
@@ -382,23 +387,21 @@ if __name__ == '__main__':
         raise Exception('No pull request found, aborting.')
 
     # Fetch issue details from Github PR
-    try:
-        issue = get_jira_issue(pr=pr)
-    except Exception as e:
-        vprint(e)
-        issue = None
+    issue = get_jira_issue(pr=pr)
 
-    # Define instance
+    # If not a ticket PR just get an available instance
+    # Reverse the order to avoid race condition
     if not issue:
-        raise Exception('No corresponding issue found, booking will not be executed.')
-
-    if issue['test_instance']:
-        instance = issue['test_instance']
-        vprint('Issue is already deployed on {0}, reusing.'.format(instance))
+        instance = get_available_instance(randomize=True)
     else:
-        instance = get_available_instance()
+        # Use pre-booked instance or get a new one
+        if issue['test_instance']:
+            instance = issue['test_instance']
+            vprint('Issue is already deployed on {0}, reusing.'.format(instance))
+        else:
+            instance = get_available_instance()
 
-    book_instance(instance, issue)
+        book_instance(instance, issue)
 
     if results_file:
         save_results({
