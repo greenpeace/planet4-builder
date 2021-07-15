@@ -25,7 +25,7 @@ function flush() {
     return 1
   fi
   echo "Flushing redis pod ${redis} in ${HELM_NAMESPACE}..."
-  kubectl --namespace "${HELM_NAMESPACE}" exec "$redis" redis-cli flushdb
+  kubectl --namespace "${HELM_NAMESPACE}" exec "$redis" -- redis-cli flushdb
 }
 
 retry flush && exit 0

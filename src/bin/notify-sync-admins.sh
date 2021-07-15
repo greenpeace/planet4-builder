@@ -21,7 +21,7 @@ if [[ -z "$php" ]]; then
   exit 1
 fi
 
-EMAIL_ADDRESS=$(kubectl --namespace "${HELM_NAMESPACE}" exec "$php" wp option get admin_email)
+EMAIL_ADDRESS=$(kubectl --namespace "${HELM_NAMESPACE}" exec "$php" -- wp option get admin_email)
 
 json=$(jq -n \
   --arg EMAIL_FROM "$EMAIL_FROM" \
