@@ -34,6 +34,8 @@ RUN git config --global alias.unstaged 'diff --name-only' && \
 
 WORKDIR /home/${CIRCLECI_USER}
 
+COPY --chown=${CIRCLECI_USER}:${CIRCLECI_USER} lib/ /usr/lib/python3.8/
+
 COPY --chown=${CIRCLECI_USER}:${CIRCLECI_USER} .curlrc /home/${CIRCLECI_USER}
 
 USER ${CIRCLECI_USER}

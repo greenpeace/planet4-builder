@@ -1,2 +1,3 @@
 Dockerfile
 test/logs/
+__pycache__

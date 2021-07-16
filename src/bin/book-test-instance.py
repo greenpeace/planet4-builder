@@ -13,6 +13,8 @@ import requests
 from requests.auth import HTTPBasicAuth
 from requests_oauthlib import OAuth1
 
+from p4.apis import api_failed, api_query
+from p4.github import get_last_commit_date, get_pull_request
 
 JIRA_API = 'https://jira.greenpeace.org/rest/api/2'
 GITHUB_API = 'https://api.github.com'
@@ -20,33 +22,6 @@ SWARM_API = 'https://us-central1-planet-4-151612.cloudfunctions.net/p4-test-swar
 
 INSTANCE_REPO_PREFIX = 'greenpeace/planet4-test-'
 JIRA_INSTANCE_FIELD = 'customfield_13000'
-
-
-def get_pull_request(pr_url):
-    """
-    Fetch PR details
-
-    Extract data from PR url
-    Request PR data
-    """
-
-    regex = re.compile('https://github.com/(.*)/pull/([0-9]{1,6})')
-    matches = regex.match(pr_url)
-    vprint('Parsing URL {0}'.format(matches.groups()))
-
-    repository = matches.group(1) or None
-    pr_number = matches.group(2) or None
-
-    if not repository or not pr_number:
-        raise Exception('PR id could not be parsed.')
-
-    pr_endpoint = '{0}/repos/{1}/pulls/{2}'.format(
-        GITHUB_API,
-        repository,
-        pr_number
-    )
-
-    return api_query(pr_endpoint, {'Accept': 'application/vnd.github.v3+json'})
 
 
 def get_jira_issue(pr=None, jira_key=None):
@@ -69,7 +44,7 @@ def get_jira_issue(pr=None, jira_key=None):
     if not jira_key:
         return None
 
-    vprint('Jira key found: {0}'.format(jira_key))
+    logs.append('Jira key found: {0}'.format(jira_key))
     search_result = api_query(
         JIRA_API + '/search?jql=key={0}'.format(jira_key))
     if not search_result['issues']:
@@ -108,7 +83,7 @@ def book_instance(instance, jira_issue):
     if current_state in editable_status:
         transition_issue(jira_issue)
     else:
-        vprint('Issue is not in an editable status <{0}>, skipping transition.'.format(
+        logs.append('Issue is not in an editable status <{0}>, skipping transition.'.format(
             current_state
         ))
 
@@ -116,7 +91,7 @@ def book_instance(instance, jira_issue):
     if not jira_issue['test_instance'] or jira_issue['test_instance'] != instance:
         edit_issue(jira_issue, instance)
     else:
-        vprint('Issue is already configured for instance ({0}), skipping configuration.'.format(
+        logs.append('Issue is already configured for instance ({0}), skipping configuration.'.format(
             instance))
 
     return True
@@ -136,7 +111,7 @@ def transition_issue(jira_issue):
                    ['name'], 'name': s['name']},
         response['transitions']
     ))
-    vprint(available_transitions)
+    logs.append(available_transitions)
     dev_transition = list(
         filter(lambda t: t['status'] == in_dev, available_transitions))[0]
 
@@ -147,7 +122,7 @@ def transition_issue(jira_issue):
     # Transition
     data = {'transition': {'id': dev_transition['id']}}
 
-    vprint('POST {0}\n{1}'.format(transition_endpoint, json.dumps(data, indent=4)))
+    logs.append('POST {0}\n{1}'.format(transition_endpoint, json.dumps(data, indent=4)))
 
     if dryrun:
         return True
@@ -160,12 +135,12 @@ def transition_issue(jira_issue):
                                  'Accept': 'application/json'
                              })
 
-    vprint('Transitioned issue, response: ')
-    vprint(response.status_code, response.headers, response.text)
+    logs.append('Transitioned issue, response: ')
+    logs.append(response.status_code, response.headers, response.text)
 
     failed = api_failed(response, transition_endpoint, exit_on_error=False)
     if failed:
-        vprint('Status transition failed, please move the issue manually in Jira.')
+        logs.append('Status transition failed, please move the issue manually in Jira.')
         return False
 
     return True
@@ -179,7 +154,7 @@ def edit_issue(jira_issue, instance):
     data = {'fields': {JIRA_INSTANCE_FIELD: [{'value': instance}], }}
 
     if dryrun:
-        vprint("PUT {0}\n{1}".format(endpoint, json.dumps(data, indent=4)))
+        logs.append("PUT {0}\n{1}".format(endpoint, json.dumps(data, indent=4)))
         return True
 
     response = requests.put(endpoint,
@@ -219,7 +194,8 @@ def get_available_instance(randomize=False):
         return available_list[0]
 
     dated_list = list(
-        map(lambda name: [name, get_instance_last_commit_date(name)], available_list))
+        map(lambda name: [name, get_last_commit_date(INSTANCE_REPO_PREFIX + name)], available_list))
+
     dated_list.sort(key=lambda i: i[1])
 
     return dated_list[0][0]
@@ -234,68 +210,11 @@ def get_instances():
     return api_query(SWARM_API)
 
 
-def get_instance_last_commit_date(instance):
-    """
-    Return last commit date for an instance repo
-    """
-    commit = api_query(
-        GITHUB_API + '/repos/' + INSTANCE_REPO_PREFIX + instance + '/commits/main',
-        {'Accept': 'application/vnd.github.v3+json'}
-    )
-
-    return commit['commit']['committer']['date']
-
-
 """
 
 API stuff
 
 """
-
-
-def api_query(url, headers={'Accept': 'application/json'}, auth=None):
-    """
-    Queries API
-    - fails on error
-    - return json
-    - use cache if requested
-    """
-
-    vprint('GET {0}'.format(url))
-
-    cache_file = '/tmp/{0}.cache'.format(hashlib.md5(url.encode()).hexdigest())
-    if use_request_cache and os.path.isfile(cache_file):
-        vprint('Using cache for ' + url)
-        return json.load(open(cache_file))
-
-    response = requests.get(url, headers=headers, auth=auth)
-    api_failed(response, url)
-
-    content = response.json()
-
-    if use_request_cache:
-        vprint(url, ' -> ', cache_file)
-
-    json.dump(content, open(cache_file, "w"))  # write anyway
-    return content
-
-
-def api_failed(response, endpoint, exit_on_error=True):
-    """
-    Check if api request failed
-
-    Can raise exception
-    """
-
-    if 200 <= response.status_code < 300:
-        return False
-
-    vprint('API call failed')
-    vprint(response.status_code, response.headers, response.text)
-    if exit_on_error:
-        raise Exception("Status code {0} calling {1}".format(
-            response.status_code, endpoint))
-    return True
 
 
 def get_jira_auth():
@@ -347,8 +266,6 @@ if __name__ == '__main__':
                         help="pull request URL")
     parser.add_argument("-n", "--dryrun", action="store_true",
                         help="gives a course of action but doesn't execute")
-    parser.add_argument("-v", "--verbosity", action="count", default=0,
-                        help="increase output verbosity")
     parser.add_argument("--no-cache", action="store_true",
                         help="Disable request cache use")
     parser.add_argument("--no-booking", action="store_true",
@@ -361,30 +278,26 @@ if __name__ == '__main__':
     # Parsed options
     pr_url = args.pr_url if args.pr_url else os.getenv('CIRCLE_PULL_REQUEST')
     dryrun = args.dryrun
-    verbose = args.verbosity
-    use_request_cache = not args.no_cache
     results_file = args.results
+
     # Logs
     logs = []
 
-    def vprint(*args):
-        for msg in args:
-            logs.append(msg)
-            if verbose:
-                print(msg)
     # Auth
     jira_auth = get_jira_auth()
 
     # Main program
 
-    vprint('# Running for {0}'.format(pr_url))
+    logs.append('# Running for {0}'.format(pr_url))
     if dryrun:
-        vprint('## Dry run, nothing will be commited.')
+        logs.append('## Dry run, nothing will be commited.')
 
     # Fetch PR details
-    pr = get_pull_request(pr_url=pr_url)
-    if not pr:
+    pr_endpoint, _ = get_pull_request(pr_url=pr_url)
+    if not pr_endpoint:
         raise Exception('No pull request found, aborting.')
+
+    pr = api_query(pr_endpoint)
 
     # Fetch issue details from Github PR
     issue = get_jira_issue(pr=pr)
@@ -397,7 +310,7 @@ if __name__ == '__main__':
         # Use pre-booked instance or get a new one
         if issue['test_instance']:
             instance = issue['test_instance']
-            vprint('Issue is already deployed on {0}, reusing.'.format(instance))
+            logs.append('Issue is already deployed on {0}, reusing.'.format(instance))
         else:
             instance = get_available_instance()
 
