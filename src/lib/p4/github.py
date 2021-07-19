@@ -23,15 +23,16 @@ def get_pull_request(pr_url):
     if not repository or not pr_number:
         raise Exception('PR id could not be parsed.')
 
-    pr_endpoint = '{0}/repos/{1}/issues/{2}/comments'.format(
+    pr_endpoint = '{0}/repos/{1}/issues/{2}'.format(
         GITHUB_API,
         repository,
         pr_number
     )
 
-    comments_endpoint = '{0}/repos/{1}/issues/comments/'.format(
+    comments_endpoint = '{0}/repos/{1}/issues/{2}/comments/'.format(
         GITHUB_API,
-        repository
+        repository,
+        pr_number
     )
 
     return pr_endpoint, comments_endpoint
