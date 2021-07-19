@@ -14,7 +14,7 @@ from requests.auth import HTTPBasicAuth
 from requests_oauthlib import OAuth1
 
 from p4.apis import api_failed, api_query
-from p4.github import get_last_commit_date, get_pull_request
+from p4.github import get_last_commit_date, get_repo_endpoints, get_pr_test_instance
 
 JIRA_API = 'https://jira.greenpeace.org/rest/api/2'
 GITHUB_API = 'https://api.github.com'
@@ -293,7 +293,7 @@ if __name__ == '__main__':
         logs.append('## Dry run, nothing will be commited.')
 
     # Fetch PR details
-    pr_endpoint, _ = get_pull_request(pr_url=pr_url)
+    pr_endpoint, _ = get_repo_endpoints(pr_url=pr_url)
     if not pr_endpoint:
         raise Exception('No pull request found, aborting.')
 
@@ -305,7 +305,9 @@ if __name__ == '__main__':
     # If not a ticket PR just get an available instance
     # Reverse the order to avoid race condition
     if not issue:
-        instance = get_available_instance(randomize=True)
+        instance = get_pr_test_instance(pr_endpoint)
+        if not instance:
+            instance = get_available_instance(randomize=True)
     else:
         # Use pre-booked instance or get a new one
         if issue['test_instance']:
