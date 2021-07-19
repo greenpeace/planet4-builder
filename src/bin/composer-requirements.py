@@ -5,7 +5,11 @@ import sys
 
 
 def merge_requirements(env_data, local_data):
-    env_require = env_data['require']
+    try:
+        env_require = env_data['require']
+    except KeyError:
+        print('No environment specific requirements')
+        exit(0)
 
     local_data['require'].update(env_require)
 
