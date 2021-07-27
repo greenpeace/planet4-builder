@@ -14,7 +14,7 @@ from requests.auth import HTTPBasicAuth
 from requests_oauthlib import OAuth1
 
 from p4.apis import api_failed, api_query
-from p4.github import get_last_commit_date, get_repo_endpoints, get_pr_test_instance
+from p4.github import get_last_commit_date, get_repo_endpoints, get_pr_test_instance, has_open_pr_labeled_with_instance
 
 JIRA_API = 'https://jira.greenpeace.org/rest/api/2'
 GITHUB_API = 'https://api.github.com'
@@ -193,8 +193,12 @@ def get_available_instance(randomize=False):
         random.shuffle(available_list)
         return available_list[0]
 
+    not_used_with_label = list(filter(lambda name: has_open_pr_labeled_with_instance(name), available_list))
+    print(available_list)
+    print(not_used_with_label)
+
     dated_list = list(
-        map(lambda name: [name, get_last_commit_date(INSTANCE_REPO_PREFIX + name)], available_list))
+        map(lambda name: [name, get_last_commit_date(INSTANCE_REPO_PREFIX + name)], not_used_with_label))
 
     dated_list.sort(key=lambda i: i[1])
 
