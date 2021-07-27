@@ -7,9 +7,6 @@ import os
 from p4.github import (get_repo_endpoints, check_for_comment,
                        post_issue_comment, add_issue_label)
 
-TEST_INSTANCE_PREFIX = 'https://www-dev.greenpeace.org/test-'
-
-
 if __name__ == '__main__':
 
     # Options
@@ -30,9 +27,13 @@ if __name__ == '__main__':
     # Construct comment body
     now = datetime.now().strftime('%Y.%m.%d %H:%M:%S')
     title = '### Test instance is ready :rocket:'
-    msg = (':new_moon: [{0}]({1}{0})\n\n'
-           ':watch: {2}').format(
-            test_instance, TEST_INSTANCE_PREFIX, now)
+    msg = (':new_moon: [{0}](https://www-dev.greenpeace.org/test-{0}) | '
+           '[admin](https://www-dev.greenpeace.org/test-{0}/wp-admin/) | '
+           '[blocks report](https://www-dev.greenpeace.org/test-{0}/wp-admin/?page=plugin_blocks_report) | '
+           '[CircleCI](https://app.circleci.com/pipelines/github/greenpeace/planet4-test-{0}) | '
+           '[composer-local.json](https://github.com/greenpeace/planet4-test-{0}/blob/main/composer-local.json)\n\n'
+           ':watch: {1}').format(
+            test_instance, now)
     body = '{0}\n\n{1}'.format(title, msg)
 
     # Post comment, but only once
