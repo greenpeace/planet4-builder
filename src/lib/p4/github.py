@@ -106,13 +106,13 @@ def get_pr_test_instance(pr_endpoint, prefix='[Test Env] '):
     return False
 
 def has_open_pr_labeled_with_instance(name):
-    BLOCKS_ENDPOINT = 'https://api.github.com/repos/greenpeace/planet4-plugin-gutenberg-blocks/issues?state=open&labels=env-test-{0}'
-    THEME_ENDPOINT = 'https://api.github.com/repos/greenpeace/planet4-master-theme/issues?state=open&labels=env-test-{0}'
+    BLOCKS_ENDPOINT = 'https://api.github.com/repos/greenpeace/planet4-plugin-gutenberg-blocks/issues?state=open&labels=[Test Env] {0}'
+    THEME_ENDPOINT = 'https://api.github.com/repos/greenpeace/planet4-master-theme/issues?state=open&labels=[Test Env] {0}'
 
-    blocks_prs = api_query(BLOCKS_ENDPOINT.format(name), get_headers());
+    blocks_prs = api_query(BLOCKS_ENDPOINT.format(name), get_headers())
     if len(blocks_prs) > 0:
-        return true
+        return True
 
-    theme_prs = api_query(THEME_ENDPOINT.format(name), get_headers());
+    theme_prs = api_query(THEME_ENDPOINT.format(name), get_headers())
 
     return len(theme_prs) > 0
