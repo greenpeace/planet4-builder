@@ -5,7 +5,7 @@ from datetime import datetime
 import os
 
 from p4.github import (get_repo_endpoints, check_for_comment,
-                       post_issue_comment, add_issue_label)
+                       post_issue_comment)
 
 if __name__ == '__main__':
 
@@ -39,10 +39,6 @@ if __name__ == '__main__':
     # Post comment, but only once
     comment_id = check_for_comment(pr_endpoint, title)
     post_issue_comment(pr_endpoint, comment_endpoint, comment_id, body)
-
-    # Add label
-    label_name = '[Test Env] {0}'.format(test_instance)
-    add_issue_label(pr_endpoint, label_name)
 
     print("Comment posted")
 

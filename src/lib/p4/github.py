@@ -8,6 +8,14 @@ from p4.apis import api_query
 
 GITHUB_API = 'https://api.github.com'
 
+def get_headers():
+    oauth_key = os.getenv('GITHUB_OAUTH_TOKEN')
+
+    return {
+        'Authorization': 'token {0}'.format(oauth_key),
+        'Accept': 'application/vnd.github.v3+json'
+    }
+
 
 def get_repo_endpoints(pr_url):
     """
@@ -38,16 +46,9 @@ def get_repo_endpoints(pr_url):
 
 
 def check_for_comment(pr_endpoint, title):
-    oauth_key = os.getenv('GITHUB_OAUTH_TOKEN')
-
-    headers = {
-        'Authorization': 'token {0}'.format(oauth_key),
-        'Accept': 'application/vnd.github.v3+json'
-    }
-
     comments_endpoint = '{0}/comments'.format(pr_endpoint)
 
-    response = requests.get(comments_endpoint, headers=headers)
+    response = requests.get(comments_endpoint, headers=get_headers())
 
     for comment in response.json():
         if comment['body'].splitlines()[0] == title:
@@ -69,53 +70,32 @@ def get_last_commit_date(repo):
 
 
 def post_issue_comment(pr_endpoint, comment_endpoint, comment_id, body):
-    oauth_key = os.getenv('GITHUB_OAUTH_TOKEN')
-
     data = {
         'body': body
     }
-    headers = {
-        'Authorization': 'token {0}'.format(oauth_key),
-        'Accept': 'application/vnd.github.v3+json'
-    }
-
     comments_endpoint = '{0}/comments'.format(pr_endpoint)
 
     if comment_id:
         endpoint = '{0}{1}'.format(comment_endpoint, comment_id)
-        response = requests.patch(endpoint, headers=headers, data=json.dumps(data))
+        response = requests.patch(endpoint, headers=get_headers(), data=json.dumps(data))
         return response.json()
 
-    response = requests.post(comments_endpoint, headers=headers, data=json.dumps(data))
+    response = requests.post(comments_endpoint, headers=get_headers(), data=json.dumps(data))
     return response.json()
 
 
 def add_issue_label(pr_endpoint, label_name):
-    oauth_key = os.getenv('GITHUB_OAUTH_TOKEN')
-
     data = {
         'labels': [label_name]
     }
-    headers = {
-        'Authorization': 'token {0}'.format(oauth_key),
-        'Accept': 'application/vnd.github.v3+json'
-    }
-
     labels_endpoint = '{0}/labels'.format(pr_endpoint)
 
-    response = requests.post(labels_endpoint, headers=headers, data=json.dumps(data))
+    response = requests.post(labels_endpoint, headers=get_headers(), data=json.dumps(data))
     return response.json()
 
 
 def get_pr_test_instance(pr_endpoint, prefix='[Test Env] '):
-    oauth_key = os.getenv('GITHUB_OAUTH_TOKEN')
-
-    headers = {
-        'Authorization': 'token {0}'.format(oauth_key),
-        'Accept': 'application/vnd.github.v3+json'
-    }
-
-    response = requests.get(pr_endpoint, headers=headers)
+    response = requests.get(pr_endpoint, headers=get_headers())
 
     labels = response.json()['labels']
 
@@ -124,3 +104,15 @@ def get_pr_test_instance(pr_endpoint, prefix='[Test Env] '):
             return label['name'][len(prefix):]
 
     return False
+
+def has_open_pr_labeled_with_instance(name):
+    BLOCKS_ENDPOINT = 'https://api.github.com/repos/greenpeace/planet4-plugin-gutenberg-blocks/issues?state=open&labels=[Test Env] {0}'
+    THEME_ENDPOINT = 'https://api.github.com/repos/greenpeace/planet4-master-theme/issues?state=open&labels=[Test Env] {0}'
+
+    blocks_prs = api_query(BLOCKS_ENDPOINT.format(name), get_headers())
+    if len(blocks_prs) > 0:
+        return True
+
+    theme_prs = api_query(THEME_ENDPOINT.format(name), get_headers())
+
+    return len(theme_prs) > 0

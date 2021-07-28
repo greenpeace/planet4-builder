@@ -7,14 +7,13 @@ import hashlib
 import json
 from oauthlib.oauth1 import SIGNATURE_RSA
 import os
-import random
 import re
 import requests
 from requests.auth import HTTPBasicAuth
 from requests_oauthlib import OAuth1
 
 from p4.apis import api_failed, api_query
-from p4.github import get_last_commit_date, get_repo_endpoints, get_pr_test_instance
+from p4.github import get_last_commit_date, get_repo_endpoints, get_pr_test_instance, has_open_pr_labeled_with_instance, add_issue_label
 
 JIRA_API = 'https://jira.greenpeace.org/rest/api/2'
 GITHUB_API = 'https://api.github.com'
@@ -176,7 +175,7 @@ Instances
 """
 
 
-def get_available_instance(randomize=False):
+def get_available_instance():
     """
     fetch instances from swarm | filter available
     fetch last commit date on each, reverse order for a steady rotation
@@ -189,12 +188,10 @@ def get_available_instance(randomize=False):
     if not len(available_list):
         raise Exception('No available instance could be found.')
 
-    if randomize:
-        random.shuffle(available_list)
-        return available_list[0]
+    not_used_with_label = list(filter(lambda name: not has_open_pr_labeled_with_instance(name), available_list))
 
     dated_list = list(
-        map(lambda name: [name, get_last_commit_date(INSTANCE_REPO_PREFIX + name)], available_list))
+        map(lambda name: [name, get_last_commit_date(INSTANCE_REPO_PREFIX + name)], not_used_with_label))
 
     dated_list.sort(key=lambda i: i[1])
 
@@ -306,17 +303,20 @@ if __name__ == '__main__':
     # Reverse the order to avoid race condition
     if not issue:
         instance = get_pr_test_instance(pr_endpoint)
-        if not instance:
-            instance = get_available_instance(randomize=True)
     else:
         # Use pre-booked instance or get a new one
         if issue['test_instance']:
             instance = issue['test_instance']
             logs.append('Issue is already deployed on {0}, reusing.'.format(instance))
-        else:
-            instance = get_available_instance()
 
-        book_instance(instance, issue)
+
+    if not instance:
+        instance = get_available_instance()
+        label_name = '[Test Env] {0}'.format(instance)
+        add_issue_label(pr_endpoint, label_name)
+        if issue:
+            book_instance(instance, issue)
+
 
     if results_file:
         save_results({
