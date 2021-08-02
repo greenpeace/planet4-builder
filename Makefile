@@ -52,6 +52,7 @@ DOCKER := $(shell command -v docker 2> /dev/null)
 SHELLCHECK := $(shell command -v shellcheck 2> /dev/null)
 SHFMT := $(shell command -v shfmt 2> /dev/null)
 YAMLLINT := $(shell command -v yamllint 2> /dev/null)
+FLAKE8 := $(shell command -v flake8 2> /dev/null)
 
 # ---
 
@@ -61,7 +62,7 @@ SRC := src
 
 .DEFAULT_GOAL := all
 
-.PHONY: all init lint lint-sh lint-yaml lint-docker Dockerfile prepare build test
+.PHONY: all init lint lint-sh lint-yaml lint-py lint-docker Dockerfile prepare build test
 
 all: init prepare lint build test
 
@@ -78,7 +79,7 @@ ifndef SHFMT
 endif
 	@shfmt -i 2 -ci -w .
 
-lint: init lint-yaml lint-sh lint-docker
+lint: init lint-yaml lint-sh lint-py lint-docker
 
 lint-yaml:
 ifndef YAMLLINT
@@ -95,6 +96,12 @@ ifndef SHFMT
 endif
 	@shfmt -f . | xargs shellcheck -x
 	@shfmt -i 2 -ci -d .
+
+lint-py:
+ifndef FLAKE8
+	$(error "flake8 is not installed: https://pypi.org/project/flake8/")
+endif
+	@flake8
 
 lint-docker: $(SRC)/Dockerfile
 ifndef DOCKER
