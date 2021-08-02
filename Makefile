@@ -76,7 +76,7 @@ format-sh:
 ifndef SHFMT
 		$(error "shfmt is not installed: https://github.com/mvdan/sh")
 endif
-		@shfmt -i 2 -ci -w .
+	@shfmt -i 2 -ci -w .
 
 lint: init lint-yaml lint-sh lint-docker
 
@@ -84,7 +84,7 @@ lint-yaml:
 ifndef YAMLLINT
 	$(error "yamllint is not installed: https://github.com/adrienverge/yamllint")
 endif
-		@$(YAMLLINT) -d "{extends: default, rules: {line-length: disable}}" .circleci/config.yml
+	@$(YAMLLINT) -d "{extends: default, rules: {line-length: disable}}" .circleci/config.yml
 
 lint-sh:
 ifndef SHELLCHECK
@@ -93,14 +93,14 @@ endif
 ifndef SHFMT
 		$(error "shfmt is not installed: https://github.com/mvdan/sh")
 endif
-		@shfmt -f . | xargs shellcheck -x
-		@shfmt -i 2 -ci -d .
+	@shfmt -f . | xargs shellcheck -x
+	@shfmt -i 2 -ci -d .
 
 lint-docker: $(SRC)/Dockerfile
 ifndef DOCKER
 	$(error "docker is not installed: https://docs.docker.com/install/")
 endif
-		@docker run --rm -i hadolint/hadolint < $(SRC)/Dockerfile
+	@docker run --rm -i hadolint/hadolint < $(SRC)/Dockerfile
 
 prepare: Dockerfile
 
@@ -122,20 +122,20 @@ endif
 		src/ ; \
 
 test:
-		@$(MAKE) -j1 -C $@ clean
-		@$(MAKE) -k -C $@
-		$(MAKE) -C $@ status
+	@$(MAKE) -j1 -C $@ clean
+	@$(MAKE) -k -C $@
+	$(MAKE) -C $@ status
 
 push: push-tag push-latest
 
 push-tag:
-		docker push $(BUILD_IMAGE):$(BUILD_TAG)
-		docker push $(BUILD_IMAGE):$(BUILD_NUM)
+	docker push $(BUILD_IMAGE):$(BUILD_TAG)
+	docker push $(BUILD_IMAGE):$(BUILD_NUM)
 
 push-latest:
-		@if [[ "$(PUSH_LATEST)" = "true" ]]; then { \
-			docker tag $(BUILD_IMAGE):$(BUILD_NUM) $(BUILD_IMAGE):latest; \
-			docker push $(BUILD_IMAGE):latest; \
-		}	else { \
-			echo "Not tagged.. skipping latest"; \
-		} fi
+	@if [[ "$(PUSH_LATEST)" = "true" ]]; then { \
+		docker tag $(BUILD_IMAGE):$(BUILD_NUM) $(BUILD_IMAGE):latest; \
+		docker push $(BUILD_IMAGE):latest; \
+	}	else { \
+		echo "Not tagged.. skipping latest"; \
+	} fi
