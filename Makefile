@@ -52,6 +52,7 @@ DOCKER := $(shell command -v docker 2> /dev/null)
 SHELLCHECK := $(shell command -v shellcheck 2> /dev/null)
 SHFMT := $(shell command -v shfmt 2> /dev/null)
 YAMLLINT := $(shell command -v yamllint 2> /dev/null)
+FLAKE8 := $(shell command -v flake8 2> /dev/null)
 
 # ---
 
@@ -61,7 +62,7 @@ SRC := src
 
 .DEFAULT_GOAL := all
 
-.PHONY: all init lint lint-sh lint-yaml lint-docker Dockerfile prepare build test
+.PHONY: all init lint lint-sh lint-yaml lint-py lint-docker Dockerfile prepare build test
 
 all: init prepare lint build test
 
@@ -76,15 +77,15 @@ format-sh:
 ifndef SHFMT
 		$(error "shfmt is not installed: https://github.com/mvdan/sh")
 endif
-		@shfmt -i 2 -ci -w .
+	@shfmt -i 2 -ci -w .
 
-lint: init lint-yaml lint-sh lint-docker
+lint: init lint-yaml lint-sh lint-py lint-docker
 
 lint-yaml:
 ifndef YAMLLINT
 	$(error "yamllint is not installed: https://github.com/adrienverge/yamllint")
 endif
-		@$(YAMLLINT) -d "{extends: default, rules: {line-length: disable}}" .circleci/config.yml
+	@$(YAMLLINT) -d "{extends: default, rules: {line-length: disable}}" .circleci/config.yml
 
 lint-sh:
 ifndef SHELLCHECK
@@ -93,14 +94,20 @@ endif
 ifndef SHFMT
 		$(error "shfmt is not installed: https://github.com/mvdan/sh")
 endif
-		@shfmt -f . | xargs shellcheck -x
-		@shfmt -i 2 -ci -d .
+	@shfmt -f . | xargs shellcheck -x
+	@shfmt -i 2 -ci -d .
+
+lint-py:
+ifndef FLAKE8
+	$(error "flake8 is not installed: https://pypi.org/project/flake8/")
+endif
+	@flake8
 
 lint-docker: $(SRC)/Dockerfile
 ifndef DOCKER
 	$(error "docker is not installed: https://docs.docker.com/install/")
 endif
-		@docker run --rm -i hadolint/hadolint < $(SRC)/Dockerfile
+	@docker run --rm -i hadolint/hadolint < $(SRC)/Dockerfile
 
 prepare: Dockerfile
 
@@ -122,20 +129,20 @@ endif
 		src/ ; \
 
 test:
-		@$(MAKE) -j1 -C $@ clean
-		@$(MAKE) -k -C $@
-		$(MAKE) -C $@ status
+	@$(MAKE) -j1 -C $@ clean
+	@$(MAKE) -k -C $@
+	$(MAKE) -C $@ status
 
 push: push-tag push-latest
 
 push-tag:
-		docker push $(BUILD_IMAGE):$(BUILD_TAG)
-		docker push $(BUILD_IMAGE):$(BUILD_NUM)
+	docker push $(BUILD_IMAGE):$(BUILD_TAG)
+	docker push $(BUILD_IMAGE):$(BUILD_NUM)
 
 push-latest:
-		@if [[ "$(PUSH_LATEST)" = "true" ]]; then { \
-			docker tag $(BUILD_IMAGE):$(BUILD_NUM) $(BUILD_IMAGE):latest; \
-			docker push $(BUILD_IMAGE):latest; \
-		}	else { \
-			echo "Not tagged.. skipping latest"; \
-		} fi
+	@if [[ "$(PUSH_LATEST)" = "true" ]]; then { \
+		docker tag $(BUILD_IMAGE):$(BUILD_NUM) $(BUILD_IMAGE):latest; \
+		docker push $(BUILD_IMAGE):latest; \
+	}	else { \
+		echo "Not tagged.. skipping latest"; \
+	} fi

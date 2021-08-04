@@ -3,7 +3,6 @@
 # https://github.com/greenpeace/planet4-builder/commit/d6640747ad20ed54b7e8d40b0920af106880e17f
 
 import argparse
-import hashlib
 import json
 from oauthlib.oauth1 import SIGNATURE_RSA
 import os
@@ -13,7 +12,9 @@ from requests.auth import HTTPBasicAuth
 from requests_oauthlib import OAuth1
 
 from p4.apis import api_failed, api_query
-from p4.github import get_last_commit_date, get_repo_endpoints, get_pr_test_instance, has_open_pr_labeled_with_instance, add_issue_label
+from p4.github import (get_last_commit_date, get_repo_endpoints,
+                       get_pr_test_instance, has_open_pr_labeled_with_instance,
+                       add_issue_label)
 
 JIRA_API = 'https://jira.greenpeace.org/rest/api/2'
 GITHUB_API = 'https://api.github.com'
@@ -90,8 +91,8 @@ def book_instance(instance, jira_issue):
     if not jira_issue['test_instance'] or jira_issue['test_instance'] != instance:
         edit_issue(jira_issue, instance)
     else:
-        logs.append('Issue is already configured for instance ({0}), skipping configuration.'.format(
-            instance))
+        logs.append('Issue is already configured for instance ({0}),'
+                    ' skipping configuration.'.format(instance))
 
     return True
 
@@ -188,10 +189,12 @@ def get_available_instance():
     if not len(available_list):
         raise Exception('No available instance could be found.')
 
-    not_used_with_label = list(filter(lambda name: not has_open_pr_labeled_with_instance(name), available_list))
+    not_used_with_label = list(filter(lambda name: not has_open_pr_labeled_with_instance(name),
+                                      available_list))
 
     dated_list = list(
-        map(lambda name: [name, get_last_commit_date(INSTANCE_REPO_PREFIX + name)], not_used_with_label))
+        map(lambda name: [name, get_last_commit_date(INSTANCE_REPO_PREFIX + name)],
+            not_used_with_label))
 
     dated_list.sort(key=lambda i: i[1])
 
@@ -309,14 +312,12 @@ if __name__ == '__main__':
             instance = issue['test_instance']
             logs.append('Issue is already deployed on {0}, reusing.'.format(instance))
 
-
     if not instance:
         instance = get_available_instance()
         label_name = '[Test Env] {0}'.format(instance)
         add_issue_label(pr_endpoint, label_name)
         if issue:
             book_instance(instance, issue)
-
 
     if results_file:
         save_results({

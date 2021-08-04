@@ -7,6 +7,11 @@ import os
 from p4.github import (get_repo_endpoints, check_for_comment,
                        post_issue_comment)
 
+DEV_URL = 'https://www-dev.greenpeace.org'
+CI_URL = 'https://app.circleci.com/pipelines/github/greenpeace'
+GITHUB_URL = 'https://github.com/greenpeace'
+
+
 if __name__ == '__main__':
 
     # Options
@@ -27,13 +32,12 @@ if __name__ == '__main__':
     # Construct comment body
     now = datetime.now().strftime('%Y.%m.%d %H:%M:%S')
     title = '### Test instance is ready :rocket:'
-    msg = (':new_moon: [{0}](https://www-dev.greenpeace.org/test-{0}) | '
-           '[admin](https://www-dev.greenpeace.org/test-{0}/wp-admin/) | '
-           '[blocks report](https://www-dev.greenpeace.org/test-{0}/wp-admin/?page=plugin_blocks_report) | '
-           '[CircleCI](https://app.circleci.com/pipelines/github/greenpeace/planet4-test-{0}) | '
-           '[composer-local.json](https://github.com/greenpeace/planet4-test-{0}/blob/main/composer-local.json)\n\n'
-           ':watch: {1}').format(
-            test_instance, now)
+    msg = (':new_moon: [{0}](test-{0}) | '
+           '[admin]({2}/test-{0}/wp-admin/) | '
+           '[blocks report]({2}/test-{0}/wp-admin/?page=plugin_blocks_report) | '
+           '[CircleCI]({3}/planet4-test-{0}) | '
+           '[composer-local.json]({4}/planet4-test-{0}/blob/main/composer-local.json)\n\n'
+           ':watch: {1}').format(test_instance, now, DEV_URL, CI_URL, GITHUB_URL)
     body = '{0}\n\n{1}'.format(title, msg)
 
     # Post comment, but only once
@@ -41,4 +45,3 @@ if __name__ == '__main__':
     post_issue_comment(pr_endpoint, comment_endpoint, comment_id, body)
 
     print("Comment posted")
-

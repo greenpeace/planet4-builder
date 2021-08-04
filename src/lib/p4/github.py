@@ -8,7 +8,8 @@ from p4.apis import api_query
 
 GITHUB_API = 'https://api.github.com'
 
-def get_headers():
+
+def _get_headers():
     oauth_key = os.getenv('GITHUB_OAUTH_TOKEN')
 
     return {
@@ -48,7 +49,7 @@ def get_repo_endpoints(pr_url):
 def check_for_comment(pr_endpoint, title):
     comments_endpoint = '{0}/comments'.format(pr_endpoint)
 
-    response = requests.get(comments_endpoint, headers=get_headers())
+    response = requests.get(comments_endpoint, headers=_get_headers())
 
     for comment in response.json():
         if comment['body'].splitlines()[0] == title:
@@ -77,10 +78,10 @@ def post_issue_comment(pr_endpoint, comment_endpoint, comment_id, body):
 
     if comment_id:
         endpoint = '{0}{1}'.format(comment_endpoint, comment_id)
-        response = requests.patch(endpoint, headers=get_headers(), data=json.dumps(data))
+        response = requests.patch(endpoint, headers=_get_headers(), data=json.dumps(data))
         return response.json()
 
-    response = requests.post(comments_endpoint, headers=get_headers(), data=json.dumps(data))
+    response = requests.post(comments_endpoint, headers=_get_headers(), data=json.dumps(data))
     return response.json()
 
 
@@ -90,12 +91,12 @@ def add_issue_label(pr_endpoint, label_name):
     }
     labels_endpoint = '{0}/labels'.format(pr_endpoint)
 
-    response = requests.post(labels_endpoint, headers=get_headers(), data=json.dumps(data))
+    response = requests.post(labels_endpoint, headers=_get_headers(), data=json.dumps(data))
     return response.json()
 
 
 def get_pr_test_instance(pr_endpoint, prefix='[Test Env] '):
-    response = requests.get(pr_endpoint, headers=get_headers())
+    response = requests.get(pr_endpoint, headers=_get_headers())
 
     labels = response.json()['labels']
 
@@ -105,14 +106,17 @@ def get_pr_test_instance(pr_endpoint, prefix='[Test Env] '):
 
     return False
 
-def has_open_pr_labeled_with_instance(name):
-    BLOCKS_ENDPOINT = 'https://api.github.com/repos/greenpeace/planet4-plugin-gutenberg-blocks/issues?state=open&labels=[Test Env] {0}'
-    THEME_ENDPOINT = 'https://api.github.com/repos/greenpeace/planet4-master-theme/issues?state=open&labels=[Test Env] {0}'
 
-    blocks_prs = api_query(BLOCKS_ENDPOINT.format(name), get_headers())
+def has_open_pr_labeled_with_instance(name):
+    BLOCKS_ENDPOINT = ('{0}/repos/greenpeace/planet4-plugin-gutenberg-blocks/'
+                       'issues?state=open&labels=[Test Env] ').format(GITHUB_API)
+    THEME_ENDPOINT = ('{0}/repos/greenpeace/planet4-master-theme/'
+                      'issues?state=open&labels=[Test Env] ').format(GITHUB_API)
+
+    blocks_prs = api_query('{0}{1}'.format(BLOCKS_ENDPOINT, name), _get_headers())
     if len(blocks_prs) > 0:
         return True
 
-    theme_prs = api_query(THEME_ENDPOINT.format(name), get_headers())
+    theme_prs = api_query(THEME_ENDPOINT.format(name), _get_headers())
 
     return len(theme_prs) > 0
