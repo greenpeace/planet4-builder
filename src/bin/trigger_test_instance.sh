@@ -51,7 +51,7 @@ git -C "$instance_repo" --no-pager diff
 git -C "$instance_repo" add composer-local.json
 
 git -C "$instance_repo" commit --allow-empty \
-  -m "$CIRCLE_PULL_REQUEST at ${CIRCLE_SHA1:0:8}" \
+  -m "${CIRCLE_PULL_REQUEST:-$CIRCLE_PROJECT_REPONAME} at ${CIRCLE_SHA1:0:8}" \
   -m "/unhold $CIRCLE_WORKFLOW_ID"
 
 git -C "$instance_repo" push
