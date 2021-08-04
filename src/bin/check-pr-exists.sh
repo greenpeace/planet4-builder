@@ -7,7 +7,7 @@ commit_msg="$1"
 # We use that check to reset the test instance.
 # Otherwise it's either a normal PR or just a new commit that doesn't require deployment.
 if [[ "$commit_msg" =~ ^Merge[[:space:]]pull[[:space:]]request[[:space:]]\#([[:digit:]]+) ]]; then
-  echo "https://github.com/greenpeace/planet4-plugin-gutenberg-blocks/pull/${BASH_REMATCH[1]}" >/tmp/workspace/pr
+  echo "https://github.com/greenpeace/${CIRCLE_PROJECT_REPONAME}/pull/${BASH_REMATCH[1]}" >/tmp/workspace/pr
   echo "MERGED PR ID: ${BASH_REMATCH[1]}"
   echo true >/tmp/workspace/is_merge_commit
 else
