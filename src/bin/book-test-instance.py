@@ -304,6 +304,7 @@ if __name__ == '__main__':
 
     # If not a ticket PR just get an available instance
     # Reverse the order to avoid race condition
+    instance = None
     if not issue:
         instance = get_pr_test_instance(pr_endpoint)
     else:
