@@ -88,6 +88,8 @@ GCLOUD_ZONE         ?= us-central1-a
 PAGESPEED_ENABLED   ?= false
 
 INGRESS_CLASS				?= traefik
+INGRESS_NOTLS				?= true
+INGRESS_TLS					?= false
 
 CLOUDFLARE_ENABLED  ?= true
 ifeq ($(strip $(APP_ENVIRONMENT)),production)
