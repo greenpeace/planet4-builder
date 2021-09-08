@@ -18,6 +18,16 @@ openresty:
 ingress:
   annotations:
     kubernetes.io/ingress.class: '${INGRESS_CLASS}'
+
+nginxingress:
+  enabled: ${INGRESS_NOTLS}
+
+nginxingresstls:
+  enabled: ${INGRESS_TLS}
+  hosts:
+    - name: ${APP_HOSTNAME}
+      tls: true
+
 pagespeed:
   enabled: '${PAGESPEED_ENABLED}'
 php:
