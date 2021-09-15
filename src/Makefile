@@ -67,7 +67,6 @@ APP_HOSTPATH :=
 endif
 BUILD_NAMESPACE     ?= gcr.io
 GOOGLE_PROJECT_ID   ?= planet-4-151612
-NEWRELIC_APPNAME    ?= Greenpeace Planet4 Wordpress Test
 OPENRESTY_IMAGE     ?= $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_PREFIX)-openresty
 PHP_IMAGE           ?= $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_PREFIX)-app
 
@@ -115,7 +114,6 @@ PHP_PROCESS_MANAGER ?= dynamic
 # Secrets
 # Values are expected to be stored in Circle build environment
 
-# NEWRELIC_LICENSE    := $(NEWRELIC_LICENSE)
 # SQLPROXY_KEY        := $(SQLPROXY_KEY)
 # EXIM_USERNAME       := $(EXIM_USERNAME)
 # EXIM_PASSWORD       := $(EXIM_PASSWORD)
@@ -161,7 +159,6 @@ test:
 	@echo "PARENT_VERSION:    $(PARENT_VERSION)"
 	@echo "APP_HOSTNAME:      $(APP_HOSTNAME)"
 	@echo "APP_HOSTPATH:      $(APP_HOSTPATH)"
-	@echo "NEWRELIC_APPNAME:  $(NEWRELIC_APPNAME)"
 	@echo "GIT_REF:           $(GIT_REF)"
 	@echo "MERGE_REF:         $(MERGE_REF)"
 	@echo ""
@@ -243,9 +240,6 @@ deploy: prepare-helm deploy-helm post-deploy
 rollback: checkout copy persist prepare-helm rollback-helm post-deploy
 
 prepare-helm:
-ifndef NEWRELIC_REST_API_KEY
-	$(error NEWRELIC_REST_API_KEY is not set)
-endif
 	# Update Helm repositories
 	helm repo update
 
@@ -269,8 +263,6 @@ post-deploy:
 	activate_plugins.sh
 
 	flush_redis.sh
-
-	newrelic_deployment.sh
 
 	configure_redis.sh
 
