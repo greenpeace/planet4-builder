@@ -7,11 +7,18 @@ import sys
 def merge_requirements(env_data, local_data):
     try:
         env_require = env_data['require']
+        local_data['require'].update(env_require)
     except KeyError:
         print('No environment specific requirements')
-        exit(0)
 
-    local_data['require'].update(env_require)
+    try:
+        env_wp_version = env_data['extra']['wp-version']
+        try:
+            local_data['extra']['wp-version'] = env_wp_version
+        except KeyError:
+            local_data['extra'] = {'wp-version': env_wp_version}
+    except KeyError:
+        print('No environment specific wp version')
 
     return local_data
 
