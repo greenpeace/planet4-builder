@@ -32,7 +32,7 @@ if __name__ == '__main__':
     # Construct comment body
     now = datetime.now().strftime('%Y.%m.%d %H:%M:%S')
     title = '### Test instance is ready :rocket:'
-    msg = (':new_moon: [{0}](test-{0}) | '
+    msg = (':new_moon: [{0}]({2}/test-{0}) | '
            '[admin]({2}/test-{0}/wp-admin/) | '
            '[blocks report]({2}/test-{0}/wp-admin/?page=plugin_blocks_report) | '
            '[CircleCI]({3}/planet4-test-{0}) | '
