@@ -50,6 +50,8 @@ JUNIT_MERGE_VERSION=2.0.0
 # https://pypi.org/project/requests-oauthlib/
 OAUTHLIB_VERSION=1.3.0
 
+# https://pypi.org/project/pycircleci/
+PYCIRCLECI_VERSION=0.4.1
 
 # https://pypi.org/project/semver/
 SEMVER_VERSION=2.13.0

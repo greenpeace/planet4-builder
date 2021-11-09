@@ -17,6 +17,7 @@ The base image builds upon CircleCI's next image: `cimg/php-node` image and adds
 - [helm3](https://github.com/kubernetes/helm)
 - [junit-merge](https://www.npmjs.com/package/junit-merge)
 - [oauthlib](https://pypi.org/project/requests-oauthlib/)
+- [pycircleci](https://pypi.org/project/pycircleci/)
 - [semver](https://pypi.org/project/semver/)
 - [shellcheck](https://github.com/koalaman/shellcheck)
 - [shfmt](https://github.com/mvdan/sh)
