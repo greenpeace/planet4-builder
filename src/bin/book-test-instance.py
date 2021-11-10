@@ -136,7 +136,7 @@ def transition_issue(jira_issue):
                              })
 
     logs.append('Transitioned issue, response: ')
-    logs.append(response.status_code, response.headers, response.text)
+    logs.extend([response.status_code, response.headers, response.text])
 
     failed = api_failed(response, transition_endpoint, exit_on_error=False)
     if failed:
