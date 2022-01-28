@@ -53,6 +53,12 @@ OAUTHLIB_VERSION=1.3.0
 # https://pypi.org/project/pycircleci/
 PYCIRCLECI_VERSION=0.4.1
 
+# https://pypi.org/project/PyGithub/
+PYGITHUB_VERSION=1.55
+
+# https://github.com/sendgrid/sendgrid-python
+SENDGRID_VERSION=6.9.7
+
 # https://pypi.org/project/semver/
 SEMVER_VERSION=2.13.0
 

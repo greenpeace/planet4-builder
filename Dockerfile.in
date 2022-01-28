@@ -25,7 +25,8 @@ RUN apt-get update && \
 
 # Install pip and npm dependencies
 RUN pip3 install --no-cache-dir yamllint==${YAMLLINT_VERSION} yq==${YQ_VERSION} flake8==${FLAKE8_VERSION} requests_oauthlib==${OAUTHLIB_VERSION} \
-    GitPython==${GITPYTHON_VERSION} semver==${SEMVER_VERSION} pycircleci==${PYCIRCLECI_VERSION} && \
+    GitPython==${GITPYTHON_VERSION} semver==${SEMVER_VERSION} pycircleci==${PYCIRCLECI_VERSION} PyGithub==${PYGITHUB_VERSION} \
+    sendgrid==${SENDGRID_VERSION} && \
     npm install -g bats@${BATS_VERSION} junit-merge@${JUNIT_MERGE_VERSION} tap-xunit@${TAP_XUNIT_VERSION}
 
 # Git and user config
