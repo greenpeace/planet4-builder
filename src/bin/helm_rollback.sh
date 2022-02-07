@@ -29,7 +29,8 @@ echo "Release #current of $release is in state: $status"
 # Find last good deployment
 previous=${2:-$((current - 1))}
 while [[ $previous -gt 0 ]]; do
-  [[ $(helm status "$release" --revision "$previous" | grep '^STATUS:' | cut -d' ' -f2 | xargs) == "SUPERSEDED" ]] && break
+  revision_status=$(helm status "$release" --revision "$previous" | grep '^STATUS:' | cut -d' ' -f2 | xargs)
+  [[ "$revision_status" == "SUPERSEDED" || "$revision_status" == "DEPLOYED" ]] && break
   previous=$((previous - 1))
 done
 
