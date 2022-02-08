@@ -165,7 +165,7 @@ curl --request POST \
 
 # Commit Chagelog to Gitbook
 git clone -b master git@github.com:greenpeace/planet4-docs.git
-cd planet4-docs/docs/tech/changelog/
+cd planet4-docs/docs/platform/changelog/
 git config user.email "${GIT_USER_EMAIL}"
 git config user.name "CircleCI Bot"
 git config push.default simple
