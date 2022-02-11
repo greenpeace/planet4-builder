@@ -13,10 +13,6 @@ openresty:
   cloudflare:
     enabled: '${CLOUDFLARE_ENABLED}'
 
-ingress:
-  annotations:
-    kubernetes.io/ingress.class: '${INGRESS_CLASS}'
-
 nginxingress:
   enabled: ${INGRESS_NOTLS}
 
@@ -41,13 +37,7 @@ php:
     minSpare: '${PHP_PROCESS_MANAGER_MIN_SPARE_SERVERS}'
     maxSpare: '${PHP_PROCESS_MANAGER_MAX_SPARE_SERVERS}'
     maxRequests: '${PHP_PROCESS_MANAGER_MAX_REQUESTS}'
-sqlproxy:
-  cloudsql:
-    instances:
-    - instance: '${CLOUDSQL_INSTANCE}'
-      project: '${GOOGLE_PROJECT_ID}'
-      region: '${GCLOUD_REGION}'
-      port: '3306'
+
 wp:
   siteUrl: '${APP_HOSTNAME}/${APP_HOSTPATH}'
   stateless:
