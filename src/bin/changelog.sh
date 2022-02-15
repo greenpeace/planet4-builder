@@ -11,10 +11,11 @@ VERSION="${1#v}"
 
 now="$(date +'%Y-%m-%d')"
 contributor_memo=""
+feature_flags=""
 
 changelog="<h2>${VERSION} - ${now}</h2>"
 
-JIRA_API_QUERY="https://jira.greenpeace.org/rest/api/latest/search?jql=project%20%3D%20PLANET%20AND%20fixVersion%20%3D%20${VERSION}&fields=summary,issuetype,customfield_13100,customfield_12100,issuetype,assignee"
+JIRA_API_QUERY="https://jira.greenpeace.org/rest/api/latest/search?jql=project%20%3D%20PLANET%20AND%20fixVersion%20%3D%20${VERSION}&fields=summary,issuetype,customfield_13100,customfield_12100,issuetype,assignee,labels"
 
 jira_json=$(curl -s "$JIRA_API_QUERY")
 retval=$?
@@ -28,6 +29,7 @@ echo "$jira_json" | jq --raw-output '.issues []  | .fields .summary ' >/tmp/$$.s
 echo "$jira_json" | jq --raw-output '.issues []  | .fields .customfield_12100 .value ' >/tmp/$$.tracks
 echo "$jira_json" | jq --raw-output '.issues []  | .fields .issuetype .name ' >/tmp/$$.issuetypes
 echo "$jira_json" | jq --raw-output '.issues []  | .fields .assignee .name ' >/tmp/$$.assignees
+echo "$jira_json" | jq --raw-output '.issues []  | .fields .labels [] // 0 ' >/tmp/$$.labels
 
 keys=()
 i=0
@@ -64,6 +66,13 @@ while read -r line; do
   i=$((i + 1))
 done </tmp/$$.assignees
 
+labels=()
+i=0
+while read -r line; do
+  labels[i]=$line
+  i=$((i + 1))
+done </tmp/$$.labels
+
 total=${#keys[*]}
 
 if [ "$total" -ne 0 ]; then
@@ -80,6 +89,7 @@ if [ "$total" -ne 0 ]; then
     assignee="${assignees[$i]}"
     track="${tracks[$i]}"
     issuetype="${issuetypes[$i]}"
+    label="${labels[$i]}"
 
     contributor_star=""
     if [ "$assignee" == "contributor" ]; then
@@ -87,7 +97,13 @@ if [ "$total" -ne 0 ]; then
       contributor_memo="<font size='1'>⭐ Community contributed</font>"
     fi
 
-    ticket="<li><a href='https://jira.greenpeace.org/browse/${key}'>${key}</a> - ${summary}${contributor_star}</li>"
+    feature_icon=""
+    if [[ "$label" == *"featureflag"* ]]; then
+      feature_icon=" <font size='1'>🔑</font>"
+      feature_flags="<font size='1'>🔑 [Feature Flag] Not enabled by default</font>"
+    fi
+
+    ticket="<li><a href='https://jira.greenpeace.org/browse/${key}'>${key}</a> - ${summary}${contributor_star}${feature_icon}</li>"
     ticket_md="- [${key}](https://jira.greenpeace.org/browse/${key}) - ${summary}\n"
 
     if [ "$track" == "Infra" ]; then
@@ -125,7 +141,7 @@ if [ ${#infra} -gt 100 ]; then
   md="$md$infra_md"
 fi
 
-changelog="$changelog$contributor_memo"
+changelog="$changelog$contributor_memo$feature_flags"
 md="\n$md"
 
 # Send Changelog to email
