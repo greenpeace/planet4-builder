@@ -15,7 +15,7 @@ feature_flags=""
 
 changelog="<h2>${VERSION} - ${now}</h2>"
 
-JIRA_API_QUERY="https://jira.greenpeace.org/rest/api/latest/search?jql=project%20%3D%20PLANET%20AND%20fixVersion%20%3D%20${VERSION}&fields=summary,issuetype,customfield_13100,customfield_12100,issuetype,assignee,labels"
+JIRA_API_QUERY="https://jira.greenpeace.org/rest/api/latest/search?jql=project%20%3D%20PLANET%20AND%20fixVersion%20%3D%20${VERSION}&fields=summary,issuetype,customfield_13100,issuetype,assignee,labels"
 
 jira_json=$(curl -s "$JIRA_API_QUERY")
 retval=$?
@@ -26,7 +26,6 @@ fi
 
 echo "$jira_json" | jq --raw-output '.issues []  | .key ' >/tmp/$$.keys
 echo "$jira_json" | jq --raw-output '.issues []  | .fields .summary ' >/tmp/$$.summaries
-echo "$jira_json" | jq --raw-output '.issues []  | .fields .customfield_12100 .value ' >/tmp/$$.tracks
 echo "$jira_json" | jq --raw-output '.issues []  | .fields .issuetype .name ' >/tmp/$$.issuetypes
 echo "$jira_json" | jq --raw-output '.issues []  | .fields .assignee .name ' >/tmp/$$.assignees
 echo "$jira_json" | jq --raw-output '.issues []  | .fields .labels [] // 0 ' >/tmp/$$.labels
@@ -51,13 +50,6 @@ while read -r line; do
   issuetypes[i]=$line
   i=$((i + 1))
 done </tmp/$$.issuetypes
-
-tracks=()
-i=0
-while read -r line; do
-  tracks[i]=$line
-  i=$((i + 1))
-done </tmp/$$.tracks
 
 assignees=()
 i=0
