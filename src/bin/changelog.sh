@@ -87,7 +87,6 @@ if [ "$total" -ne 0 ]; then
     key=$(echo "${keys[$i]}" | xargs)
     summary="${summaries[$i]}"
     assignee="${assignees[$i]}"
-    track="${tracks[$i]}"
     issuetype="${issuetypes[$i]}"
     label="${labels[$i]}"
 
