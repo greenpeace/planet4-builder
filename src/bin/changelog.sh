@@ -106,7 +106,7 @@ if [ "$total" -ne 0 ]; then
     ticket="<li><a href='https://jira.greenpeace.org/browse/${key}'>${key}</a> - ${summary}${contributor_star}${feature_icon}</li>"
     ticket_md="- [${key}](https://jira.greenpeace.org/browse/${key}) - ${summary}\n"
 
-    if [ "$track" == "Infra" ]; then
+    if [ "$issuetype" == "Infra Task" ]; then
       infra="$infra$ticket"
       infra_md="$infra_md$ticket_md"
     elif [ "$issuetype" == "Bug" ]; then
