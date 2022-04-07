@@ -183,20 +183,27 @@ def get_available_instance():
     return oldest available instance
     """
     instances = get_instances()
+    logs.append('Swarm response {0}'.format(json.dumps(instances, indent=4)))
 
     available_list = list(filter(lambda name: instances[name] == 1, instances))
 
     if not len(available_list):
         raise Exception('No available instance could be found.')
 
-    not_used_with_label = list(filter(lambda name: not has_open_pr_labeled_with_instance(name),
-                                      available_list))
+    not_used_with_label = list(
+        filter(
+            lambda name: not has_open_pr_labeled_with_instance(name, logs),
+            available_list
+        ))
 
     dated_list = list(
         map(lambda name: [name, get_last_commit_date(INSTANCE_REPO_PREFIX + name)],
             not_used_with_label))
 
     dated_list.sort(key=lambda i: i[1])
+
+    if not len(dated_list):
+        raise Exception('No available instance after checking Github labels.')
 
     return dated_list[0][0]
 
