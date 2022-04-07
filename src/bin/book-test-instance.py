@@ -183,6 +183,7 @@ def get_available_instance():
     return oldest available instance
     """
     instances = get_instances()
+    logs.append('Swarm response {0}'.format(json.dumps(instances, indent=4)))
 
     available_list = list(filter(lambda name: instances[name] == 1, instances))
 
@@ -197,6 +198,9 @@ def get_available_instance():
             not_used_with_label))
 
     dated_list.sort(key=lambda i: i[1])
+
+    if not len(dated_list):
+        raise Exception('No available instance after checking Github labels.')
 
     return dated_list[0][0]
 
