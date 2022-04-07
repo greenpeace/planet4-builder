@@ -107,7 +107,7 @@ def get_pr_test_instance(pr_endpoint, prefix='[Test Env] '):
     return False
 
 
-def has_open_pr_labeled_with_instance(name):
+def has_open_pr_labeled_with_instance(name, logs):
     BLOCKS_ENDPOINT = ('{0}/repos/greenpeace/planet4-plugin-gutenberg-blocks/'
                        'issues?state=open&labels=[Test Env] ').format(GITHUB_API)
     THEME_ENDPOINT = ('{0}/repos/greenpeace/planet4-master-theme/'
