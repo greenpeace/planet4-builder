@@ -41,8 +41,10 @@ else
   if [ "$APP_ENVIRONMENT" == "production" ]; then
     latest_tag=$(git describe --tags "$(git rev-list --tags --max-count=1)")
     git checkout "$latest_tag"
+    echo "${latest_tag}" >/tmp/workspace/release_number
   else
     git reset "origin/${GIT_REF}"
+    echo "${GIT_REF}" >/tmp/workspace/release_number
   fi
   git checkout -- .
 fi
