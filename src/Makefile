@@ -183,6 +183,8 @@ copy:
 	[[ -d source ]] && rsync --exclude '.git' -a source/ build/source
 	# Copy merge files to build container context, overwriting as required
 	[[ -d merge ]] && rsync --exclude '.git' -a merge/ build/source
+	# Copy release number
+	cp /tmp/workspace/release_number build/source/public/
 
 bake:
 	source lib/retry.sh && retry bake.sh | tee source/bake.log
