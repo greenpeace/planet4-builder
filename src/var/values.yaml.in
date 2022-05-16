@@ -37,7 +37,9 @@ php:
     minSpare: '${PHP_PROCESS_MANAGER_MIN_SPARE_SERVERS}'
     maxSpare: '${PHP_PROCESS_MANAGER_MAX_SPARE_SERVERS}'
     maxRequests: '${PHP_PROCESS_MANAGER_MAX_REQUESTS}'
-
+  resources:
+    limits:
+      memory: "${PHP_MEMORY_LIMIT}"
 wp:
   siteUrl: '${APP_HOSTNAME}/${APP_HOSTPATH}'
   stateless:
