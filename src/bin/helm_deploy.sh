@@ -8,8 +8,8 @@ function install() {
 
   # workaround for helmv3 upgrade, allows helm3 to adopt pdbs into its state
   kubectl annotate pdb --overwrite -n "${HELM_NAMESPACE}" "${HELM_RELEASE}"-wordpress-php meta.helm.sh/release-name="${HELM_RELEASE}"
-  kubectl annotate pdb --overwrite-n "${HELM_NAMESPACE}" "${HELM_RELEASE}"-wordpress-php meta.helm.sh/release-namespace="${HELM_NAMESPACE}"
-  kubectl label pdb --overwrite-n "${HELM_NAMESPACE}" "${HELM_RELEASE}"-wordpress-php app.kubernetes.io/managed-by=Helm
+  kubectl annotate pdb --overwrite -n "${HELM_NAMESPACE}" "${HELM_RELEASE}"-wordpress-php meta.helm.sh/release-namespace="${HELM_NAMESPACE}"
+  kubectl label pdb --overwrite -n "${HELM_NAMESPACE}" "${HELM_RELEASE}"-wordpress-php app.kubernetes.io/managed-by=Helm
 
   kubectl annotate pdb --overwrite -n "${HELM_NAMESPACE}" "${HELM_RELEASE}"-wordpress-openresty meta.helm.sh/release-name="${HELM_RELEASE}"
   kubectl annotate pdb --overwrite -n "${HELM_NAMESPACE}" "${HELM_RELEASE}"-wordpress-openresty meta.helm.sh/release-namespace="${HELM_NAMESPACE}"
