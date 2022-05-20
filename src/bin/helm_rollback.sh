@@ -7,7 +7,7 @@ set -euo pipefail
 release=${1:-${HELM_RELEASE}}
 helm3 history -n "${HELM_NAMESPACE}" "$release" --max=10
 
-helm3 status -n "${HELM_NAMESPACE}" "$release" > helm_get_release.txt
+helm3 status -n "${HELM_NAMESPACE}" "$release" >helm_get_release.txt
 current=$(grep '^REVISION:' helm_get_release.txt | cut -d' ' -f2)
 
 re='^[0-9]+$'
