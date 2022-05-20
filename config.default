@@ -42,7 +42,7 @@ HADOLINT_VERSION=1.18.0
 HELM2_VERSION=2.17.0
 
 # https://github.com/helm/helm/releases
-HELM3_VERSION=3.4.2
+HELM3_VERSION=3.9.0
 
 # https://www.npmjs.com/package/junit-merge
 JUNIT_MERGE_VERSION=2.0.0
