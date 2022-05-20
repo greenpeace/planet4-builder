@@ -6,6 +6,8 @@ set -uo pipefail
 
 function install() {
 
+  helm3 2to3 convert "${HELM_RELEASE}" || true
+
   # workaround for helmv3 upgrade, allows helm3 to adopt pdbs into its state
   kubectl annotate pdb --overwrite -n "${HELM_NAMESPACE}" "${HELM_RELEASE}"-wordpress-php meta.helm.sh/release-name="${HELM_RELEASE}"
   kubectl annotate pdb --overwrite -n "${HELM_NAMESPACE}" "${HELM_RELEASE}"-wordpress-php meta.helm.sh/release-namespace="${HELM_NAMESPACE}"
