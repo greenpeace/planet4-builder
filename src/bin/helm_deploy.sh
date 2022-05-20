@@ -6,6 +6,15 @@ set -uo pipefail
 
 function install() {
 
+  # workaround for helmv3 upgrade, allows helm3 to adopt pdbs into its state
+  kubectl annotate pdb "${HELM_RELEASE}"-wordpress-php meta.helm.sh/release-name="${HELM_RELEASE}"
+  kubectl annotate pdb "${HELM_RELEASE}"-wordpress-php meta.helm.sh/release-namespace="${HELM_NAMESPACE}"
+  kubectl label pdb "${HELM_RELEASE}"-wordpress-php app.kubernetes.io/managed-by=Helm
+
+  kubectl annotate pdb "${HELM_RELEASE}"-wordpress-openresty meta.helm.sh/release-name="${HELM_RELEASE}"
+  kubectl annotate pdb "${HELM_RELEASE}"-wordpress-openresty meta.helm.sh/release-namespace="${HELM_NAMESPACE}"
+  kubectl label pdb "${HELM_RELEASE}"-wordpress-openresty app.kubernetes.io/managed-by=Helm
+
   if helm3 upgrade --install --force --wait --timeout 300s "${HELM_RELEASE}" \
     --namespace "${HELM_NAMESPACE}" \
     --values "$HOME"/var/values.yaml \
