@@ -6,6 +6,7 @@ set -uo pipefail
 
 function install() {
 
+  helm3 plugin install https://github.com/helm/helm-2to3.git || true
   helm3 2to3 convert "${HELM_RELEASE}" || true
 
   # workaround for helmv3 upgrade, allows helm3 to adopt pdbs into its state
