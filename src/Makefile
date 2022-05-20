@@ -244,7 +244,7 @@ rollback: checkout copy persist prepare-helm rollback-helm post-deploy
 
 prepare-helm:
 	# Update Helm repositories
-	helm repo update
+	helm3 repo update
 
 	# Connect to cluster
 	gcloud container clusters get-credentials $(GCLOUD_CLUSTER) \

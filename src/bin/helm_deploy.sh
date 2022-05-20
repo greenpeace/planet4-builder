@@ -6,7 +6,7 @@ set -uo pipefail
 
 function install() {
 
-  if helm upgrade --install --force --wait --timeout 300 "${HELM_RELEASE}" \
+  if helm3 upgrade --install --force --wait --timeout 300s "${HELM_RELEASE}" \
     --namespace "${HELM_NAMESPACE}" \
     --values "$HOME"/var/values.yaml \
     --values "$HOME"/var/secrets.yaml \
