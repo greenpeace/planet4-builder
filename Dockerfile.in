@@ -3,8 +3,7 @@ FROM ${BASE_NAMESPACE}/${BASE_IMAGE}:${BASE_TAG}
 
 ENV PATH=/home/${CIRCLECI_USER}/bin:${PATH}
 
-RUN helm init --client-only && \
-    helm repo add p4 https://planet4-helm-charts.storage.googleapis.com && \
-    helm repo add rimusz https://charts.rimusz.net
+RUN helm3 repo add p4 https://planet4-helm-charts.storage.googleapis.com && \
+    helm3 repo add rimusz https://charts.rimusz.net
 
 COPY --chown=${CIRCLECI_USER}:${CIRCLECI_USER} . /home/circleci/

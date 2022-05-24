@@ -17,17 +17,17 @@ echo "Release:   $release"
 echo "Tag:       $tag"
 echo
 
-if ! helm status "${HELM_RELEASE}" | tee release_status.txt; then
+namespace=$(helm3 list -A -o json | jq 'map(select(.name == "${HELM_RELEASE}")) | .[0].namespace')
+
+if ! helm3 status -n "$namespace" "${HELM_RELEASE}" | tee release_status.txt; then
   echo "SKIP: Release not yet deployed"
   exit 0
 fi
 
-grep -Eq "STATUS: DEPLOYED" release_status.txt || {
+grep -Eq "STATUS: deployed" release_status.txt || {
   echo "SKIP: Release is not in a stable state"
   exit 0
 }
-
-namespace=${HELM_NAMESPACE:-${2:-$(grep 'NAMESPACE:' release_status.txt | cut -d' ' -f2 | sed 's/planet4-//' | sed 's/-master$//' | sed 's/-release$//' | xargs)}}
 
 if ! kubectl get namespace "$namespace" >/dev/null; then
   echo "ERROR: Namespace '$namespace' not found."

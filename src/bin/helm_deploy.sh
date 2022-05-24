@@ -6,7 +6,19 @@ set -uo pipefail
 
 function install() {
 
-  if helm upgrade --install --force --wait --timeout 300 "${HELM_RELEASE}" \
+  helm3 plugin install https://github.com/helm/helm-2to3.git || true
+  helm3 2to3 convert "${HELM_RELEASE}" || true
+
+  # workaround for helmv3 upgrade, allows helm3 to adopt pdbs into its state
+  kubectl annotate pdb --overwrite -n "${HELM_NAMESPACE}" "${HELM_RELEASE}"-wordpress-php meta.helm.sh/release-name="${HELM_RELEASE}"
+  kubectl annotate pdb --overwrite -n "${HELM_NAMESPACE}" "${HELM_RELEASE}"-wordpress-php meta.helm.sh/release-namespace="${HELM_NAMESPACE}"
+  kubectl label pdb --overwrite -n "${HELM_NAMESPACE}" "${HELM_RELEASE}"-wordpress-php app.kubernetes.io/managed-by=Helm
+
+  kubectl annotate pdb --overwrite -n "${HELM_NAMESPACE}" "${HELM_RELEASE}"-wordpress-openresty meta.helm.sh/release-name="${HELM_RELEASE}"
+  kubectl annotate pdb --overwrite -n "${HELM_NAMESPACE}" "${HELM_RELEASE}"-wordpress-openresty meta.helm.sh/release-namespace="${HELM_NAMESPACE}"
+  kubectl label pdb --overwrite -n "${HELM_NAMESPACE}" "${HELM_RELEASE}"-wordpress-openresty app.kubernetes.io/managed-by=Helm
+
+  if helm3 upgrade --install --force --wait --timeout 300s "${HELM_RELEASE}" \
     --namespace "${HELM_NAMESPACE}" \
     --values "$HOME"/var/values.yaml \
     --values "$HOME"/var/secrets.yaml \

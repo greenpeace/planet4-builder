@@ -7,7 +7,7 @@ PARENT_IMAGE      ?= gcr.io/planet-4-151612/wordpress
 PARENT_VERSION    ?= latest
 
 # Wordpress Helm chart version
-CHART_VERSION     ?= 0.8.23
+CHART_VERSION     ?= 0.8.25
 
 # Use current folder name as prefix for built containers,
 # eg planet4-gpi-app planet4-gpi-openresty
@@ -110,7 +110,7 @@ PHP_PROCESS_MANAGER_MAX_SPARE_SERVERS ?= 5
 PHP_PROCESS_MANAGER_MIN_SPARE_SERVERS ?= 4
 PHP_PROCESS_MANAGER_START_SERVERS ?= 5
 PHP_PROCESS_MANAGER ?= dynamic
-PHP_MEMORY_LIMIT ?= "1Gi"
+PHP_MEMORY_LIMIT ?= 1Gi
 
 # Secrets
 # Values are expected to be stored in Circle build environment
@@ -244,7 +244,7 @@ rollback: checkout copy persist prepare-helm rollback-helm post-deploy
 
 prepare-helm:
 	# Update Helm repositories
-	helm repo update
+	helm3 repo update
 
 	# Connect to cluster
 	gcloud container clusters get-credentials $(GCLOUD_CLUSTER) \
