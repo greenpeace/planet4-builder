@@ -17,7 +17,7 @@ echo "Release:   $release"
 echo "Tag:       $tag"
 echo
 
-namespace=$(helm3 list -A -o json | jq 'map(select(.name == "${HELM_RELEASE}")) | .[0].namespace')
+namespace=$(helm3 list -A -o json | jq --arg release "$release" 'map(select(.name == $release)) | .[0].namespace' | tr -d '"')
 
 if ! helm3 status -n "$namespace" "${HELM_RELEASE}" | tee release_status.txt; then
   echo "SKIP: Release not yet deployed"
