@@ -142,11 +142,8 @@ echo "Discourage search engines from indexing dev/stage sites"
 echo
 $kc exec "$POD" -- wp option update blog_public 0
 
-if [[ "$APP_ENV" = "development" ]]; then
-  echo "Remove GF addons settings"
-  # shellcheck disable=SC2046
-  $kc exec "$POD" -- wp option delete $(wp option list --search='gravityformsaddon_*_settings' --field=option_name)
-fi
+echo "Remove GF addons authentication"
+$kc exec "$POD" -- wp p4-gf-addons disconnect
 
 echo ""
 echo "Flushing cache"
