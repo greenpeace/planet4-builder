@@ -17,7 +17,7 @@ FLUSH_REDIS_DIR="$(cd -P "$(dirname "$source")" && pwd)"
 function flush() {
   redis=$(kubectl get pods --namespace "${HELM_NAMESPACE}" \
     --field-selector=status.phase=Running \
-    -l "app=redis,role=master,release=${HELM_RELEASE}" \
+    -l "app.kubernetes.io/name=redis,app.kubernetes.io/component=master,app.kubernetes.io/instance=${HELM_RELEASE}" \
     -o jsonpath="{.items[0].metadata.name}")
 
   if [[ -z "$redis" ]]; then
