@@ -34,7 +34,6 @@ echo ""
 echo "mysqldump ${WP_DB_NAME} > content/${WP_DB_NAME}-${SQL_TAG}.sql ..."
 echo ""
 mysqldump -v --column-statistics=0 --set-gtid-purged=OFF \
-  --ignore-table="$WP_DB_NAME".wp_gf_draft_submissions --ignore-table="$WP_DB_NAME".wp_gf_entry --ignore-table="$WP_DB_NAME".wp_gf_entry_meta --ignore-table="$WP_DB_NAME".wp_gf_entry_notes --ignore-table="$WP_DB_NAME".wp_gf_form --ignore-table="$WP_DB_NAME".wp_gf_form_meta --ignore-table="$WP_DB_NAME".wp_gf_form_revisions --ignore-table="$WP_DB_NAME".wp_gf_form_view \
   -u "$WP_DB_USERNAME_DC" \
   -p"$WP_DB_PASSWORD_DC" \
   -h 127.0.0.1 \
