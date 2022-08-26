@@ -142,6 +142,9 @@ echo "Discourage search engines from indexing dev/stage sites"
 echo
 $kc exec "$POD" -- wp option update blog_public 0
 
+echo "Remove GF addons authentication"
+$kc exec "$POD" -- wp p4-gf-addons disconnect
+
 echo ""
 echo "Flushing cache"
 echo ""
