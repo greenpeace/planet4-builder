@@ -20,9 +20,14 @@ main() {
     return 1
   fi
 
-  redis_service=$(kubectl get service --namespace "${HELM_NAMESPACE}" \
-    -l "app=redis,release=${HELM_RELEASE}" \
-    -o jsonpath="{.items[0].metadata.name}")
+  redis_service=$(
+    kubectl get service --namespace "${HELM_NAMESPACE}" \
+      -l "app.kubernetes.io/name=redis,app.kubernetes.io/component=master,app.kubernetes.io/instance=${HELM_RELEASE}" \
+      -o jsonpath="{.items[0].metadata.name}" ||
+      kubectl get service --namespace "${HELM_NAMESPACE}" \
+        -l "app=redis,release=${HELM_RELEASE}" \
+        -o jsonpath="{.items[0].metadata.name}"
+  )
 
   if [[ -z "$redis_service" ]]; then
     echo >&2 "ERROR: redis service not found in release ${HELM_RELEASE}"
