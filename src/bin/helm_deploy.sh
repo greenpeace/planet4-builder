@@ -11,6 +11,7 @@ function install() {
     --values "$HOME"/var/values.yaml \
     --values "$HOME"/var/secrets.yaml \
     --version "${CHART_VERSION}" \
+    --create-namespace \
     p4/wordpress 2>&1 | tee -a helm_output.txt; then
     echo "SUCCESS: Deployed release $HELM_RELEASE"
     return 0
