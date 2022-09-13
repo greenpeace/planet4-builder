@@ -29,7 +29,7 @@ if [ "$branch" == "main" ]; then
   git commit --allow-empty -m ":robot:${GIT_PREFIX} Trigger build #${CIRCLE_BUILD_NUM}" -m "${CIRCLE_BUILD_URL}"
   git push origin "$branch"
 else
-  current_version=$(git describe --abbrev=0 --tags)
+  current_version=$(git tag --sort=-v:refname | head -1)
   new_version=$(increment-version.sh "$current_version")
   git tag -a "$new_version" -m "$new_version"
   git push origin --tags
