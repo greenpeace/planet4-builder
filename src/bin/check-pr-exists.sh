@@ -5,7 +5,8 @@ set -eo pipefail
 # Otherwise it's either a normal PR or just a new commit that doesn't require deployment.
 if [[ "$CIRCLE_BRANCH" = "main" ]]; then
   echo true >/tmp/workspace/is_merge_commit
-  echo "$CIRCLE_PULL_REQUEST" >/tmp/workspace/pr
+  instance=$(find-commit-test-instance.py)
+  echo "$instance" >/tmp/workspace/test-instance
 else
   if [ -z "$CIRCLE_PULL_REQUEST" ]; then
     echo "No PR found, skipping instance deploy"
