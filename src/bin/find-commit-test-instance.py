@@ -20,8 +20,10 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Parsed options
+    ci_repo = '{0}/{1}'.format(os.getenv('CIRCLE_PROJECT_USERNAME'),
+                               os.getenv('CIRCLE_PROJECT_REPONAME'))
     commit_sha = args.commit_sha if args.commit_sha else os.getenv('CIRCLE_SHA1')
-    commit_repo = args.commit_repo if args.commit_repo else os.getenv('CIRCLE_PROJECT_REPONAME')
+    commit_repo = args.commit_repo if args.commit_repo else ci_repo
 
     # Authentication
     oauth_key = os.getenv('GITHUB_OAUTH_TOKEN')
