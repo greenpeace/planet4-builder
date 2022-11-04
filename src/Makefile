@@ -262,6 +262,9 @@ deploy-helm:
 	# Remove secrets file
 	rm -f "$HOME"/secrets.yaml
 
+reset:
+	reset_test_instance.sh
+
 post-deploy:
 	activate_plugins.sh
 
