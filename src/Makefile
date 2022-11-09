@@ -4,7 +4,7 @@ SHELL := /bin/bash
 
 # https://github.com/greenpeace/planet4-docker
 PARENT_IMAGE      ?= gcr.io/planet-4-151612/wordpress
-PARENT_VERSION    ?= build-14935
+PARENT_VERSION    ?= build-14556
 
 # Wordpress Helm chart version
 CHART_VERSION     ?= 0.8.31
