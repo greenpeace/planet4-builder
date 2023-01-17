@@ -135,7 +135,7 @@ echo ""
 echo "Stateless domain and path replacement."
 echo "We will replace the path $OLD_PATH with $NEW_PATH for the images themselves"
 echo ""
-$kc exec "$POD" -- wp search-replace "$OLD_PATH" "$NEW_PATH" --precise --skip-columns=guid
+$kc exec "$POD" -- wp search-replace "$OLD_PATH" "$NEW_PATH" --precise --skip-columns=guid --verbose
 
 echo
 echo "Discourage search engines from indexing dev/stage sites"
