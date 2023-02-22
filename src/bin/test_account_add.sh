@@ -12,4 +12,10 @@ if [[ -z "$php" ]]; then
   exit 1
 fi
 
-kubectl -n "${HELM_NAMESPACE}" exec -it "$php" -- bash -c "wp user create p4_test_user p4test+user@greenpeace.org --role=editor --user_pass=${WP_TEST_USER}"
+# Set kubernetes command with namespace
+kc="kubectl -n ${HELM_NAMESPACE}"
+
+if ! $kc exec "$php" -- wp user create p4_test_user p4test+user@planet4.test --user_pass="${WP_TEST_USER}" --role=editor; then
+  echo "Test user already exists, updating..."
+  $kc exec "$php" -- wp user update p4_test_user --user_email=p4test+user@planet4.test --user_pass="${WP_TEST_USER}" --role=editor
+fi

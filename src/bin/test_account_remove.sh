@@ -12,4 +12,10 @@ if [[ -z "$php" ]]; then
   exit 1
 fi
 
-kubectl -n "${HELM_NAMESPACE}" exec "$php" -- "wp user delete p4test+user@greenpeace.org --yes"
+# Set kubernetes command with namespace
+kc="kubectl -n ${HELM_NAMESPACE}"
+
+if ! $kc exec "$php" -- wp user delete p4test+user@planet4.test --yes; then
+  echo "Failed to delete test user."
+  exit 0
+fi
