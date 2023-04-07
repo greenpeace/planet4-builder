@@ -14,7 +14,7 @@ IMAGE_NAME=circleci-base
 # Upstream image
 BASE_IMAGE=php
 BASE_NAMESPACE=cimg
-BASE_TAG=7.4
+BASE_TAG=7.3
 NODE_VERSION=16.19.0
 
 # =============================================================================
