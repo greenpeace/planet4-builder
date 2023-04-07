@@ -7,7 +7,7 @@ ENV CIRCLECI_USER=${CIRCLECI_USER} \
 
 USER root
 
-# Install system dependencies
+# Install system, node, python dependencies
 # hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -21,16 +21,16 @@ RUN apt-get update && \
     silversearcher-ag \
     wget && \
     rm -rf /tmp/* && \
-    rm -rf /var/lib/apt/lists/*
-
-# Install pip and npm dependencies
-RUN pip3 install --no-cache-dir yamllint==${YAMLLINT_VERSION} yq==${YQ_VERSION} flake8==${FLAKE8_VERSION} requests_oauthlib==${OAUTHLIB_VERSION} \
+    rm -rf /var/lib/apt/lists/* && \
+	  curl -L -o node.tar.xz "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz" && \
+    tar -xJf node.tar.xz -C /usr/local --strip-components=1 && \
+	  rm node.tar.xz && \
+	  ln -sf /usr/local/bin/node /usr/local/bin/nodejs && \
+    pip3 install --no-cache-dir yamllint==${YAMLLINT_VERSION} yq==${YQ_VERSION} flake8==${FLAKE8_VERSION} requests_oauthlib==${OAUTHLIB_VERSION} \
     GitPython==${GITPYTHON_VERSION} semver==${SEMVER_VERSION} pycircleci==${PYCIRCLECI_VERSION} PyGithub==${PYGITHUB_VERSION} \
     sendgrid==${SENDGRID_VERSION} && \
-    npm install -g bats@${BATS_VERSION} junit-merge@${JUNIT_MERGE_VERSION} tap-xunit@${TAP_XUNIT_VERSION}
-
-# Git and user config
-RUN git config --global alias.unstaged 'diff --name-only' && \
+    npm install -g bats@${BATS_VERSION} junit-merge@${JUNIT_MERGE_VERSION} tap-xunit@${TAP_XUNIT_VERSION} && \
+    git config --global alias.unstaged 'diff --name-only' && \
     git config --global alias.staged 'diff --name-only --cached' && \
     chown -R circleci:circleci /usr/local/bin
 
