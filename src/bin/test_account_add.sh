@@ -15,7 +15,7 @@ fi
 # Set kubernetes command with namespace
 kc="kubectl -n ${HELM_NAMESPACE}"
 
-if ! $kc exec "$php" -- wp user create p4_test_user p4test+user@planet4.test --user_pass="${WP_TEST_USER}" --role=editor; then
+if ! $kc exec "$php" -- wp user create p4_test_user p4test+user@planet4.test --user_pass="${WP_TEST_USER}" --role=administrator; then
   echo "Test user already exists, updating..."
-  $kc exec "$php" -- wp user update p4_test_user --user_email=p4test+user@planet4.test --user_pass="${WP_TEST_USER}" --role=editor
+  $kc exec "$php" -- wp user update p4_test_user --user_email=p4test+user@planet4.test --user_pass="${WP_TEST_USER}" --role=administrator
 fi
