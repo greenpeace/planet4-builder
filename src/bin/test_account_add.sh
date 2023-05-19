@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -e
 
+if [ "$APP_ENVIRONMENT" = 'production' ]; then
+  echo "Production environment: skipping test user creation"
+  exit 0
+fi
+
 php=$(kubectl get pods --namespace "${HELM_NAMESPACE}" \
   --sort-by=.metadata.creationTimestamp \
   --field-selector=status.phase=Running \
