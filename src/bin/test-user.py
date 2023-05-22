@@ -16,7 +16,7 @@ Main
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--test-instance",
+    parser.add_argument("--instance",
                         help="Test instance name")
     parser.add_argument("--create", action="store_true",
                         help="Create test user")
@@ -37,7 +37,7 @@ if __name__ == '__main__':
     response = circleci.trigger_pipeline(
         vcs_type=VCS,
         username=USERNAME,
-        project='planet4-test-' + args.test_instance,
+        project='planet4-' + args.instance,
         branch='main',
         params=parameters)
     print(response)
