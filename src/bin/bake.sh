@@ -105,10 +105,13 @@ echo "Copy GF language translation files..."
 mkdir -p source/public/wp-content/languages/gravityforms/
 rsync -ar source/public/wp-content/themes/planet4-master-theme/languages/plugins/gravityforms/ source/public/wp-content/languages/gravityforms/
 
-# Tagged releases are production, remove the robots.txt
-# FIXME Find a better way to handle robots.txt
+# Tagged releases are production
+# Remove default robots.txt and create a proper one
 if [[ -n "${CIRCLE_TAG:-}" ]]; then
-  rm -f source/public/robots.txt
+  hostpath="${APP_HOSTNAME}${APP_HOSTPATH:+/$APP_HOSTPATH}/"
+  echo "User-agent: *" >source/public/robots.txt
+  echo -e "Disallow: /wp-admin/\nAllow: /wp-admin/admin-ajax.php" >>source/public/robots.txt
+  echo "Sitemap: https://www.${hostpath}/sitemap.xml" >>source/public/robots.txt
 fi
 
 echo "Done"
