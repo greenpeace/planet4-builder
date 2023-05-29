@@ -100,6 +100,11 @@ fi
 # FIXME volume: nocopy not working in the docker-compose.yml file
 rm -f source/public/index.html
 
+# GravityForms move translations to proper path
+echo "Copy GF language translation files..."
+mkdir -p source/public/wp-content/languages/gravityforms/
+rsync -ar source/public/wp-content/themes/planet4-master-theme/languages/plugins/gravityforms/ source/public/wp-content/languages/gravityforms/
+
 # Tagged releases are production, remove the robots.txt
 # FIXME Find a better way to handle robots.txt
 if [[ -n "${CIRCLE_TAG:-}" ]]; then
