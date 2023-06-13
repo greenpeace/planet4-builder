@@ -11,7 +11,19 @@ workspace=/tmp/workspace/src
 
 for file in "$workspace"/tasks/post-deploy/*; do
   echo ""
-  echo "Running the script : $(basename "$file")"
+  filename=$(basename "$file")
+  echo "Running the script: ${filename}"
   echo ""
-  run_bash_script_in_php_pod.sh "$file"
+
+  if [[ $filename == *"-pods-"* ]]; then
+    echo "Running script in all php pods"
+    echo ""
+    run_bash_script_in_all_php_pods.sh "$file"
+  elif [[ $filename == *"-openresty-"* ]]; then
+    echo "Running script in all openresty pods"
+    echo ""
+    run_bash_script_in_all_openresty_pods.sh "$file"
+  else
+    run_bash_script_in_php_pod.sh "$file"
+  fi
 done
