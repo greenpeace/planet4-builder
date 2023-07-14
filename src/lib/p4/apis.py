@@ -36,6 +36,6 @@ def api_failed(response, endpoint, exit_on_error=True):
         return False
 
     if exit_on_error:
-        raise Exception("Status code {0} calling {1}".format(
+        raise Exception('Status code {0} calling {1}'.format(
             response.status_code, endpoint))
     return True

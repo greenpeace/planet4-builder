@@ -164,7 +164,7 @@ def edit_issue(jira_issue, instance):
     failed = api_failed(response, endpoint, exit_on_error=False)
     if failed:
         raise Exception(
-            'Issue could not be edited, instance booking process has failed.')
+            'Issue could not be edited. Jira status code: {0}'.format(response.status_code))
 
     return True
 
