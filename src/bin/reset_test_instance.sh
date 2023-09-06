@@ -91,7 +91,7 @@ echo "Restore paths"
 OLD_PATH="www-dev.greenpeace.org/defaultcontent"
 NEW_PATH="www-dev.greenpeace.org/${INSTANCE}"
 kubectl exec -n "$INSTANCE" "$POD" -- wp search-replace "$OLD_PATH" "$NEW_PATH" --precise --skip-columns=guid
-OLD_PATH="https://www.greenpeace.org/static/defaultcontent-stateless-develop/"
+OLD_PATH="https://www.greenpeace.org/static/planet4-defaultcontent-stateless-develop/"
 NEW_PATH="https://www.greenpeace.org/static/${CONTAINER_PREFIX}-stateless-develop/"
 kubectl exec -n "$INSTANCE" "$POD" -- wp search-replace "$OLD_PATH" "$NEW_PATH" --precise --skip-columns=guid
 echo ""
