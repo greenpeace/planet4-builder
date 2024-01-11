@@ -48,17 +48,17 @@ gzip --test "content/${WP_DB_NAME}-${SQL_TAG}.sql.gz"
 echo ""
 echo "Checking if bucket exists"
 echo ""
-if ! gsutil ls "${BUCKET_DESTINATION}/"; then
+if ! gcloud storage ls "${BUCKET_DESTINATION}/"; then
   echo "Bucket does not exist, attempting to create it"
-  gsutil mb "${BUCKET_DESTINATION}/"
+  gcloud storage buckets create "${BUCKET_DESTINATION}/"
   echo "And now we will apply labels"
-  gsutil label ch -l "nro:${APP_HOSTNAME}/${APP_HOSTPATH:-}" "${BUCKET_DESTINATION}"
-  gsutil label ch -l "environment:${ENVIRONMENT}" "${BUCKET_DESTINATION}"
+  gcloud storage buckets update "gs://${BUCKET_DESTINATION}" \
+    --update-labels=nro="${APP_HOSTNAME}",environment="${ENVIRONMENT}"
 fi
 
 echo ""
 echo "uploading to ${BUCKET_DESTINATION}/..."
 echo ""
-gsutil cp "content/${WP_DB_NAME}-${SQL_TAG}.sql.gz" "${BUCKET_DESTINATION}/"
+gcloud storage cp "content/${WP_DB_NAME}-${SQL_TAG}.sql.gz" "${BUCKET_DESTINATION}/"
 
-gsutil ls "${BUCKET_DESTINATION}/"
+gcloud storage ls "${BUCKET_DESTINATION}/"

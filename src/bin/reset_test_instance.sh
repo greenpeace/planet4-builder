@@ -49,7 +49,7 @@ echo ""
 
 echo ""
 echo "Download DB dump"
-gsutil cp "${CONTENT_BASE}${CONTENT_DB}" "${LOCAL_DB}.gz"
+gcloud storage cp "${CONTENT_BASE}${CONTENT_DB}" "${LOCAL_DB}.gz"
 gunzip "${LOCAL_DB}"
 echo ""
 
@@ -76,7 +76,7 @@ echo ""
 
 echo ""
 echo "Sync Stateless bucket"
-gsutil rsync -d -r gs://planet4-defaultcontent-stateless-develop gs://"${WP_STATELESS_BUCKET}"
+gcloud storage rsync gs://planet4-defaultcontent-stateless-develop gs://"${WP_STATELESS_BUCKET}" --recursive --delete-unmatched-destination-objects
 echo ""
 
 echo ""

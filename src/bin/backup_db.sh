@@ -74,14 +74,14 @@ gzip "$filename"
 
 bucket="${release}-db-backup"
 
-if ! gsutil ls "gs://$bucket" >/dev/null; then
+if ! gcloud storage ls "gs://$bucket" >/dev/null; then
   echo "Creating bucket: gs://$bucket"
-  gsutil mb -p "${GOOGLE_PROJECT_ID:-planet-4-151612}" "gs://$bucket"
-  gsutil label ch -l "nro:${APP_HOSTPATH:-undefined}" "gs://${bucket}"
-  gsutil label ch -l "environment:${ENVIRONMENT:-development}" "gs://${bucket}"
+  gcloud storage buckets create --project "${GOOGLE_PROJECT_ID:-planet-4-151612}" "gs://$bucket"
+  gcloud storage buckets update "gs://${bucket}" \
+    --update-labels=nro="${APP_HOSTPATH:-undefined}",environment="${ENVIRONMENT:-development}"
 fi
 
-gsutil cp "$filename.gz" "gs://$bucket/$tag/$filename.gz"
+gcloud storage cp "$filename.gz" "gs://$bucket/$tag/$filename.gz"
 
 echo
 echo "SUCCESS: Database backed up to: gs://$bucket/$tag/$filename.gz"
