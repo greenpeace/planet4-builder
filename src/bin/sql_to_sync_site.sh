@@ -145,7 +145,7 @@ $kc exec "$POD" -- wp option update blog_public 0
 echo
 echo "Disable Cloudflare cache purging on deployments"
 echo
-$kc exec "$POD" -- wp option patch delete planet4_features cloudflare_deploy_purge
+$kc exec "$POD" -- wp option patch delete planet4_features cloudflare_deploy_purge || true
 
 echo "Remove GF addons authentication"
 $kc exec "$POD" -- wp p4-gf-addons disconnect
