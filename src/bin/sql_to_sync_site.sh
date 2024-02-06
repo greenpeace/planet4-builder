@@ -62,7 +62,7 @@ echo ""
 echo ""
 echo "Copying the file from the bucket"
 echo ""
-gsutil cp "${BUCKET_DESTINATION}/${FILE_TO_IMPORT}.gz" "content/${FILE_TO_IMPORT}.gz"
+gcloud storage cp "${BUCKET_DESTINATION}/${FILE_TO_IMPORT}.gz" "content/${FILE_TO_IMPORT}.gz"
 
 echo ""
 echo "Gunzip the file"
@@ -90,7 +90,7 @@ echo "Actually replacing the contents of the release stateless with the producti
 echo "Source bucket: $SOURCE_BUCKET"
 echo "Target bucket: $WP_STATELESS_BUCKET"
 echo ""
-gsutil rsync -d -r gs://"${SOURCE_BUCKET}" gs://"${WP_STATELESS_BUCKET}"
+gcloud storage rsync gs://"${SOURCE_BUCKET}" gs://"${WP_STATELESS_BUCKET}" --recursive --delete-unmatched-destination-objects
 
 echo ""
 echo "Set kubectl command to use the namespace"
