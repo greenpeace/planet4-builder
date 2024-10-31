@@ -3,7 +3,7 @@
 # Parent image
 BASE_NAMESPACE=greenpeaceinternational
 BASE_IMAGE=circleci-base
-BASE_TAG=latest
+BASE_TAG=maintenance-node-upgrade
 
 # Build image
 BUILD_NAMESPACE=greenpeaceinternational
