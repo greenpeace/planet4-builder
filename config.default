@@ -15,7 +15,7 @@ IMAGE_NAME=circleci-base
 BASE_IMAGE=php
 BASE_NAMESPACE=cimg
 BASE_TAG=7.3
-NODE_VERSION=20.16.0
+NODE_VERSION=20.18.0
 
 # =============================================================================
 
