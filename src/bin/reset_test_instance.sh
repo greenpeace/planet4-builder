@@ -13,7 +13,7 @@ else
 fi
 echo ""
 
-CONTENT_DB_VERSION="0.2.49"
+CONTENT_DB_VERSION="0.2.50"
 CONTENT_BASE="gs://planet4-default-content/"
 CONTENT_DB="planet4-defaultcontent_wordpress-v${CONTENT_DB_VERSION}.sql.gz"
 LOCAL_DB="defaultcontent.sql"
