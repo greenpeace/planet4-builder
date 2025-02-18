@@ -27,8 +27,7 @@ orig_json=$(cat "$composer_file")
 if [ "$is_merge_commit" == true ]; then
   echo "$orig_json" |
     jq "del(.repositories)" |
-    jq --tab ".require.\"greenpeace/planet4-master-theme\" = \"dev-main\"" |
-    jq --tab ".require.\"greenpeace/planet4-plugin-gutenberg-blocks\" = \"dev-main\"" >"$composer_file"
+    jq --tab ".require.\"greenpeace/planet4-master-theme\" = \"dev-main\"" >"$composer_file"
 
   git -C "$instance_repo" --no-pager diff
   git -C "$instance_repo" add composer-local.json
