@@ -45,6 +45,9 @@ HELM2_VERSION=2.17.0
 # https://github.com/helm/helm/releases
 HELM3_VERSION=3.14.2
 
+# https://pypi.org/project/jira/
+JIRA_VERSION=3.8.0
+
 # https://www.npmjs.com/package/junit-merge
 JUNIT_MERGE_VERSION=2.0.0
 
