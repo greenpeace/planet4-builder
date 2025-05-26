@@ -55,7 +55,7 @@ JUNIT_MERGE_VERSION=2.0.0
 OAUTHLIB_VERSION=1.3.0
 
 # https://pypi.org/project/pycircleci/
-PYCIRCLECI_VERSION=0.4.1
+PYCIRCLECI_VERSION=0.7.0
 
 # https://pypi.org/project/PyGithub/
 PYGITHUB_VERSION=1.55
