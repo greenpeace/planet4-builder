@@ -15,6 +15,7 @@ openresty:
 
 nginxingress:
   enabled: ${INGRESS_NOTLS}
+  oauth: ${OAUTH_GROUP}
 
 nginxingresstls:
   enabled: ${INGRESS_TLS}
