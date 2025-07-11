@@ -18,5 +18,5 @@ if [[ -z "$php" ]]; then
   exit 1
 fi
 
-kubectl --namespace "${HELM_NAMESPACE}" exec "$php" -- sh -c 'yes | wp wpml_elasticpress sync --setup' \
-  || kubectl --namespace "${HELM_NAMESPACE}" exec "$php" -- sh -c 'wp elasticpress sync --setup --yes'
+kubectl --namespace "${HELM_NAMESPACE}" exec "$php" -- sh -c 'yes | wp wpml_elasticpress sync --setup' ||
+  kubectl --namespace "${HELM_NAMESPACE}" exec "$php" -- sh -c 'wp elasticpress sync --setup --yes'
