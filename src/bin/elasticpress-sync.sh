@@ -18,5 +18,11 @@ if [[ -z "$php" ]]; then
   exit 1
 fi
 
-kubectl --namespace "${HELM_NAMESPACE}" exec "$php" -- sh -c 'yes | wp wpml_elasticpress sync --setup' ||
-  kubectl --namespace "${HELM_NAMESPACE}" exec "$php" -- sh -c 'wp elasticpress sync --setup --yes'
+# Check if ElasticPress is active
+if kubectl --namespace "${HELM_NAMESPACE}" exec "$php" -- wp plugin is-active elasticpress; then
+  # Try WPML sync, fall back to regular sync if WPML fails
+  kubectl --namespace "${HELM_NAMESPACE}" exec "$php" -- sh -c 'yes | wp wpml_elasticpress sync --setup' \
+    || kubectl --namespace "${HELM_NAMESPACE}" exec "$php" -- sh -c 'wp elasticpress sync --setup --yes'
+else
+  echo "ElasticPress plugin is not active. Skipping sync."
+fi
