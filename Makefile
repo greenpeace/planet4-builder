@@ -55,7 +55,11 @@ FLAKE8 := $(shell command -v flake8 2> /dev/null)
 
 # ============================================================================
 
-ALL: init prepare lint build push
+.DEFAULT_GOAL := all
+
+.PHONY: all init lint lint-sh lint-yaml lint-py lint-docker Dockerfile prepare build test
+
+all: init prepare lint build test
 
 init:
 	@chmod 755 .githooks/*
@@ -116,26 +120,39 @@ endif
 prepare: Dockerfile
 
 Dockerfile:
-	envsubst '$${BASE_NAMESPACE},$${BASE_IMAGE},$${BASE_TAG},$${CIRCLECI_USER}' \
+	envsubst '$${BASE_NAMESPACE},$${BASE_IMAGE},$${BASE_TAG},$${CIRCLECI_USER}, \
+		$${YAMLLINT_VERSION},$${YQ_VERSION},$${BATS_VERSION},$${JUNIT_MERGE_VERSION}, \
+		$${FLAKE8_VERSION},$${OAUTHLIB_VERSION},$${GITPYTHON_VERSION},$${SENDGRID_VERSION}, \
+		$${SEMVER_VERSION},$${PYCIRCLECI_VERSION},$${PYGITHUB_VERSION},$${TAP_XUNIT_VERSION}, \
+		$${HADOLINT_VERSION},$${SHELLCHECK_VERSION},$${HELM3_VERSION}, \
+		$${TRIVY_VERSION},$${SHFMT_VERSION},$${GOOGLE_SDK_VERSION},$${NODE_VERSION}$${JIRA_VERSION}' \
 		< Dockerfile.in > src/Dockerfile
 
 build:
+ifndef DOCKER
+$(error "docker is not installed: https://docs.docker.com/install/")
+endif
 	docker build \
-		--tag=$(BUILD_NAMESPACE)/${IMAGE_NAME}:$(BUILD_TAG) \
-		--tag=$(BUILD_NAMESPACE)/${IMAGE_NAME}:build-$(BUILD_NUM) \
-		--tag=$(BUILD_NAMESPACE)/${IMAGE_NAME}:$(REVISION_TAG) \
+		--tag=$(BUILD_IMAGE):$(BUILD_TAG) \
+		--tag=$(BUILD_IMAGE):build-$(BUILD_NUM) \
+		--tag=$(BUILD_IMAGE):$(REVISION_TAG) \
 		src
+
+test:
+	@$(MAKE) -j1 -C $@ clean
+	@$(MAKE) -k -C $@
+	$(MAKE) -C $@ status
 
 push: push-tag push-latest
 
 push-tag:
-	docker push $(BUILD_NAMESPACE)/${IMAGE_NAME}:$(BUILD_TAG)
-	docker push $(BUILD_NAMESPACE)/${IMAGE_NAME}:build-$(BUILD_NUM)
+	docker push $(BUILD_IMAGE):$(BUILD_TAG)
+	docker push $(BUILD_IMAGE):build-$(BUILD_NUM)
 
 push-latest:
 	if [[ "$(PUSH_LATEST)" = "true" ]]; then { \
-		docker tag $(BUILD_NAMESPACE)/${IMAGE_NAME}:$(REVISION_TAG) $(BUILD_NAMESPACE)/${IMAGE_NAME}:latest; \
-		docker push $(BUILD_NAMESPACE)/${IMAGE_NAME}:latest; \
+		docker tag $(BUILD_IMAGE):$(BUILD_NUM) $(BUILD_IMAGE):latest; \
+		docker push $(BUILD_IMAGE):latest; \
 	}	else { \
 		echo "Not tagged.. skipping latest"; \
 	} fi
