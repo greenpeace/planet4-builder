@@ -64,7 +64,7 @@ if [[ -z "${CIRCLE_BRANCH}" ]] && [[ -n "${CIRCLE_TAG}" ]]; then
   fi
 
   # Checkout that branch / tag
-  git checkout ${CIRCLE_BRANCH}
+  git checkout "${CIRCLE_BRANCH}"
   if [[ "$(git rev-parse HEAD)" != "${CIRCLE_SHA1}" ]]; then
     echo >&2 "Found the wrong commit!"
     echo >&2 "Wanted: ${CIRCLE_SHA1}"
@@ -119,4 +119,4 @@ git commit -F- <<EOF
 EOF
 
 # Push updated files to the repo
-git push --force-with-lease --set-upstream origin ${CIRCLE_BRANCH}
+git push --force-with-lease --set-upstream origin "${CIRCLE_BRANCH}"

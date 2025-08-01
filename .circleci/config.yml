@@ -34,11 +34,18 @@ jobs:
           name: build
           command: make build
       - run:
+          name: test
+          command: make -k test
+      - run:
           name: dockerhub login
           command: docker-login.sh
       - run:
           name: push
           command: make -j2 push
+      - store_test_results:
+          path: /home/circleci/app/test/logs/
+      - store_artifacts:
+          path: /home/circleci/app/test/logs/
       - persist_to_workspace:
           root: /tmp/workspace
           paths:

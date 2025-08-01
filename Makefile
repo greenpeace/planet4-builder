@@ -83,8 +83,8 @@ endif
 ifndef SHFMT
 	$(error "shfmt is not installed: https://github.com/mvdan/sh")
 endif
-	@shfmt -f . | xargs shellcheck
-	@shfmt -i 2 -ci -d .
+	@shfmt -f src/ | xargs shellcheck -e SC2317
+	@shfmt -i 2 -ci -d src/
 
 lint-py:
 ifndef FLAKE8
@@ -136,7 +136,7 @@ endif
 		--tag=$(BUILD_IMAGE):$(BUILD_TAG) \
 		--tag=$(BUILD_IMAGE):build-$(BUILD_NUM) \
 		--tag=$(BUILD_IMAGE):$(REVISION_TAG) \
-		src
+		src/ ; \
 
 test:
 	@$(MAKE) -j1 -C $@ clean

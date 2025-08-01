@@ -7,6 +7,10 @@ ENV CIRCLECI_USER=${CIRCLECI_USER} \
 
 USER root
 
+WORKDIR /home/${CIRCLECI_USER}
+
+COPY --chown=${CIRCLECI_USER}:${CIRCLECI_USER} . .
+
 # Install system, node, python dependencies
 # hadolint ignore=DL3008
 RUN apt-get update && \
@@ -21,6 +25,7 @@ RUN apt-get update && \
     wget && \
     rm -rf /tmp/* && \
     rm -rf /var/lib/apt/lists/* && \
+    PY_LIB_PATH="$(python3 -c "import sys; print(f'/usr/lib/python{sys.version_info.major}.{sys.version_info.minor}')")" && \
 	  curl -L -o node.tar.xz "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz" && \
     tar -xJf node.tar.xz -C /usr/local --strip-components=1 && \
 	  rm node.tar.xz && \
@@ -31,36 +36,25 @@ RUN apt-get update && \
     npm install -g bats@${BATS_VERSION} junit-merge@${JUNIT_MERGE_VERSION} tap-xunit@${TAP_XUNIT_VERSION} && \
     git config --global alias.unstaged 'diff --name-only' && \
     git config --global alias.staged 'diff --name-only --cached' && \
-    chown -R circleci:circleci /usr/local/bin
-
-WORKDIR /home/${CIRCLECI_USER}
-
-COPY --chown=${CIRCLECI_USER}:${CIRCLECI_USER} lib/ /usr/lib/python3.10/
-
-COPY --chown=${CIRCLECI_USER}:${CIRCLECI_USER} .curlrc /home/${CIRCLECI_USER}
-
-USER ${CIRCLECI_USER}
-
-# Install all extra tools
-RUN echo "Hadolint v${HADOLINT_VERSION} ..." && \
-    curl "https://github.com/hadolint/hadolint/releases/download/v${HADOLINT_VERSION}/hadolint-Linux-x86_64" -o /usr/local/bin/hadolint && \
+    echo "Hadolint v${HADOLINT_VERSION} ..." && \
+    curl -L "https://github.com/hadolint/hadolint/releases/download/v${HADOLINT_VERSION}/hadolint-Linux-x86_64" -o /usr/local/bin/hadolint && \
     chmod 755 /usr/local/bin/hadolint && \
     echo "Shellcheck v${SHELLCHECK_VERSION} ..." && \
-    curl "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.linux.x86_64.tar.xz" -o /tmp/shellcheck.tar.xz && \
+    curl -L "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.linux.x86_64.tar.xz" -o /tmp/shellcheck.tar.xz && \
     tar xf /tmp/shellcheck.tar.xz -C /tmp/ && \
     mv /tmp/shellcheck-v${SHELLCHECK_VERSION}/shellcheck /usr/local/bin && \
     echo "Helm3 v${HELM3_VERSION} ..." && \
-    curl "https://get.helm.sh/helm-v${HELM3_VERSION}-linux-amd64.tar.gz" -o /tmp/helm3.tar.gz && \
+    curl -L "https://get.helm.sh/helm-v${HELM3_VERSION}-linux-amd64.tar.gz" -o /tmp/helm3.tar.gz && \
     tar zxf /tmp/helm3.tar.gz -C /tmp/ && \
     mv /tmp/linux-amd64/helm /usr/local/bin/helm3 && \
     echo "Trivy v${TRIVY_VERSION} ..." && \
-    curl https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz -o /tmp/trivy.tar.gz && \
+    curl -L "https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz" -o /tmp/trivy.tar.gz && \
     tar zxvf /tmp/trivy.tar.gz -C /tmp/ && \
     mv /tmp/trivy /usr/local/bin && \
     echo "Shfmt v${SHFMT_VERSION} ..." && \
-    curl https://github.com/mvdan/sh/releases/download/v${SHFMT_VERSION}/shfmt_v${SHFMT_VERSION}_linux_amd64 -o /usr/local/bin/shfmt && \
+    curl -L "https://github.com/mvdan/sh/releases/download/v${SHFMT_VERSION}/shfmt_v${SHFMT_VERSION}_linux_amd64" -o /usr/local/bin/shfmt && \
     chmod +x /usr/local/bin/shfmt && \
-    curl "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${GOOGLE_SDK_VERSION}-linux-x86_64.tar.gz" | tar xz && \
+    curl -L "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${GOOGLE_SDK_VERSION}-linux-x86_64.tar.gz" | tar xz && \
     CLOUDSDK_CORE_DISABLE_PROMPTS=1 ./google-cloud-sdk/install.sh \
         --usage-reporting false \
         --bash-completion false \
@@ -68,6 +62,9 @@ RUN echo "Hadolint v${HADOLINT_VERSION} ..." && \
     gcloud --quiet components update kubectl cloud_sql_proxy && \
     rm -fr /tmp/* && \
     helm3 repo add p4 https://planet4-helm-charts.storage.googleapis.com && \
-    helm3 repo add rimusz https://charts.rimusz.net
+    helm3 repo add rimusz https://charts.rimusz.net && \
+    mv lib/ "${PY_LIB_PATH}" && \
+    mv bin/* /usr/local/bin/ && \
+    rm -rf bin/
 
-COPY --chown=${CIRCLECI_USER}:${CIRCLECI_USER} ./bin/* /usr/local/bin/
+USER ${CIRCLECI_USER}
