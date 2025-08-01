@@ -39,9 +39,6 @@ GOOGLE_SDK_VERSION=523.0.0
 HADOLINT_VERSION=1.18.0
 
 # https://github.com/helm/helm/releases
-HELM2_VERSION=2.17.0
-
-# https://github.com/helm/helm/releases
 HELM3_VERSION=3.14.2
 
 # https://pypi.org/project/jira/
