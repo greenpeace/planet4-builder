@@ -84,13 +84,13 @@ echo "flushing the redis database"
 echo ""
 flush_redis.sh
 
-SOURCE_BUCKET="${CONTAINER_PREFIX}-stateless"
+STATELESS_PRODUCTION=$(yq -r .job_environments.production_environment.WP_STATELESS_BUCKET /tmp/workspace/src/.circleci/config.yml)
 echo ""
 echo "Actually replacing the contents of the release stateless with the production stateless bucket"
-echo "Source bucket: $SOURCE_BUCKET"
-echo "Target bucket: $WP_STATELESS_BUCKET"
+echo "Source bucket: ${STATELESS_PRODUCTION}"
+echo "Target bucket: ${WP_STATELESS_BUCKET}"
 echo ""
-gcloud storage rsync gs://"${SOURCE_BUCKET}" gs://"${WP_STATELESS_BUCKET}" --recursive --delete-unmatched-destination-objects
+gcloud storage rsync gs://"${STATELESS_PRODUCTION}" gs://"${WP_STATELESS_BUCKET}" --recursive --delete-unmatched-destination-objects
 
 echo ""
 echo "Set kubectl command to use the namespace"
@@ -121,15 +121,15 @@ echo
 # Stateless domain and path replacement
 # Check if this in .org or .ch domain
 if [[ "$APP_HOSTNAME" == *"greenpeace.org"* ]]; then
-  OLD_PATH="https://www.greenpeace.org/static/${CONTAINER_PREFIX}-stateless/"
-  NEW_PATH="https://www.greenpeace.org/static/${CONTAINER_PREFIX}-stateless-${SITE_ENV}/"
+  OLD_PATH="https://www.greenpeace.org/static/${STATELESS_PRODUCTION}/"
+  NEW_PATH="https://www.greenpeace.org/static/${WP_STATELESS_BUCKET}/"
 elif [[ "$APP_HOSTNAME" == *"greenpeace.ch"* ]]; then
   NEW_DOMAIN=$(yq -r .job_environments."${SITE_ENV}"_environment.APP_HOSTNAME /tmp/workspace/src/.circleci/config.yml)
   OLD_PATH="https://${NEW_DOMAIN}/static/${CONTAINER_PREFIX}-stateless/"
   NEW_PATH="https://www.greenpeace.ch/static/${CONTAINER_PREFIX}-stateless-${SITE_ENV}/"
 else
-  OLD_PATH="https://storage.googleapis.com/${CONTAINER_PREFIX}-stateless/"
-  NEW_PATH="https://storage.googleapis.com/${CONTAINER_PREFIX}-stateless-${SITE_ENV}/"
+  OLD_PATH="https://storage.googleapis.com/${STATELESS_PRODUCTION}/"
+  NEW_PATH="https://storage.googleapis.com/${WP_STATELESS_BUCKET}/"
 fi
 echo ""
 echo "Stateless domain and path replacement."
